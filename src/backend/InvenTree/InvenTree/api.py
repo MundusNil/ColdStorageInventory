@@ -367,7 +367,7 @@ class NotFoundView(APIView):
         return JsonResponse(
             {
                 'detail': _('API endpoint not found'),
-                'url': request.build_absolute_uri(),
+                'url': helpers.redact_url(request.build_absolute_uri()),
             },
             status=404,
         )

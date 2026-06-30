@@ -310,7 +310,7 @@ class InvenTreeExceptionProcessor(ExceptionProcessor):
         if not ERROR_DETAIL_SETTINGS.get('ERROR_DETAIL_ENABLE', True):
             return
 
-        path = request.build_absolute_uri()
+        path = InvenTree.helpers.redact_url(request.build_absolute_uri())
 
         # Truncate the path to a reasonable length
         # Otherwise we get a database error,

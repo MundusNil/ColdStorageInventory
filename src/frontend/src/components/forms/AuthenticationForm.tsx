@@ -1,7 +1,5 @@
 import { ApiEndpoints } from '@lib/enums/ApiEndpoints';
 import { apiUrl } from '@lib/functions/Api';
-import { t } from '@lingui/core/macro';
-import { Trans } from '@lingui/react/macro';
 import {
   Alert,
   Anchor,
@@ -54,10 +52,11 @@ export function AuthenticationForm() {
 
   const [isLoggingIn, setIsLoggingIn] = useState<boolean>(false);
 
-  function handleLogin() {
+  async function handleLogin() {
     setIsLoggingIn(true);
 
     if (classicLoginMode === true) {
+      await ensureCsrf();
       doBasicLogin(
         classicForm.values.username,
         classicForm.values.password,
@@ -70,24 +69,24 @@ export function AuthenticationForm() {
 
           if (isLoggedIn()) {
             showLoginNotification({
-              title: t`Login successful`,
-              message: t`Logged in successfully`
+              title: '登录成功',
+              message: '已成功登录'
             });
             followRedirect(navigate, location?.state);
           } else if (success) {
             // MFA login
           } else {
             showLoginNotification({
-              title: t`Login failed`,
-              message: t`Check your input and try again.`,
+              title: '登录失败',
+              message: '请检查账号和密码后重试。',
               success: false
             });
           }
         })
         .catch(() => {
           showNotification({
-            title: t`Login failed`,
-            message: t`Check your input and try again.`,
+            title: '登录失败',
+            message: '请检查账号和密码后重试。',
             color: 'red'
           });
         });
@@ -97,13 +96,13 @@ export function AuthenticationForm() {
 
         if (ret?.status === 'ok') {
           showLoginNotification({
-            title: t`Mail delivery successful`,
-            message: t`Check your inbox for the login link. If you have an account, you will receive a login link. Check in spam too.`
+            title: '登录邮件发送成功',
+            message: '登录邮件已发送，请检查邮箱。'
           });
         } else {
           showLoginNotification({
-            title: t`Mail delivery failed`,
-            message: t`Check your input and try again.`,
+            title: '登录邮件发送失败',
+            message: '邮件发送失败，请检查邮箱地址后重试。',
             success: false
           });
         }
@@ -122,27 +121,27 @@ export function AuthenticationForm() {
           </Group>
 
           <Divider
-            label={t`Or continue with other methods`}
+            label='也可以使用其他登录方式'
             labelPosition='center'
             my='lg'
           />
         </>
       ) : null}
-      <form onSubmit={classicForm.onSubmit(() => {})}>
+      <form onSubmit={classicForm.onSubmit(handleLogin)}>
         {classicLoginMode ? (
           <Stack gap={0}>
             <TextInput
               required
-              label={t`Username`}
+              label='账号'
               aria-label='login-username'
-              placeholder={t`Your username`}
+              placeholder='请输入账号'
               {...classicForm.getInputProps('username')}
             />
             <PasswordInput
               required
-              label={t`Password`}
+              label='密码'
               aria-label='login-password'
-              placeholder={t`Your password`}
+              placeholder='请输入密码'
               {...classicForm.getInputProps('password')}
             />
             <VisuallyHidden>
@@ -161,7 +160,7 @@ export function AuthenticationForm() {
                   size='xs'
                   onClick={() => navigate('/reset-password')}
                 >
-                  <Trans>Reset password</Trans>
+                  忘记密码
                 </Anchor>
               </Group>
             )}
@@ -170,8 +169,8 @@ export function AuthenticationForm() {
           <Stack>
             <TextInput
               required
-              label={t`Email`}
-              description={t`We will send you a link to login - if you are registered`}
+              label='邮箱'
+              description='如果账号已注册，系统会发送登录链接到邮箱。'
               placeholder='email@example.org'
               {...simpleForm.getInputProps('email')}
             />
@@ -186,22 +185,14 @@ export function AuthenticationForm() {
             size='xs'
             onClick={() => setMode.toggle()}
           >
-            {classicLoginMode ? (
-              <Trans>Send me an email</Trans>
-            ) : (
-              <Trans>Use username and password</Trans>
-            )}
+              {classicLoginMode ? '发送邮箱登录链接' : '使用账号密码登录'}
           </Anchor>
-          <Button type='submit' disabled={isLoggingIn} onClick={handleLogin}>
+          <Button type='submit' disabled={isLoggingIn}>
             {isLoggingIn ? (
               <Loader size='sm' />
             ) : (
               <>
-                {classicLoginMode ? (
-                  <Trans>Log In</Trans>
-                ) : (
-                  <Trans>Send Email</Trans>
-                )}
+                {classicLoginMode ? '登录' : '发送邮件'}
               </>
             )}
           </Button>
@@ -232,16 +223,16 @@ export function RegistrationForm() {
   const [isRegistering, setIsRegistering] = useState<boolean>(false);
 
   async function handleRegistration() {
-    // check if passwords match
+    // 检查两次密码是否一致
     if (
       registrationForm.values.password !== registrationForm.values.password2
     ) {
-      registrationForm.setFieldError('password2', t`Passwords do not match`);
+      registrationForm.setFieldError('password2', '两次输入的密码不一致');
       return;
     }
     setIsRegistering(true);
 
-    // remove password2 from the request
+    // 后端只需要一份密码，重复密码不随请求发送
     const { password2, ...vals } = registrationForm.values;
     await ensureCsrf();
 
@@ -253,8 +244,8 @@ export function RegistrationForm() {
         if (ret?.status === 200) {
           setIsRegistering(false);
           showLoginNotification({
-            title: t`Registration successful`,
-            message: t`Please confirm your email address to complete the registration`
+            title: '注册成功',
+            message: '请到邮箱中确认账号，完成注册。'
           });
           navigate('/home');
         }
@@ -263,7 +254,7 @@ export function RegistrationForm() {
         if (err.response?.status === 400) {
           setIsRegistering(false);
 
-          // collect all errors per field
+          // 按字段收集后端返回的错误
           const errors: { [key: string]: string[] } = {};
           for (const val of err.response.data.errors) {
             if (!errors[val.param]) {
@@ -277,8 +268,8 @@ export function RegistrationForm() {
           }
 
           showLoginNotification({
-            title: t`Input error`,
-            message: t`Check your input and try again. `,
+            title: '输入有误',
+            message: '请检查填写内容后重试。',
             success: false
           });
         }
@@ -293,31 +284,31 @@ export function RegistrationForm() {
           <Stack gap={0}>
             <TextInput
               required
-              label={t`Username`}
+              label='账号'
               aria-label='register-username'
-              placeholder={t`Your username`}
+              placeholder='请输入账号'
               {...registrationForm.getInputProps('username')}
             />
             <TextInput
               required
-              label={t`Email`}
+              label='邮箱'
               aria-label='register-email'
-              description={t`This will be used for a confirmation`}
+              description='用于接收确认邮件'
               placeholder='email@example.org'
               {...registrationForm.getInputProps('email')}
             />
             <PasswordInput
               required
-              label={t`Password`}
+              label='密码'
               aria-label='register-password'
-              placeholder={t`Your password`}
+              placeholder='请输入密码'
               {...registrationForm.getInputProps('password')}
             />
             <PasswordInput
               required
-              label={t`Password repeat`}
+              label='重复密码'
               aria-label='register-password-repeat'
-              placeholder={t`Repeat password`}
+              placeholder='请再次输入密码'
               {...registrationForm.getInputProps('password2')}
             />
           </Stack>
@@ -329,13 +320,13 @@ export function RegistrationForm() {
               onClick={handleRegistration}
               fullWidth
             >
-              <Trans>Register</Trans>
+              注册
             </Button>
           </Group>
         </form>
       )}
       {both_reg_enabled && (
-        <Divider label={t`Or use SSO`} labelPosition='center' my='lg' />
+        <Divider label='或使用单点登录' labelPosition='center' my='lg' />
       )}
       {sso_registration() && (
         <Group grow mb='md' mt='md'>
@@ -345,8 +336,8 @@ export function RegistrationForm() {
         </Group>
       )}
       {!registration_enabled() && !sso_registration() && (
-        <Alert title={t`Registration not active`} color='orange'>
-          <Text>{t`This might be related to missing mail settings or could be a deliberate decision.`}</Text>
+        <Alert title='注册未启用' color='orange'>
+          <Text>可能是邮件设置未配置，也可能是管理员主动关闭了注册。</Text>
           {errorCodeLink('INVE-W11')}
         </Alert>
       )}
