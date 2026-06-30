@@ -362,7 +362,7 @@ export function useCompleteBuildOutputsForm({
           );
         },
         headers: [
-          { title: t`Part` },
+          { title: t`货品` },
           { title: t`Build Output` },
           { title: t`Quantity to Complete`, style: { width: '200px' } },
           { title: t`Batch` },
@@ -444,7 +444,7 @@ export function useScrapBuildOutputsForm({
           );
         },
         headers: [
-          { title: t`Part` },
+          { title: t`货品` },
           { title: t`Build Output` },
           { title: t`Quantity to Scrap`, style: { width: '200px' } },
           { title: t`Batch` },
@@ -519,8 +519,8 @@ export function useCancelBuildOutputsForm({
           );
         },
         headers: [
-          { title: t`Part` },
-          { title: t`Stock Item` },
+          { title: t`货品` },
+          { title: t`库存批次` },
           { title: t`Batch` },
           { title: t`Status` },
           { title: '', style: { width: '50px' } }
@@ -677,10 +677,10 @@ export function useAllocateStockToBuildForm({
         field_type: 'table',
         value: [],
         headers: [
-          { title: t`Part`, style: { minWidth: '175px' } },
+          { title: t`货品`, style: { minWidth: '175px' } },
           { title: t`IPN`, style: { minWidth: '50px' } },
           { title: t`Allocated`, style: { minWidth: '175px' } },
-          { title: t`Stock Item`, style: { width: '100%' } },
+          { title: t`库存批次`, style: { width: '100%' } },
           { title: t`Quantity`, style: { minWidth: '175px' } },
           { title: '', style: { width: '50px' } }
         ],
@@ -841,8 +841,8 @@ export function useConsumeBuildItemsForm({
         field_type: 'table',
         value: [],
         headers: [
-          { title: t`Part` },
-          { title: t`Stock Item` },
+          { title: t`货品` },
+          { title: t`库存批次` },
           { title: t`Location` },
           { title: t`Allocated` },
           { title: t`Quantity` }
@@ -944,7 +944,7 @@ export function useConsumeBuildLinesForm({
         field_type: 'table',
         value: [],
         headers: [
-          { title: t`Part` },
+          { title: t`货品` },
           { title: t`Allocated` },
           { title: t`Consumed` }
         ],

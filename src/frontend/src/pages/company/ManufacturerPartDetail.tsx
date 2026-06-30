@@ -76,14 +76,14 @@ export default function ManufacturerPartDetail() {
       {
         type: 'link',
         name: 'part',
-        label: t`Internal Part`,
+        label: t`货品`,
         model: ModelType.part,
         hidden: !manufacturerPart.part
       },
       {
         type: 'string',
         name: 'part_detail.IPN',
-        label: t`IPN`,
+        label: t`货品编码`,
         copy: true,
         icon: 'serial',
         hidden: !data.part_detail?.IPN
@@ -91,7 +91,7 @@ export default function ManufacturerPartDetail() {
       {
         type: 'string',
         name: 'part_detail.description',
-        label: t`Description`,
+        label: t`说明`,
         copy: true,
         icon: 'info',
         hidden: !manufacturerPart.description
@@ -102,7 +102,7 @@ export default function ManufacturerPartDetail() {
       {
         type: 'link',
         name: 'manufacturer',
-        label: t`Manufacturer`,
+        label: t`生产厂家/品牌`,
         icon: 'manufacturers',
         model: ModelType.company,
         hidden: !manufacturerPart.manufacturer
@@ -110,7 +110,7 @@ export default function ManufacturerPartDetail() {
       {
         type: 'string',
         name: 'MPN',
-        label: t`Manufacturer Part Number`,
+        label: t`厂家货号`,
         copy: true,
         hidden: !manufacturerPart.MPN,
         icon: 'reference'
@@ -118,7 +118,7 @@ export default function ManufacturerPartDetail() {
       {
         type: 'string',
         name: 'description',
-        label: t`Description`,
+        label: t`说明`,
         copy: true,
         hidden: !manufacturerPart.description,
         icon: 'info'
@@ -127,7 +127,7 @@ export default function ManufacturerPartDetail() {
         type: 'link',
         external: true,
         name: 'link',
-        label: t`External Link`,
+        label: t`外部链接`,
         copy: true,
         hidden: !manufacturerPart.link
       }
@@ -147,12 +147,12 @@ export default function ManufacturerPartDetail() {
               pk={manufacturerPart?.part_detail?.pk}
             />
             <Grid.Col span={{ base: 12, sm: 8 }}>
-              <DetailsTable title={t`Part Details`} fields={tl} item={data} />
+              <DetailsTable title={t`货品详情`} fields={tl} item={data} />
             </Grid.Col>
           </Grid>
           <TagsList tags={manufacturerPart.tags} />
         </Stack>
-        <DetailsTable title={t`Manufacturer Details`} fields={tr} item={data} />
+        <DetailsTable title={t`生产厂家/品牌详情`} fields={tr} item={data} />
       </ItemDetailsGrid>
     );
   }, [manufacturerPart, instanceQuery]);
@@ -161,13 +161,13 @@ export default function ManufacturerPartDetail() {
     return [
       {
         name: 'details',
-        label: t`Manufacturer Part Details`,
+        label: t`生产厂家货号详情`,
         icon: <IconInfoCircle />,
         content: detailsPanel
       },
       {
         name: 'stock',
-        label: t`Received Stock`,
+        label: t`已入库库存`,
         hidden: !user.hasViewRole(UserRoles.stock),
         icon: <IconPackages />,
         content: (
@@ -181,7 +181,7 @@ export default function ManufacturerPartDetail() {
       },
       {
         name: 'suppliers',
-        label: t`Suppliers`,
+        label: t`供货商`,
         icon: <IconBuildingWarehouse />,
         content: manufacturerPart?.pk ? (
           <SupplierPartTable
@@ -214,7 +214,7 @@ export default function ManufacturerPartDetail() {
   const editManufacturerPart = useEditApiFormModal({
     url: ApiEndpoints.manufacturer_part_list,
     pk: manufacturerPart?.pk,
-    title: t`Edit Manufacturer Part`,
+    title: t`编辑生产厂家货号`,
     fields: editManufacturerPartFields,
     queryParams: new URLSearchParams({ tags: 'true' }),
     onFormSuccess: refreshInstance
@@ -222,7 +222,7 @@ export default function ManufacturerPartDetail() {
 
   const duplicateManufacturerPart = useCreateApiFormModal({
     url: ApiEndpoints.manufacturer_part_list,
-    title: t`Add Manufacturer Part`,
+    title: t`新增生产厂家货号`,
     fields: editManufacturerPartFields,
     initialData: {
       ...manufacturerPart
@@ -234,7 +234,7 @@ export default function ManufacturerPartDetail() {
   const deleteManufacturerPart = useDeleteApiFormModal({
     url: ApiEndpoints.manufacturer_part_list,
     pk: manufacturerPart?.pk,
-    title: t`Delete Manufacturer Part`,
+    title: t`删除生产厂家货号`,
     onFormSuccess: () => {
       navigate(getDetailUrl(ModelType.part, manufacturerPart.part));
     }
@@ -249,7 +249,7 @@ export default function ManufacturerPartDetail() {
       />,
       <OptionsActionDropdown
         key='options'
-        tooltip={t`Manufacturer Part Actions`}
+        tooltip={t`生产厂家货号操作`}
         actions={[
           DuplicateItemAction({
             hidden: !user.hasAddRole(UserRoles.purchase_order),
@@ -271,11 +271,11 @@ export default function ManufacturerPartDetail() {
   const breadcrumbs = useMemo(() => {
     return [
       {
-        name: t`Purchasing`,
+        name: t`进货管理`,
         url: '/purchasing/'
       },
       {
-        name: manufacturerPart?.manufacturer_detail?.name ?? t`Manufacturer`,
+        name: manufacturerPart?.manufacturer_detail?.name ?? t`生产厂家/品牌`,
         url: `/purchasing/manufacturer/${manufacturerPart?.manufacturer_detail?.pk}/`
       }
     ];
@@ -292,7 +292,7 @@ export default function ManufacturerPartDetail() {
       >
         <Stack gap='xs'>
           <PageDetail
-            title={t`Manufacturer Part`}
+            title={t`生产厂家货号`}
             subtitle={`${manufacturerPart.MPN} - ${manufacturerPart.part_detail?.name}`}
             breadcrumbs={breadcrumbs}
             lastCrumb={[

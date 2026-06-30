@@ -244,7 +244,7 @@ export default function PartTestResultTable({
     // Fixed columns
     const columns: TableColumn[] = [
       PartColumn({
-        title: t`Part`,
+        title: t`货品`,
         part: 'part_detail',
         full_name: true,
         ordering: 'part',
@@ -253,7 +253,7 @@ export default function PartTestResultTable({
       }),
       {
         accessor: 'stock',
-        title: t`Stock Item`,
+        title: t`库存批次`,
         sortable: true,
         switchable: false,
         filter: ['in_stock', 'is_building'],

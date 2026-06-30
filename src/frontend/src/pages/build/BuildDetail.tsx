@@ -71,8 +71,8 @@ function NoItems() {
   return (
     <Alert color='blue' icon={<IconInfoCircle />} title={t`No Required Items`}>
       <Stack gap='xs'>
-        <Text>{t`This build order does not have any required items.`}</Text>
-        <Text>{t`The assembled part may not have a Bill of Materials (BOM) defined, or the BOM is empty.`}</Text>
+        <Text>{t`此组合配货单没有需要扣减的明细。`}</Text>
+        <Text>{t`组合货品可能还没有维护组合清单，或者组合清单为空。`}</Text>
       </Stack>
     </Alert>
   );
@@ -119,9 +119,9 @@ function BuildLinesPanel({
           <Alert
             color='orange'
             icon={<IconExclamationCircle />}
-            title={t`BOM Not Validated`}
+            title={t`组合清单未校验`}
           >
-            <Text>{t`The Bill of Materials for this assembly has not been validated.`}</Text>
+            <Text>{t`此组合货品的组合清单尚未校验。`}</Text>
           </Alert>
         )}
       {buildLocation.instance.pk && (
@@ -257,7 +257,7 @@ export default function BuildDetail() {
       {
         type: 'link',
         name: 'part',
-        label: t`Part`,
+        label: t`货品`,
         model: ModelType.part
       },
       {
@@ -346,7 +346,7 @@ export default function BuildDetail() {
       {
         type: 'link',
         name: 'sales_order',
-        label: t`Sales Order`,
+        label: t`出货单`,
         icon: 'sales_orders',
         model: ModelType.salesorder,
         model_field: 'reference',
@@ -559,7 +559,7 @@ export default function BuildDetail() {
       },
       {
         name: 'child-orders',
-        label: t`Child Build Orders`,
+        label: t`子组合配货单`,
         icon: <IconSitemap />,
         hidden: !showChildBuilds,
         content: build.pk ? (
@@ -614,7 +614,7 @@ export default function BuildDetail() {
   const editBuild = useEditApiFormModal({
     url: ApiEndpoints.build_order_list,
     pk: build.pk,
-    title: t`Edit Build Order`,
+    title: t`编辑组合配货单`,
     modalId: 'edit-build-order',
     fields: editBuildOrderFields,
     queryParams: new URLSearchParams({ tags: 'true' }),
@@ -637,7 +637,7 @@ export default function BuildDetail() {
 
   const duplicateBuild = useCreateApiFormModal({
     url: ApiEndpoints.build_order_list,
-    title: t`Add Build Order`,
+    title: t`新增组合配货单`,
     modalId: 'duplicate-build-order',
     fields: duplicateBuildOrderFields,
     initialData: duplicateBuildOrderInitialData,
@@ -647,7 +647,7 @@ export default function BuildDetail() {
 
   const cancelOrder = useCreateApiFormModal({
     url: apiUrl(ApiEndpoints.build_order_cancel, build.pk),
-    title: t`Cancel Build Order`,
+    title: t`取消组合配货单`,
     onFormSuccess: refreshInstance,
     successMessage: t`Order cancelled`,
     preFormWarning: t`Cancel this order`,
@@ -659,7 +659,7 @@ export default function BuildDetail() {
 
   const holdOrder = useCreateApiFormModal({
     url: apiUrl(ApiEndpoints.build_order_hold, build.pk),
-    title: t`Hold Build Order`,
+    title: t`暂停组合配货单`,
     onFormSuccess: refreshInstance,
     preFormWarning: t`Place this order on hold`,
     successMessage: t`Order placed on hold`
@@ -667,7 +667,7 @@ export default function BuildDetail() {
 
   const issueOrder = useCreateApiFormModal({
     url: apiUrl(ApiEndpoints.build_order_issue, build.pk),
-    title: t`Issue Build Order`,
+    title: t`下达组合配货单`,
     onFormSuccess: refreshInstance,
     preFormWarning: t`Issue this order`,
     successMessage: t`Order issued`
@@ -689,7 +689,7 @@ export default function BuildDetail() {
 
   const completeOrder = useCreateApiFormModal({
     url: apiUrl(ApiEndpoints.build_order_complete, build.pk),
-    title: t`Complete Build Order`,
+    title: t`完成组合配货单`,
     onFormSuccess: refreshInstance,
     preFormContent: (
       <Alert
@@ -751,7 +751,7 @@ export default function BuildDetail() {
         enableReports
       />,
       <OptionsActionDropdown
-        tooltip={t`Build Order Actions`}
+        tooltip={t`组合配货单操作`}
         actions={[
           EditItemAction({
             onClick: () => editBuild.open(),
@@ -807,7 +807,7 @@ export default function BuildDetail() {
       <InstanceDetail query={instanceQuery} requiredRole={UserRoles.build}>
         <Stack gap='xs'>
           <PageDetail
-            title={`${t`Build Order`}: ${build.reference}`}
+            title={`${t`组合配货单`}: ${build.reference}`}
             subtitle={`${build.quantity} x ${build.part_detail?.full_name}`}
             badges={buildBadges}
             editAction={editBuild.open}

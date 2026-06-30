@@ -104,7 +104,7 @@ export default function SalesOrderDetail() {
       {
         type: 'text',
         name: 'customer_reference',
-        label: t`Customer Reference`,
+        label: t`客户单号`,
         copy: true,
         icon: 'reference',
         hidden: !order.customer_reference
@@ -113,7 +113,7 @@ export default function SalesOrderDetail() {
         type: 'link',
         name: 'customer',
         icon: 'customers',
-        label: t`Customer`,
+        label: t`客户`,
         model: ModelType.company
       },
       {
@@ -328,7 +328,7 @@ export default function SalesOrderDetail() {
   const editSalesOrder = useEditApiFormModal({
     url: ApiEndpoints.sales_order_list,
     pk: order.pk,
-    title: t`Edit Sales Order`,
+    title: t`编辑出货单`,
     fields: salesOrderFields,
     queryParams: new URLSearchParams({ tags: 'true' }),
     onFormSuccess: () => {
@@ -351,7 +351,7 @@ export default function SalesOrderDetail() {
 
   const duplicateSalesOrder = useCreateApiFormModal({
     url: ApiEndpoints.sales_order_list,
-    title: t`Add Sales Order`,
+    title: t`新增出货单`,
     fields: duplicateOrderFields,
     initialData: duplicateSalesOrderInitialData,
     follow: true,
@@ -434,7 +434,7 @@ export default function SalesOrderDetail() {
       },
       {
         name: 'build-orders',
-        label: t`Build Orders`,
+        label: t`组合配货单`,
         icon: <IconTools />,
         hidden: !user.hasViewRole(UserRoles.build),
         content: order?.pk ? (
@@ -467,7 +467,7 @@ export default function SalesOrderDetail() {
 
   const issueOrder = useCreateApiFormModal({
     url: apiUrl(ApiEndpoints.sales_order_issue, order.pk),
-    title: t`Issue Sales Order`,
+    title: t`下达出货单`,
     onFormSuccess: refreshInstance,
     preFormWarning: t`Issue this order`,
     successMessage: t`Order issued`
@@ -475,7 +475,7 @@ export default function SalesOrderDetail() {
 
   const cancelOrder = useCreateApiFormModal({
     url: apiUrl(ApiEndpoints.sales_order_cancel, order.pk),
-    title: t`Cancel Sales Order`,
+    title: t`取消出货单`,
     onFormSuccess: refreshInstance,
     preFormWarning: t`Cancel this order`,
     successMessage: t`Order cancelled`
@@ -483,7 +483,7 @@ export default function SalesOrderDetail() {
 
   const holdOrder = useCreateApiFormModal({
     url: apiUrl(ApiEndpoints.sales_order_hold, order.pk),
-    title: t`Hold Sales Order`,
+    title: t`暂停出货单`,
     onFormSuccess: refreshInstance,
     preFormWarning: t`Place this order on hold`,
     successMessage: t`Order placed on hold`
@@ -491,7 +491,7 @@ export default function SalesOrderDetail() {
 
   const shipOrder = useCreateApiFormModal({
     url: apiUrl(ApiEndpoints.sales_order_complete, order.pk),
-    title: t`Ship Sales Order`,
+    title: t`发货出库`,
     onFormSuccess: refreshInstance,
     preFormWarning: t`Ship this order?`,
     successMessage: t`Order shipped`,
@@ -502,7 +502,7 @@ export default function SalesOrderDetail() {
 
   const completeOrder = useCreateApiFormModal({
     url: apiUrl(ApiEndpoints.sales_order_complete, order.pk),
-    title: t`Complete Sales Order`,
+    title: t`完成出货单`,
     onFormSuccess: refreshInstance,
     preFormWarning: t`Mark this order as complete`,
     successMessage: t`Order completed`,
@@ -638,7 +638,7 @@ export default function SalesOrderDetail() {
       >
         <Stack gap='xs'>
           <PageDetail
-            title={`${t`Sales Order`}: ${order.reference}`}
+            title={`${t`出货单`}: ${order.reference}`}
             subtitle={subtitle}
             imageUrl={order.customer_detail?.image}
             badges={orderBadges}

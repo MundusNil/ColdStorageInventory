@@ -1,5 +1,3 @@
-import { t } from '@lingui/core/macro';
-import { Trans } from '@lingui/react/macro';
 import { Button, TextInput } from '@mantine/core';
 import { useForm } from '@mantine/form';
 import { useNavigate } from 'react-router-dom';
@@ -11,11 +9,11 @@ export default function Reset() {
   const navigate = useNavigate();
 
   return (
-    <Wrapper titleText={t`Reset Password`}>
+    <Wrapper titleText='重置密码'>
       <TextInput
         required
-        label={t`Email`}
-        description={t`We will send you a link to login - if you are registered`}
+        label='邮箱'
+        description='如果账号已注册，系统会发送重置密码链接到邮箱。'
         placeholder='email@example.org'
         {...simpleForm.getInputProps('email')}
       />
@@ -23,7 +21,7 @@ export default function Reset() {
         type='submit'
         onClick={() => handleReset(navigate, simpleForm.values)}
       >
-        <Trans>Send Email</Trans>
+        发送邮件
       </Button>
     </Wrapper>
   );

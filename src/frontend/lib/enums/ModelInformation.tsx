@@ -27,8 +27,8 @@ export type ModelDict = {
 
 export const ModelInformationDict: ModelDict = {
   part: {
-    label: () => t`Part`,
-    label_multiple: () => t`Parts`,
+    label: () => t`货品`,
+    label_multiple: () => t`货品`,
     url_overview: '/part/category/index/parts',
     url_detail: '/part/:pk/',
     api_endpoint: ApiEndpoints.part_list,
@@ -37,28 +37,28 @@ export const ModelInformationDict: ModelDict = {
     icon: 'part'
   },
   parameter: {
-    label: () => t`Parameter`,
-    label_multiple: () => t`Parameters`,
+    label: () => t`货品参数`,
+    label_multiple: () => t`货品参数`,
     api_endpoint: ApiEndpoints.parameter_list,
     icon: 'list_details'
   },
   parametertemplate: {
-    label: () => t`Parameter Template`,
-    label_multiple: () => t`Parameter Templates`,
+    label: () => t`参数模板`,
+    label_multiple: () => t`参数模板`,
     api_endpoint: ApiEndpoints.parameter_template_list,
     admin_url: '/common/parametertemplate/',
     icon: 'list'
   },
   parttesttemplate: {
-    label: () => t`Part Test Template`,
-    label_multiple: () => t`Part Test Templates`,
+    label: () => t`质检模板`,
+    label_multiple: () => t`质检模板`,
     url_detail: '/parttesttemplate/:pk/',
     api_endpoint: ApiEndpoints.part_test_template_list,
     icon: 'test'
   },
   supplierpart: {
-    label: () => t`Supplier Part`,
-    label_multiple: () => t`Supplier Parts`,
+    label: () => t`供货商货品`,
+    label_multiple: () => t`供货商货品`,
     url_overview: '/purchasing/index/supplier-parts',
     url_detail: '/purchasing/supplier-part/:pk/',
     api_endpoint: ApiEndpoints.supplier_part_list,
@@ -67,8 +67,8 @@ export const ModelInformationDict: ModelDict = {
     icon: 'supplier_part'
   },
   manufacturerpart: {
-    label: () => t`Manufacturer Part`,
-    label_multiple: () => t`Manufacturer Parts`,
+    label: () => t`生产厂家货号`,
+    label_multiple: () => t`生产厂家货号`,
     url_overview: '/purchasing/index/manufacturer-parts',
     url_detail: '/purchasing/manufacturer-part/:pk/',
     api_endpoint: ApiEndpoints.manufacturer_part_list,
@@ -77,8 +77,8 @@ export const ModelInformationDict: ModelDict = {
     icon: 'manufacturers'
   },
   partcategory: {
-    label: () => t`Part Category`,
-    label_multiple: () => t`Part Categories`,
+    label: () => t`货品分类`,
+    label_multiple: () => t`货品分类`,
     url_overview: '/part/category/parts/subcategories',
     url_detail: '/part/category/:pk/',
     api_endpoint: ApiEndpoints.category_list,
@@ -86,8 +86,8 @@ export const ModelInformationDict: ModelDict = {
     icon: 'category'
   },
   stockitem: {
-    label: () => t`Stock Item`,
-    label_multiple: () => t`Stock Items`,
+    label: () => t`库存批次`,
+    label_multiple: () => t`库存批次`,
     url_overview: '/stock/location/index/stock-items',
     url_detail: '/stock/item/:pk/',
     api_endpoint: ApiEndpoints.stock_item_list,
@@ -96,8 +96,8 @@ export const ModelInformationDict: ModelDict = {
     icon: 'stock'
   },
   stocklocation: {
-    label: () => t`Stock Location`,
-    label_multiple: () => t`Stock Locations`,
+    label: () => t`冷库库位`,
+    label_multiple: () => t`冷库库位`,
     url_overview: '/stock/location',
     url_detail: '/stock/location/:pk/',
     api_endpoint: ApiEndpoints.stock_location_list,
@@ -106,20 +106,20 @@ export const ModelInformationDict: ModelDict = {
     icon: 'location'
   },
   stocklocationtype: {
-    label: () => t`Stock Location Type`,
-    label_multiple: () => t`Stock Location Types`,
+    label: () => t`库位类型`,
+    label_multiple: () => t`库位类型`,
     api_endpoint: ApiEndpoints.stock_location_type_list,
     icon: 'location'
   },
   stockhistory: {
-    label: () => t`Stock History`,
-    label_multiple: () => t`Stock Histories`,
+    label: () => t`库存流水`,
+    label_multiple: () => t`库存流水`,
     api_endpoint: ApiEndpoints.stock_tracking_list,
     icon: 'history'
   },
   build: {
-    label: () => t`Build Order`,
-    label_multiple: () => t`Build Orders`,
+    label: () => t`组合配货单`,
+    label_multiple: () => t`组合配货单`,
     url_overview: '/manufacturing/index/buildorders/',
     url_detail: '/manufacturing/build-order/:pk/',
     api_endpoint: ApiEndpoints.build_order_list,
@@ -128,37 +128,37 @@ export const ModelInformationDict: ModelDict = {
     icon: 'build_order'
   },
   buildline: {
-    label: () => t`Build Line`,
-    label_multiple: () => t`Build Lines`,
+    label: () => t`组合配货明细`,
+    label_multiple: () => t`组合配货明细`,
     url_overview: '/build/line',
     url_detail: '/build/line/:pk/',
     api_endpoint: ApiEndpoints.build_line_list,
     icon: 'build_order'
   },
   builditem: {
-    label: () => t`Build Item`,
-    label_multiple: () => t`Build Items`,
+    label: () => t`组合配货批次`,
+    label_multiple: () => t`组合配货批次`,
     api_endpoint: ApiEndpoints.build_item_list,
     icon: 'build_order'
   },
   company: {
-    label: () => t`Company`,
-    label_multiple: () => t`Companies`,
+    label: () => t`往来单位`,
+    label_multiple: () => t`往来单位`,
     url_detail: '/company/:pk/',
     api_endpoint: ApiEndpoints.company_list,
     admin_url: '/company/company/',
     icon: 'building'
   },
   projectcode: {
-    label: () => t`Project Code`,
-    label_multiple: () => t`Project Codes`,
+    label: () => t`业务编号`,
+    label_multiple: () => t`业务编号`,
     url_detail: '/project-code/:pk/',
     api_endpoint: ApiEndpoints.project_code_list,
     icon: 'list_details'
   },
   purchaseorder: {
-    label: () => t`Purchase Order`,
-    label_multiple: () => t`Purchase Orders`,
+    label: () => t`进货单`,
+    label_multiple: () => t`进货单`,
     url_overview: '/purchasing/index/purchaseorders',
     url_detail: '/purchasing/purchase-order/:pk/',
     api_endpoint: ApiEndpoints.purchase_order_list,
@@ -167,14 +167,14 @@ export const ModelInformationDict: ModelDict = {
     icon: 'purchase_orders'
   },
   purchaseorderlineitem: {
-    label: () => t`Purchase Order Line`,
-    label_multiple: () => t`Purchase Order Lines`,
+    label: () => t`进货明细`,
+    label_multiple: () => t`进货明细`,
     api_endpoint: ApiEndpoints.purchase_order_line_list,
     icon: 'purchase_orders'
   },
   salesorder: {
-    label: () => t`Sales Order`,
-    label_multiple: () => t`Sales Orders`,
+    label: () => t`出货单`,
+    label_multiple: () => t`出货单`,
     url_overview: '/sales/index/salesorders',
     url_detail: '/sales/sales-order/:pk/',
     api_endpoint: ApiEndpoints.sales_order_list,
@@ -183,8 +183,8 @@ export const ModelInformationDict: ModelDict = {
     icon: 'sales_orders'
   },
   salesordershipment: {
-    label: () => t`Sales Order Shipment`,
-    label_multiple: () => t`Sales Order Shipments`,
+    label: () => t`发货记录`,
+    label_multiple: () => t`发货记录`,
     url_overview: '/sales/index/shipments',
     url_detail: '/sales/shipment/:pk/',
     admin_url: '/order/salesordershipment/',
@@ -193,8 +193,8 @@ export const ModelInformationDict: ModelDict = {
     icon: 'shipment'
   },
   returnorder: {
-    label: () => t`Return Order`,
-    label_multiple: () => t`Return Orders`,
+    label: () => t`退货单`,
+    label_multiple: () => t`退货单`,
     url_overview: '/sales/index/returnorders',
     url_detail: '/sales/return-order/:pk/',
     api_endpoint: ApiEndpoints.return_order_list,
@@ -203,14 +203,14 @@ export const ModelInformationDict: ModelDict = {
     icon: 'return_orders'
   },
   returnorderlineitem: {
-    label: () => t`Return Order Line Item`,
-    label_multiple: () => t`Return Order Line Items`,
+    label: () => t`退货明细`,
+    label_multiple: () => t`退货明细`,
     api_endpoint: ApiEndpoints.return_order_line_list,
     icon: 'return_orders'
   },
   transferorder: {
-    label: () => t`Transfer Order`,
-    label_multiple: () => t`Transfer Orders`,
+    label: () => t`移库单`,
+    label_multiple: () => t`移库单`,
     url_overview: '/stock/location/index/transfer-orders',
     url_detail: '/stock/transfer-order/:pk/',
     api_endpoint: ApiEndpoints.transfer_order_list,
@@ -219,28 +219,28 @@ export const ModelInformationDict: ModelDict = {
     icon: 'transfer_orders'
   },
   transferorderlineitem: {
-    label: () => t`Transfer Order Line Item`,
-    label_multiple: () => t`Transfer Order Line Items`,
+    label: () => t`移库明细`,
+    label_multiple: () => t`移库明细`,
     api_endpoint: ApiEndpoints.transfer_order_line_list,
     icon: 'transfer-orders'
   },
   address: {
-    label: () => t`Address`,
-    label_multiple: () => t`Addresses`,
+    label: () => t`地址`,
+    label_multiple: () => t`地址`,
     url_detail: '/address/:pk/',
     api_endpoint: ApiEndpoints.address_list,
     icon: 'address'
   },
   contact: {
-    label: () => t`Contact`,
-    label_multiple: () => t`Contacts`,
+    label: () => t`联系人`,
+    label_multiple: () => t`联系人`,
     url_detail: '/contact/:pk/',
     api_endpoint: ApiEndpoints.contact_list,
     icon: 'group'
   },
   owner: {
-    label: () => t`Owner`,
-    label_multiple: () => t`Owners`,
+    label: () => t`负责人`,
+    label_multiple: () => t`负责人`,
     url_detail: '/owner/:pk/',
     api_endpoint: ApiEndpoints.owner_list,
     icon: 'group'

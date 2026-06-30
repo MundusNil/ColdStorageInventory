@@ -30,25 +30,25 @@ export enum UserPermissions {
 export function userRoleLabel(role: UserRoles): string {
   switch (role) {
     case UserRoles.admin:
-      return t`Admin`;
+      return t`系统管理`;
     case UserRoles.build:
-      return t`Build Orders`;
+      return t`组合配货单`;
     case UserRoles.part:
-      return t`Parts`;
+      return t`货品`;
     case UserRoles.part_category:
-      return t`Part Categories`;
+      return t`货品分类`;
     case UserRoles.purchase_order:
-      return t`Purchase Orders`;
+      return t`进货单`;
     case UserRoles.return_order:
-      return t`Return Orders`;
+      return t`退货单`;
     case UserRoles.transfer_order:
-      return t`Transfer Orders`;
+      return t`移库单`;
     case UserRoles.sales_order:
-      return t`Sales Orders`;
+      return t`出货单`;
     case UserRoles.stock:
-      return t`Stock Items`;
+      return t`库存批次`;
     case UserRoles.stock_location:
-      return t`Stock Location`;
+      return t`冷库库位`;
     default:
       return role as string;
   }

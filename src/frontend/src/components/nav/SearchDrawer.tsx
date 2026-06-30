@@ -311,7 +311,7 @@ export function SearchDrawer({
         model: ModelType.company,
         overviewUrl: '/purchasing/index/manufacturers',
         searchKey: 'manufacturer',
-        title: t`Manufacturers`,
+        title: t`生产厂家/品牌`,
         parameters: {},
         enabled:
           user.hasViewRole(UserRoles.purchase_order) &&

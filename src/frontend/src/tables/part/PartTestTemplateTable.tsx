@@ -255,12 +255,12 @@ export default function PartTestTemplateTable({
       <Stack gap='xs'>
         {partLocked && (
           <Alert
-            title={t`Part is Locked`}
+            title={t`货品已锁定`}
             color='orange'
             icon={<IconLock />}
             p='xs'
           >
-            <Text>{t`Part templates cannot be edited, as the part is locked`}</Text>
+            <Text>{t`货品质检模板不能编辑，因为该货品已锁定`}</Text>
           </Alert>
         )}
         <InvenTreeTable

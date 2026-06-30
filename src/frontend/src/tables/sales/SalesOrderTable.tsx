@@ -58,7 +58,7 @@ export function SalesOrderTable({
 
   const newSalesOrder = useCreateApiFormModal({
     url: ApiEndpoints.sales_order_list,
-    title: t`Add Sales Order`,
+    title: t`新增出货单`,
     fields: salesOrderFields,
     initialData: {
       customer: customerId
@@ -72,7 +72,7 @@ export function SalesOrderTable({
     return [
       <AddItemButton
         key='add-sales-order'
-        tooltip={t`Add Sales Order`}
+        tooltip={t`新增出货单`}
         onClick={() => newSalesOrder.open()}
         hidden={!user.hasAddRole(UserRoles.sales_order)}
       />
@@ -84,7 +84,7 @@ export function SalesOrderTable({
       ReferenceColumn({}),
       {
         accessor: 'customer__name',
-        title: t`Customer`,
+        title: t`客户`,
         sortable: true,
         render: (record: any) => (
           <CompanyColumn company={record.customer_detail} />
@@ -92,7 +92,7 @@ export function SalesOrderTable({
       },
       {
         accessor: 'customer_reference',
-        title: t`Customer Reference`,
+        title: t`客户单号`,
         copyable: true
       },
       DescriptionColumn({}),
@@ -102,7 +102,7 @@ export function SalesOrderTable({
       }),
       {
         accessor: 'shipments_count',
-        title: t`Shipments`,
+        title: t`发货记录`,
         minWidth: 125,
         render: (record: any) => (
           <ProgressBar

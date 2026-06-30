@@ -152,7 +152,7 @@ export function BomTable({
                 }
                 iconColor={record.validated ? undefined : 'red'}
                 extra={extra}
-                title={t`Part Information`}
+                title={t`货品信息`}
               />
             )
           );
@@ -544,24 +544,24 @@ export function BomTable({
     initialData: {
       part: partId
     },
-    successMessage: t`BOM item created`,
+    successMessage: t`组合清单明细已创建`,
     table: table
   });
 
   const editBomItem = useEditApiFormModal({
     url: ApiEndpoints.bom_list,
     pk: selectedBomItem.pk,
-    title: t`Edit BOM Item`,
+    title: t`编辑组合清单明细`,
     fields: bomItemFields({}),
-    successMessage: t`BOM item updated`,
+    successMessage: t`组合清单明细已更新`,
     table: table
   });
 
   const deleteBomItem = useDeleteApiFormModal({
     url: ApiEndpoints.bom_list,
     pk: selectedBomItem.pk,
-    title: t`Delete BOM Item`,
-    successMessage: t`BOM item deleted`,
+    title: t`删除组合清单明细`,
+    successMessage: t`组合清单明细已删除`,
     table: table
   });
 
@@ -581,7 +581,7 @@ export function BomTable({
       .then((_response) => {
         showNotification({
           title: t`Success`,
-          message: t`BOM item validated`,
+          message: t`组合清单明细已校验`,
           color: 'green'
         });
 
@@ -710,7 +710,7 @@ export function BomTable({
       <Stack gap='xs'>
         {isLocked && (
           <Alert
-            title={t`Part is Locked`}
+            title={t`货品已锁定`}
             color='orange'
             icon={<IconLock />}
             p='xs'

@@ -202,7 +202,7 @@ function SelectPartsStep({
 
   const newPurchaseOrder = useCreateApiFormModal({
     url: apiUrl(ApiEndpoints.purchase_order_list),
-    title: t`New Purchase Order`,
+    title: t`新建进货单`,
     fields: purchaseOrderFields,
     successMessage: t`Purchase order created`,
     onFormSuccess: (response: any) => {
@@ -216,7 +216,7 @@ function SelectPartsStep({
 
   const newSupplierPart = useCreateApiFormModal({
     url: apiUrl(ApiEndpoints.supplier_part_list),
-    title: t`New Supplier Part`,
+    title: t`新增供货商货品`,
     fields: supplierPartFields,
     successMessage: t`Supplier part created`,
     onFormSuccess: (response: any) => {
@@ -246,7 +246,7 @@ function SelectPartsStep({
 
   const addToOrder = useCreateApiFormModal({
     url: apiUrl(ApiEndpoints.purchase_order_line_list),
-    title: t`Add to Purchase Order`,
+    title: t`加入进货单`,
     fields: addToOrderFields,
     focus: 'quantity',
     initialData: {
@@ -258,7 +258,7 @@ function SelectPartsStep({
       // Remove the row from the list
       onRemovePart(selectedRecord?.part);
     },
-    successMessage: t`Part added to purchase order`
+    successMessage: t`货品已加入进货单`
   });
 
   const columns: any[] = useMemo(() => {
@@ -278,7 +278,7 @@ function SelectPartsStep({
       },
       {
         accessor: 'part',
-        title: t`Part`,
+        title: t`货品`,
         minWidth: 200,
         render: (record: PartOrderRecord) => (
           <Tooltip label={record.part?.description}>
@@ -290,7 +290,7 @@ function SelectPartsStep({
       },
       {
         accessor: 'supplier_part',
-        title: t`Supplier Part`,
+        title: t`供货商货品`,
         width: '40%',
         render: (record: PartOrderRecord) => (
           <Group gap='xs' wrap='nowrap' justify='left'>
@@ -343,7 +343,7 @@ function SelectPartsStep({
       },
       {
         accessor: 'purchase_order',
-        title: t`Purchase Order`,
+        title: t`进货单`,
         width: '40%',
         render: (record: PartOrderRecord) => (
           <Group gap='xs' wrap='nowrap' justify='left'>
@@ -479,8 +479,8 @@ export default function OrderPartsWizard({
       if (records.length === 0) {
         wizard.closeWizard();
         showNotification({
-          title: t`Parts Added`,
-          message: t`All selected parts added to a purchase order`,
+          title: t`货品已加入`,
+          message: t`已将选中的货品加入进货单`,
           color: 'green'
         });
       }

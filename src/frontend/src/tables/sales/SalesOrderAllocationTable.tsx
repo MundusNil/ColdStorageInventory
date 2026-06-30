@@ -108,7 +108,7 @@ export default function SalesOrderAllocationTable({
     return [
       ReferenceColumn({
         accessor: 'order_detail.reference',
-        title: t`Sales Order`,
+        title: t`出货单`,
         switchable: false,
         sortable: true,
         hidden: showOrderInfo != true

@@ -1,5 +1,3 @@
-import { t } from '@lingui/core/macro';
-import { Trans } from '@lingui/react/macro';
 import { getTotpSecret, handleVerifyTotp } from '../../functions/auth';
 import { Wrapper } from './Layout';
 
@@ -20,7 +18,7 @@ export default function MFASetup() {
   }, []);
 
   return (
-    <Wrapper titleText={t`MFA Setup Required`} logOff>
+    <Wrapper titleText='需要设置二次验证' logOff>
       <QrRegistrationForm
         url={totpQr?.totp_url ?? ''}
         secret={totpQr?.secret ?? ''}
@@ -31,7 +29,7 @@ export default function MFASetup() {
         disabled={!value}
         onClick={handleVerifyTotp(value, navigate, location)}
       >
-        <Trans>Add TOTP</Trans>
+        添加验证码
       </Button>
     </Wrapper>
   );

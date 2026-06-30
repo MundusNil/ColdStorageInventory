@@ -114,7 +114,7 @@ export function PartStocktakePanel({ partId }: Readonly<{ partId: number }>) {
       DateColumn({}),
       DecimalColumn({
         accessor: 'item_count',
-        title: t`Stock Items`,
+        title: t`库存批次`,
         switchable: true,
         sortable: false
       }),

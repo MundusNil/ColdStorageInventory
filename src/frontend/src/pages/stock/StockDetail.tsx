@@ -155,7 +155,7 @@ export default function StockDetail() {
     const tl: DetailsField[] = [
       {
         name: 'part',
-        label: t`Base Part`,
+        label: t`货品`,
         type: 'link',
         model: ModelType.part
       },
@@ -297,7 +297,7 @@ export default function StockDetail() {
     const bl: DetailsField[] = [
       {
         name: 'supplier_part',
-        label: t`Supplier Part`,
+        label: t`供货商货品`,
         type: 'link',
         model_field: 'SKU',
         model: ModelType.supplierpart,
@@ -352,7 +352,7 @@ export default function StockDetail() {
       {
         type: 'link',
         name: 'build',
-        label: t`Build Order`,
+        label: t`组合配货单`,
         model: ModelType.build,
         hidden: !stockitem.build,
         model_field: 'reference'
@@ -360,7 +360,7 @@ export default function StockDetail() {
       {
         type: 'link',
         name: 'purchase_order',
-        label: t`Purchase Order`,
+        label: t`进货单`,
         model: ModelType.purchaseorder,
         hidden: !stockitem.purchase_order,
         icon: 'purchase_orders',
@@ -369,7 +369,7 @@ export default function StockDetail() {
       {
         type: 'link',
         name: 'sales_order',
-        label: t`Sales Order`,
+        label: t`出货单`,
         model: ModelType.salesorder,
         hidden: !stockitem.sales_order,
         icon: 'sales_orders',
@@ -378,7 +378,7 @@ export default function StockDetail() {
       {
         type: 'link',
         name: 'customer',
-        label: t`Customer`,
+        label: t`客户`,
         model: ModelType.company,
         hidden: !stockitem.customer
       }
@@ -587,7 +587,7 @@ export default function StockDetail() {
             {showBuildAllocations && (
               <Accordion.Item value='buildAllocations' key='buildAllocations'>
                 <Accordion.Control>
-                  <StylishText size='lg'>{t`Build Order Allocations`}</StylishText>
+                  <StylishText size='lg'>{t`组合配货占用`}</StylishText>
                 </Accordion.Control>
                 <Accordion.Panel>
                   <BuildAllocatedStockTable
@@ -602,7 +602,7 @@ export default function StockDetail() {
             {showSalesAllocations && (
               <Accordion.Item value='salesAllocations' key='salesAllocations'>
                 <Accordion.Control>
-                  <StylishText size='lg'>{t`Sales Order Allocations`}</StylishText>
+                  <StylishText size='lg'>{t`出货单占用`}</StylishText>
                 </Accordion.Control>
                 <Accordion.Panel>
                   <SalesOrderAllocationTable
@@ -712,7 +712,7 @@ export default function StockDetail() {
   const editStockItem = useEditApiFormModal({
     url: ApiEndpoints.stock_item_list,
     pk: stockitem.pk,
-    title: t`Edit Stock Item`,
+    title: t`编辑库存批次`,
     modalId: 'edit-stock-item',
     fields: editStockItemFields,
     queryParams: new URLSearchParams({ tags: 'true' }),
@@ -733,7 +733,7 @@ export default function StockDetail() {
   const convertStockItem = useCreateApiFormModal({
     url: ApiEndpoints.stock_convert,
     pk: stockitem.pk,
-    title: t`Convert Stock Item`,
+    title: t`转换库存批次`,
     modalId: 'convert-stock-item',
     fields: convertStockItemFields,
     onFormSuccess: refreshInstance
@@ -758,7 +758,7 @@ export default function StockDetail() {
 
   const duplicateStockItem = useCreateApiFormModal({
     url: ApiEndpoints.stock_item_list,
-    title: t`Add Stock Item`,
+    title: t`新增库存批次`,
     modalId: 'duplicate-stock-item',
     fields: duplicateStockItemFields,
     initialData: {
@@ -793,7 +793,7 @@ export default function StockDetail() {
   const deleteStockItem = useDeleteApiFormModal({
     url: ApiEndpoints.stock_item_list,
     pk: stockitem.pk,
-    title: t`Delete Stock Item`,
+    title: t`删除库存批次`,
     preFormContent: preDeleteContent,
     onFormSuccess: () => {
       // Redirect to the part page
@@ -843,7 +843,7 @@ export default function StockDetail() {
   const serializeStockItem = useCreateApiFormModal({
     url: ApiEndpoints.stock_serialize,
     pk: stockitem.pk,
-    title: t`Serialize Stock Item`,
+    title: t`分配追踪码`,
     modalId: 'stock-item-serialize',
     fields: serializeStockFields,
     initialData: {
@@ -963,7 +963,7 @@ export default function StockDetail() {
         ]}
       />,
       <OptionsActionDropdown
-        tooltip={t`Stock Item Actions`}
+        tooltip={t`库存批次操作`}
         actions={[
           DuplicateItemAction({
             hidden: !user.hasAddRole(UserRoles.stock),
@@ -1070,7 +1070,7 @@ export default function StockDetail() {
         <Stack>
           {user.hasViewRole(UserRoles.stock_location) && (
             <NavigationTree
-              title={t`Stock Locations`}
+              title={t`冷库库位`}
               modelType={ModelType.stocklocation}
               endpoint={ApiEndpoints.stock_location_tree}
               childIdentifier='sublocations'
@@ -1080,7 +1080,7 @@ export default function StockDetail() {
             />
           )}
           <PageDetail
-            title={t`Stock Item`}
+            title={t`库存批次`}
             subtitle={stockitem.part_detail?.full_name}
             imageUrl={stockitem.part_detail?.thumbnail}
             editAction={editStockItem.open}

@@ -1,5 +1,3 @@
-import { t } from '@lingui/core/macro';
-import { Trans } from '@lingui/react/macro';
 import { Button, PasswordInput } from '@mantine/core';
 import { useForm } from '@mantine/form';
 import { notifications } from '@mantine/notifications';
@@ -19,8 +17,8 @@ export default function ResetPassword() {
   useEffect(() => {
     if (!key) {
       notifications.show({
-        title: t`Key invalid`,
-        message: t`You need to provide a valid key to set a new password. Check your inbox for a reset link.`,
+        title: '重置链接无效',
+        message: '需要有效的重置链接才能设置新密码，请检查邮箱中的重置邮件。',
         color: 'red',
         autoClose: false
       });
@@ -28,11 +26,11 @@ export default function ResetPassword() {
   }, [key]);
 
   return (
-    <Wrapper titleText={t`Set new password`}>
+    <Wrapper titleText='设置新密码'>
       <PasswordInput
         required
-        label={t`Password`}
-        description={t`The desired new password`}
+        label='新密码'
+        description='请输入要设置的新密码'
         {...simpleForm.getInputProps('password')}
       />
       <Button
@@ -41,7 +39,7 @@ export default function ResetPassword() {
           handlePasswordReset(key, simpleForm.values.password, navigate)
         }
       >
-        <Trans>Send Password</Trans>
+        保存新密码
       </Button>
     </Wrapper>
   );

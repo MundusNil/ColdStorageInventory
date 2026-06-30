@@ -61,54 +61,54 @@ function DrawerContent({ closeFunc }: Readonly<{ closeFunc?: () => void }>) {
     return [
       {
         id: 'home',
-        title: t`Dashboard`,
+        title: t`首页`,
         link: '/',
         icon: 'dashboard'
       },
       {
         id: 'parts',
-        title: t`Parts`,
+        title: t`货品`,
         hidden: !user.hasViewPermission(ModelType.part),
         link: '/part',
         icon: 'part'
       },
       {
         id: 'stock',
-        title: t`Stock`,
+        title: t`库存`,
         link: '/stock',
         hidden: !user.hasViewPermission(ModelType.stockitem),
         icon: 'stock'
       },
       {
         id: 'build',
-        title: t`Manufacturing`,
+        title: t`组合配货`,
         link: '/manufacturing/',
         hidden: !user.hasViewRole(UserRoles.build),
         icon: 'build'
       },
       {
         id: 'purchasing',
-        title: t`Purchasing`,
+        title: t`进货管理`,
         link: '/purchasing/',
         hidden: !user.hasViewRole(UserRoles.purchase_order),
         icon: 'purchase_orders'
       },
       {
         id: 'sales',
-        title: t`Sales`,
+        title: t`出货管理`,
         link: '/sales/',
         hidden: !user.hasViewRole(UserRoles.sales_order),
         icon: 'sales_orders'
       },
       {
         id: 'users',
-        title: t`Users`,
+        title: t`用户`,
         link: '/core/index/users',
         icon: 'user'
       },
       {
         id: 'groups',
-        title: t`Groups`,
+        title: t`用户组`,
         link: '/core/index/groups',
         icon: 'group'
       }
@@ -119,7 +119,7 @@ function DrawerContent({ closeFunc }: Readonly<{ closeFunc?: () => void }>) {
     return [
       {
         id: 'barcode',
-        title: t`Scan Barcode`,
+        title: t`扫码`,
         link: '/scan',
         icon: 'barcode',
         hidden: !globalSettings.isSet('BARCODE_ENABLE')
@@ -131,26 +131,26 @@ function DrawerContent({ closeFunc }: Readonly<{ closeFunc?: () => void }>) {
     return [
       {
         id: 'notifications',
-        title: t`Notifications`,
+        title: t`通知`,
         link: '/notifications',
         icon: 'notification'
       },
       {
         id: 'user-settings',
-        title: t`User Settings`,
+        title: t`个人设置`,
         link: '/settings/user',
         icon: 'user'
       },
       {
         id: 'system-settings',
-        title: t`System Settings`,
+        title: t`系统设置`,
         link: '/settings/system',
         icon: 'system',
         hidden: !user.isStaff()
       },
       {
         id: 'admin-center',
-        title: t`Admin Center`,
+        title: t`管理中心`,
         link: '/settings/admin',
         icon: 'admin',
         hidden: !user.isStaff()
@@ -177,17 +177,17 @@ function DrawerContent({ closeFunc }: Readonly<{ closeFunc?: () => void }>) {
       <Space h='xs' />
       <Container className={classes.layoutContent} p={0}>
         <MenuLinks
-          title={t`Navigation`}
+          title={t`导航`}
           links={menuItemsNavigate}
           beforeClick={closeFunc}
         />
         <MenuLinks
-          title={t`Settings`}
+          title={t`设置`}
           links={menuItemsSettings}
           beforeClick={closeFunc}
         />
         <MenuLinks
-          title={t`Actions`}
+          title={t`操作`}
           links={menuItemsAction}
           beforeClick={closeFunc}
         />
@@ -205,13 +205,13 @@ function DrawerContent({ closeFunc }: Readonly<{ closeFunc?: () => void }>) {
       <div ref={ref}>
         <Space h='md' />
         <MenuLinks
-          title={t`Documentation`}
+          title={t`帮助文档`}
           links={menuItemsDocumentation}
           beforeClick={closeFunc}
         />
         <Space h='md' />
         <MenuLinks
-          title={t`About`}
+          title={t`关于系统`}
           links={menuItemsAbout}
           beforeClick={closeFunc}
         />

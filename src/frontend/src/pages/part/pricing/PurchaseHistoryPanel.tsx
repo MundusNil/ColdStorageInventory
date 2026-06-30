@@ -30,7 +30,7 @@ export default function PurchaseHistoryPanel({
     return [
       {
         accessor: 'order',
-        title: t`Purchase Order`,
+        title: t`进货单`,
         render: (record: any) => record?.order_detail?.reference,
         sortable: true,
         switchable: false

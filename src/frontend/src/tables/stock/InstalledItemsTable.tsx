@@ -63,7 +63,7 @@ export default function InstalledItemsTable({
       }),
       StockColumn({
         accessor: '',
-        title: t`Stock Item`,
+        title: t`库存批次`,
         sortable: false
       }),
       {

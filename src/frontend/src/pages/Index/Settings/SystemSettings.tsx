@@ -215,7 +215,7 @@ export default function SystemSettings() {
       },
       {
         name: 'parts',
-        label: t`Parts`,
+        label: t`货品`,
         icon: <IconBox />,
         content: (
           <Stack gap='xs'>
@@ -235,7 +235,7 @@ export default function SystemSettings() {
               ]}
             />
             <GlobalSettingList
-              heading={t`Part Creation`}
+              heading={t`货品创建`}
               keys={[
                 'PART_CREATE_INITIAL',
                 'PART_CREATE_SUPPLIER',
@@ -287,7 +287,7 @@ export default function SystemSettings() {
               ]}
             />
             <GlobalSettingList
-              heading={t`Part Stocktake`}
+              heading={t`货品盘点`}
               keys={[
                 'STOCKTAKE_ENABLE',
                 'STOCKTAKE_EXCLUDE_EXTERNAL',
@@ -313,7 +313,7 @@ export default function SystemSettings() {
         content: (
           <>
             <GlobalSettingList
-              heading={t`Build Orders`}
+              heading={t`组合配货单`}
               keys={[
                 'BUILDORDER_REFERENCE_PATTERN',
                 'BUILDORDER_REQUIRE_RESPONSIBLE',
@@ -340,7 +340,7 @@ export default function SystemSettings() {
         icon: <IconShoppingCart />,
         content: (
           <GlobalSettingList
-            heading={t`Purchase Orders`}
+            heading={t`进货单`}
             keys={[
               'PURCHASEORDER_REFERENCE_PATTERN',
               'PURCHASEORDER_REQUIRE_RESPONSIBLE',
@@ -358,7 +358,7 @@ export default function SystemSettings() {
         content: (
           <Stack gap='xs'>
             <GlobalSettingList
-              heading={t`Sales Orders`}
+              heading={t`出货单`}
               keys={[
                 'SALESORDER_REFERENCE_PATTERN',
                 'SALESORDER_REQUIRE_RESPONSIBLE',

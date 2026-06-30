@@ -42,7 +42,7 @@ export default function PartBuildAllocationsTable({
     return [
       {
         accessor: 'build',
-        title: t`Build Order`,
+        title: t`组合配货单`,
         sortable: true,
         switchable: false,
         render: (record: any) => (
@@ -70,7 +70,7 @@ export default function PartBuildAllocationsTable({
       {
         accessor: 'part_detail.IPN',
         defaultVisible: false,
-        title: t`Part IPN`
+        title: t`货品编码`
       },
       DescriptionColumn({
         accessor: 'build_detail.title'
@@ -121,7 +121,7 @@ export default function PartBuildAllocationsTable({
     (record: any) => {
       return [
         RowViewAction({
-          title: t`View Build Order`,
+          title: t`查看组合配货单`,
           modelType: ModelType.build,
           modelId: record.build,
           hidden: !user.hasViewRole(UserRoles.build),

@@ -21,7 +21,7 @@ export default function SaleHistoryPanel({
     return [
       {
         accessor: 'order',
-        title: t`Sales Order`,
+        title: t`出货单`,
         render: (record: any) => record?.order_detail?.reference,
         sortable: true,
         switchable: false

@@ -164,10 +164,10 @@ export default function PartCategoryTemplateTable({
       <Alert
         color='blue'
         icon={<IconInfoCircle />}
-        title={t`Part Category Parameters Templates`}
+        title={t`货品分类参数模板`}
       >
         <Stack gap='xs'>
-          <Text>{t`Parts which are created within this category will inherit the default values specified here.`}</Text>
+          <Text>{t`在该分类中创建的货品会继承这里设置的默认值。`}</Text>
         </Stack>
       </Alert>
       <InvenTreeTable

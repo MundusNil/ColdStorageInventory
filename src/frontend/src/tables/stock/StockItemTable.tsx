@@ -69,7 +69,7 @@ function stockItemTableColumns({
     IPNColumn({}),
     {
       accessor: 'part_detail.revision',
-      title: t`Revision`,
+      title: t`规格版本`,
       sortable: true,
       defaultVisible: false
     },
@@ -78,7 +78,7 @@ function stockItemTableColumns({
     }),
     StockColumn({
       accessor: '',
-      title: t`Stock`,
+      title: t`库存`,
       sortable: true,
       ordering: 'stock',
       filter: [
@@ -93,6 +93,7 @@ function stockItemTableColumns({
     StatusColumn({ model: ModelType.stockitem }),
     {
       accessor: 'batch',
+      title: t`批次`,
       sortable: true,
       copyable: true,
       filter: ['has_batch_code', 'batch']
@@ -103,7 +104,7 @@ function stockItemTableColumns({
     }),
     {
       accessor: 'purchase_order',
-      title: t`Purchase Order`,
+      title: t`进货单`,
       defaultVisible: false,
       render: (record: any) => {
         return record.purchase_order_reference;
@@ -111,21 +112,21 @@ function stockItemTableColumns({
     },
     {
       accessor: 'SKU',
-      title: t`Supplier Part`,
+      title: t`供货商货号`,
       sortable: true,
       defaultVisible: false,
       copyable: true
     },
     {
       accessor: 'MPN',
-      title: t`Manufacturer Part`,
+      title: t`厂家货号`,
       sortable: true,
       defaultVisible: false,
       copyable: true
     },
     {
       accessor: 'purchase_price',
-      title: t`Unit Price`,
+      title: t`进货单价`,
       sortable: true,
       switchable: true,
       hidden: !showPricing,
@@ -137,7 +138,7 @@ function stockItemTableColumns({
     },
     {
       accessor: 'stock_value',
-      title: t`Stock Value`,
+      title: t`库存金额`,
       sortable: false,
       hidden: !showPricing,
       render: (record: any) => {
@@ -155,22 +156,23 @@ function stockItemTableColumns({
     },
     {
       accessor: 'packaging',
+      title: t`包装`,
       sortable: true,
       defaultVisible: false
     },
     DateColumn({
-      title: t`Created`,
+      title: t`创建日期`,
       accessor: 'creation_date',
       sortable: true,
       filter: ['created_before', 'created_after']
     }),
     DateColumn({
-      title: t`Last Updated`,
+      title: t`最后更新`,
       accessor: 'updated',
       filter: ['updated_before', 'updated_after']
     }),
     DateColumn({
-      title: t`Expiry Date`,
+      title: t`到期日期`,
       accessor: 'expiry_date',
       hidden: !useGlobalSettingsState.getState().isSet('STOCK_ENABLE_EXPIRY'),
       defaultVisible: false,
@@ -178,7 +180,7 @@ function stockItemTableColumns({
     }),
     DateColumn({
       accessor: 'stocktake_date',
-      title: t`Stocktake Date`,
+      title: t`盘点日期`,
       sortable: true,
       filter: ['has_stocktake', 'stocktake_before', 'stocktake_after']
     })
@@ -196,63 +198,63 @@ function stockItemTableFilters({
   return [
     {
       name: 'active',
-      label: t`Active`,
-      description: t`Show stock for active parts`
+      label: t`启用货品`,
+      description: t`只看已启用货品的库存`
     },
     {
       name: 'status',
-      label: t`Status`,
-      description: t`Filter by stock status`,
+      label: t`库存状态`,
+      description: t`按库存状态筛选`,
       choiceFunction: StatusFilterOptions(ModelType.stockitem)
     },
     {
       name: 'assembly',
-      label: t`Assembly`,
-      description: t`Show stock for assembled parts`
+      label: t`组合货品`,
+      description: t`显示组合货品库存`
     },
     {
       name: 'allocated',
-      label: t`Allocated`,
-      description: t`Show items which have been allocated`
+      label: t`已占用`,
+      description: t`显示已被单据占用的库存`
     },
     {
       name: 'available',
-      label: t`Available`,
-      description: t`Show items which are available`
+      label: t`可用`,
+      description: t`显示可用库存`
     },
     {
       name: 'cascade',
-      label: t`Include Sublocations`,
-      description: t`Include stock in sublocations`
+      label: t`包含下级库位`,
+      description: t`包含下级库位中的库存`
     },
     {
       name: 'depleted',
-      label: t`Depleted`,
-      description: t`Show depleted stock items`
+      label: t`已清空`,
+      description: t`显示已清空的库存批次`
     },
     InStockFilter(),
     {
       name: 'is_building',
-      label: t`In Production`,
-      description: t`Show items which are in production`
+      label: t`组合配货中`,
+      description: t`显示正在组合配货的库存`
     },
     IncludeVariantsFilter(),
     SupplierFilter(),
     ManufacturerFilter(),
     {
       name: 'consumed',
-      label: t`Consumed`,
-      description: t`Show items which have been consumed by a build order`
+      label: t`已消耗`,
+      description: t`显示已被组合配货单消耗的库存`
     },
     {
       name: 'installed',
-      label: t`Installed`,
-      description: t`Show stock items which are installed in other items`
+      label: t`已关联`,
+      description: t`显示已关联到其他库存批次的库存`
     },
     {
       name: 'sent_to_customer',
-      label: t`Sent to Customer`,
-      description: t`Show items which have been sent to a customer`
+      label: t`已发给客户`,
+      description: t`显示已发给客户的库存`
     },
     HasBatchCodeFilter(),
     BatchFilter(),
@@ -262,37 +264,37 @@ function stockItemTableFilters({
     SerialGTEFilter(),
     {
       name: 'tracked',
-      label: t`Tracked`,
-      description: t`Show tracked items`
+      label: t`可追踪`,
+      description: t`显示可追踪的库存批次`
     },
     {
       name: 'has_purchase_price',
-      label: t`Has Purchase Price`,
-      description: t`Show items which have a purchase price`
+      label: t`有进价`,
+      description: t`显示录入了进价的库存`
     },
     {
       name: 'expired',
-      label: t`Expired`,
-      description: t`Show items which have expired`,
+      label: t`已过期`,
+      description: t`显示已过期库存`,
       active: enableExpiry
     },
     {
       name: 'stale',
-      label: t`Stale`,
-      description: t`Show items which are stale`,
+      label: t`长期未盘点`,
+      description: t`显示长期未盘点的库存`,
       active: enableExpiry
     },
     {
       name: 'expiry_before',
-      label: t`Expired Before`,
-      description: t`Show items which expired before this date`,
+      label: t`到期早于`,
+      description: t`显示在此日期前到期的库存`,
       type: 'date',
       active: enableExpiry
     },
     {
       name: 'expiry_after',
-      label: t`Expired After`,
-      description: t`Show items which expired after this date`,
+      label: t`到期晚于`,
+      description: t`显示在此日期后到期的库存`,
       type: 'date',
       active: enableExpiry
     },
@@ -302,25 +304,25 @@ function stockItemTableFilters({
     CreatedAfterFilter(),
     {
       name: 'stocktake_before',
-      label: t`Stocktake Before`,
-      description: t`Show items counted before this date`,
+      label: t`盘点早于`,
+      description: t`显示在此日期前盘点的库存`,
       type: 'date'
     },
     {
       name: 'stocktake_after',
-      label: t`Stocktake After`,
-      description: t`Show items counted after this date`,
+      label: t`盘点晚于`,
+      description: t`显示在此日期后盘点的库存`,
       type: 'date'
     },
     {
       name: 'has_stocktake',
-      label: t`Has Stocktake Date`,
-      description: t`Show items which have a stocktake date`
+      label: t`有盘点日期`,
+      description: t`显示已有盘点日期的库存`
     },
     {
       name: 'external',
-      label: t`External Location`,
-      description: t`Show items in an external location`
+      label: t`外部库位`,
+      description: t`显示外部库位中的库存`
     },
     TagsFilter({ modelType: ModelType.stockitem })
   ];
@@ -337,13 +339,15 @@ export function StockItemTable({
   allowReturn = false,
   initialFilters,
   defaultInStock = true,
-  tableName = 'stockitems'
+  tableName = 'stockitems',
+  readOnly = false
 }: Readonly<{
   params?: any;
   allowAdd?: boolean;
   showLocation?: boolean;
   showPricing?: boolean;
   allowReturn?: boolean;
+  readOnly?: boolean;
   defaultInStock?: boolean | null;
   initialFilters?: TableFilter[];
   tableName: string;
@@ -424,7 +428,7 @@ export function StockItemTable({
 
   const newStockItem = useCreateApiFormModal({
     url: ApiEndpoints.stock_item_list,
-    title: t`Add Stock Item`,
+    title: t`新增库存批次`,
     modalId: 'add-stock-item',
     fields: newStockItemFields,
     initialData: {
@@ -438,7 +442,7 @@ export function StockItemTable({
       // Navigate to the first result
       navigate(getDetailUrl(ModelType.stockitem, response[0].pk));
     },
-    successMessage: t`Stock item created`,
+    successMessage: t`库存批次已创建`,
     keepOpenOption: true
   });
 
@@ -460,7 +464,7 @@ export function StockItemTable({
       <ActionButton
         key='stock-order'
         hidden={!user.hasAddRole(UserRoles.purchase_order)}
-        tooltip={t`Order items`}
+        tooltip={t`生成进货单`}
         icon={<InvenTreeIcon icon='buy' />}
         disabled={!table.hasSelectedRecords}
         onClick={() => {
@@ -473,7 +477,7 @@ export function StockItemTable({
       <AddItemButton
         key='add-stock-item'
         hidden={!allowAdd || !user.hasAddRole(UserRoles.stock)}
-        tooltip={t`Add Stock Item`}
+        tooltip={t`新增库存批次`}
         onClick={() => newStockItem.open()}
       />
     ];
@@ -489,18 +493,18 @@ export function StockItemTable({
     <>
       {newStockItem.modal}
       {orderPartsWizard.wizard}
-      {stockAdjustActions.modals.map((modal) => modal.modal)}
+      {!readOnly && stockAdjustActions.modals.map((modal) => modal.modal)}
       <InvenTreeTable
         url={apiUrl(ApiEndpoints.stock_item_list)}
         tableState={table}
         columns={tableColumns}
         props={{
-          enableDownload: true,
-          enableSelection: true,
-          enableLabels: true,
-          enableReports: true,
+          enableDownload: !readOnly,
+          enableSelection: !readOnly,
+          enableLabels: !readOnly,
+          enableReports: !readOnly,
           tableFilters: tableFilters,
-          tableActions: tableActions,
+          tableActions: readOnly ? [] : tableActions,
           modelType: ModelType.stockitem,
           params: {
             ...params,

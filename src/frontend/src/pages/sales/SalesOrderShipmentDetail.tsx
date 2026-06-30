@@ -102,7 +102,7 @@ export default function SalesOrderShipmentDetail() {
         type: 'link',
         model: ModelType.salesorder,
         name: 'order',
-        label: t`Sales Order`,
+        label: t`出货单`,
         icon: 'sales_orders',
         model_field: 'reference'
       },
@@ -444,10 +444,10 @@ export default function SalesOrderShipmentDetail() {
       >
         <Stack gap='xs'>
           <PageDetail
-            title={`${t`Sales Order Shipment`}: ${shipment.reference}`}
-            subtitle={`${t`Sales Order`}: ${shipment.order_detail?.reference}`}
+            title={`${t`发货记录`}: ${shipment.reference}`}
+            subtitle={`${t`出货单`}: ${shipment.order_detail?.reference}`}
             breadcrumbs={[
-              { name: t`Sales`, url: '/sales/' },
+              { name: t`出货管理`, url: '/sales/' },
               {
                 name: shipment.order_detail?.reference,
                 url: getDetailUrl(ModelType.salesorder, shipment.order)

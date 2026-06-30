@@ -92,7 +92,7 @@ export default function PurchasingIndex() {
     return [
       SegmentedControlPanel({
         name: 'purchaseorders',
-        label: t`Purchase Orders`,
+        label: t`进货单`,
         icon: <IconShoppingCart />,
         hidden: !user.hasViewRole(UserRoles.purchase_order),
         selection: purchaseOrderView,
@@ -100,19 +100,19 @@ export default function PurchasingIndex() {
         options: [
           {
             value: 'table',
-            label: t`Table View`,
+            label: t`表格视图`,
             icon: <IconTable />,
             content: <PurchaseOrderTable />
           },
           {
             value: 'calendar',
-            label: t`Calendar View`,
+            label: t`日历视图`,
             icon: <IconCalendar />,
             content: <PurchaseOrderCalendar />
           },
           {
             value: 'parametric',
-            label: t`Parametric View`,
+            label: t`参数视图`,
             icon: <IconListDetails />,
             content: <PurchaseOrderParametricTable />
           }
@@ -120,14 +120,14 @@ export default function PurchasingIndex() {
       }),
       SegmentedControlPanel({
         name: 'suppliers',
-        label: t`Suppliers`,
+        label: t`供货商`,
         icon: <IconBuildingStore />,
         selection: supplierView,
         onChange: setSupplierView,
         options: [
           {
             value: 'table',
-            label: t`Table View`,
+            label: t`表格视图`,
             icon: <IconTable />,
             content: (
               <CompanyTable
@@ -139,7 +139,7 @@ export default function PurchasingIndex() {
           },
           {
             value: 'parametric',
-            label: t`Parametric View`,
+            label: t`参数视图`,
             icon: <IconListDetails />,
             content: (
               <ParametricCompanyTable queryParams={{ is_supplier: true }} />
@@ -149,20 +149,20 @@ export default function PurchasingIndex() {
       }),
       SegmentedControlPanel({
         name: 'supplier-parts',
-        label: t`Supplier Parts`,
+        label: t`供货商货品`,
         icon: <IconPackageExport />,
         selection: supplierPartsView,
         onChange: setSupplierPartsView,
         options: [
           {
             value: 'table',
-            label: t`Table View`,
+            label: t`表格视图`,
             icon: <IconTable />,
             content: <SupplierPartTable />
           },
           {
             value: 'parametric',
-            label: t`Parametric View`,
+            label: t`参数视图`,
             icon: <IconListDetails />,
             content: <SupplierPartParametricTable />
           }
@@ -170,14 +170,14 @@ export default function PurchasingIndex() {
       }),
       SegmentedControlPanel({
         name: 'manufacturer',
-        label: t`Manufacturers`,
+        label: t`生产厂家/品牌`,
         icon: <IconBuildingFactory2 />,
         selection: manufacturerView,
         onChange: setManufacturerView,
         options: [
           {
             value: 'table',
-            label: t`Table View`,
+            label: t`表格视图`,
             icon: <IconTable />,
             content: (
               <CompanyTable
@@ -189,7 +189,7 @@ export default function PurchasingIndex() {
           },
           {
             value: 'parametric',
-            label: t`Parametric View`,
+            label: t`参数视图`,
             icon: <IconListDetails />,
             content: (
               <ParametricCompanyTable queryParams={{ is_manufacturer: true }} />
@@ -199,20 +199,20 @@ export default function PurchasingIndex() {
       }),
       SegmentedControlPanel({
         name: 'manufacturer-parts',
-        label: t`Manufacturer Parts`,
+        label: t`生产厂家货号`,
         icon: <IconBuildingWarehouse />,
         selection: manufacturerPartsView,
         onChange: setManufacturerPartsView,
         options: [
           {
             value: 'table',
-            label: t`Table View`,
+            label: t`表格视图`,
             icon: <IconTable />,
             content: <ManufacturerPartTable />
           },
           {
             value: 'parametric',
-            label: t`Parametric View`,
+            label: t`参数视图`,
             icon: <IconListDetails />,
             content: <ManufacturerPartParametricTable />
           }
@@ -234,7 +234,7 @@ export default function PurchasingIndex() {
 
   return (
     <Stack>
-      <PageDetail title={t`Purchasing`} />
+      <PageDetail title={t`进货管理`} />
       <PanelGroup
         pageKey='purchasing-index'
         panels={panels}

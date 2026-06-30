@@ -444,7 +444,7 @@ export default function BuildLineTable({
           // If a build output is specified, use the provided quantity
           return (
             <TableHoverCard
-              title={t`BOM Information`}
+              title={t`组合清单信息`}
               extra={extra}
               value={
                 <Group justify='space-between' wrap='nowrap'>

@@ -82,7 +82,7 @@ export default function BuildAllocatedStockTable({
     return [
       ReferenceColumn({
         accessor: 'build_detail.reference',
-        title: t`Build Order`,
+        title: t`组合配货单`,
         switchable: false,
         hidden: showBuildInfo != true
       }),
@@ -149,7 +149,7 @@ export default function BuildAllocatedStockTable({
       }),
       {
         accessor: 'sku',
-        title: t`Supplier Part`,
+        title: t`供货商货品`,
         render: (record: any) => record?.supplier_part_detail?.SKU,
         sortable: true,
         copyable: true,

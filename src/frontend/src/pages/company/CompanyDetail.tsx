@@ -94,13 +94,13 @@ export default function CompanyDetail(props: Readonly<CompanyDetailProps>) {
       {
         type: 'text',
         name: 'description',
-        label: t`Description`,
+        label: t`说明`,
         copy: true
       },
       {
         type: 'link',
         name: 'website',
-        label: t`Website`,
+        label: t`网站`,
         external: true,
         copy: true,
         hidden: !company.website
@@ -108,21 +108,21 @@ export default function CompanyDetail(props: Readonly<CompanyDetailProps>) {
       {
         type: 'text',
         name: 'phone',
-        label: t`Phone Number`,
+        label: t`电话`,
         copy: true,
         hidden: !company.phone
       },
       {
         type: 'text',
         name: 'email',
-        label: t`Email Address`,
+        label: t`邮箱`,
         copy: true,
         hidden: !company.email
       },
       {
         type: 'text',
         name: 'tax_id',
-        label: t`Tax ID`,
+        label: t`税号`,
         copy: true,
         hidden: !company.tax_id
       }
@@ -132,24 +132,24 @@ export default function CompanyDetail(props: Readonly<CompanyDetailProps>) {
       {
         type: 'string',
         name: 'currency',
-        label: t`Default Currency`
+        label: t`默认币种`
       },
       {
         type: 'boolean',
         name: 'is_supplier',
-        label: t`Supplier`,
+        label: t`供货商`,
         icon: 'suppliers'
       },
       {
         type: 'boolean',
         name: 'is_manufacturer',
-        label: t`Manufacturer`,
+        label: t`生产厂家/品牌`,
         icon: 'manufacturers'
       },
       {
         type: 'boolean',
         name: 'is_customer',
-        label: t`Customer`,
+        label: t`客户`,
         icon: 'customers'
       }
     ];
@@ -185,20 +185,20 @@ export default function CompanyDetail(props: Readonly<CompanyDetailProps>) {
     return [
       {
         name: 'details',
-        label: t`Company Details`,
+        label: t`单位详情`,
         icon: <IconInfoCircle />,
         content: detailsPanel
       },
       {
         name: 'supplied-parts',
-        label: t`Supplied Parts`,
+        label: t`供货商货品`,
         icon: <IconPackageExport />,
         hidden: !company?.is_supplier,
         content: company?.pk && <SupplierPartTable supplierId={company.pk} />
       },
       {
         name: 'manufactured-parts',
-        label: t`Manufactured Parts`,
+        label: t`生产厂家货号`,
         icon: <IconBuildingWarehouse />,
         hidden: !company?.is_manufacturer,
         content: company?.pk && (
@@ -207,14 +207,14 @@ export default function CompanyDetail(props: Readonly<CompanyDetailProps>) {
       },
       {
         name: 'purchase-orders',
-        label: t`Purchase Orders`,
+        label: t`进货单`,
         icon: <IconShoppingCart />,
         hidden: !company?.is_supplier,
         content: company?.pk && <PurchaseOrderTable supplierId={company.pk} />
       },
       {
         name: 'stock-items',
-        label: t`Stock Items`,
+        label: t`库存批次`,
         icon: <IconPackages />,
         hidden: !company?.is_manufacturer && !company?.is_supplier,
         content: company?.pk && (
@@ -227,14 +227,14 @@ export default function CompanyDetail(props: Readonly<CompanyDetailProps>) {
       },
       {
         name: 'sales-orders',
-        label: t`Sales Orders`,
+        label: t`出货单`,
         icon: <IconTruckDelivery />,
         hidden: !company?.is_customer,
         content: company?.pk && <SalesOrderTable customerId={company.pk} />
       },
       {
         name: 'return-orders',
-        label: t`Return Orders`,
+        label: t`退货单`,
         icon: <IconTruckReturn />,
         hidden: !company?.is_customer,
         content: company.pk ? (
@@ -245,7 +245,7 @@ export default function CompanyDetail(props: Readonly<CompanyDetailProps>) {
       },
       {
         name: 'assigned-stock',
-        label: t`Assigned Stock`,
+        label: t`客户占用库存`,
         icon: <IconPackageExport />,
         hidden: !company?.is_customer,
         content: company?.pk ? (
@@ -263,13 +263,13 @@ export default function CompanyDetail(props: Readonly<CompanyDetailProps>) {
       },
       {
         name: 'contacts',
-        label: t`Contacts`,
+        label: t`联系人`,
         icon: <IconUsersGroup />,
         content: company?.pk && <ContactTable companyId={company.pk} />
       },
       {
         name: 'addresses',
-        label: t`Addresses`,
+        label: t`地址`,
         icon: <IconMap2 />,
         content: company?.pk && <AddressTable companyId={company.pk} />
       },
@@ -292,7 +292,7 @@ export default function CompanyDetail(props: Readonly<CompanyDetailProps>) {
   const editCompany = useEditApiFormModal({
     url: ApiEndpoints.company_list,
     pk: company?.pk,
-    title: t`Edit Company`,
+    title: t`编辑往来单位`,
     fields: companyFields(),
     queryParams: new URLSearchParams({ tags: 'true' }),
     onFormSuccess: refreshInstance
@@ -301,7 +301,7 @@ export default function CompanyDetail(props: Readonly<CompanyDetailProps>) {
   const deleteCompany = useDeleteApiFormModal({
     url: ApiEndpoints.company_list,
     pk: company?.pk,
-    title: t`Delete Company`,
+    title: t`删除往来单位`,
     onFormSuccess: () => {
       navigate('/');
     }
@@ -316,7 +316,7 @@ export default function CompanyDetail(props: Readonly<CompanyDetailProps>) {
         enableReports
       />,
       <OptionsActionDropdown
-        tooltip={t`Company Actions`}
+        tooltip={t`往来单位操作`}
         actions={[
           EditItemAction({
             hidden: !user.hasChangeRole(UserRoles.purchase_order),
@@ -334,7 +334,7 @@ export default function CompanyDetail(props: Readonly<CompanyDetailProps>) {
   const badges: ReactNode[] = useMemo(() => {
     return [
       <DetailsBadge
-        label={t`Inactive`}
+        label={t`已停用`}
         color='red'
         visible={company.active == false}
       />
@@ -351,7 +351,7 @@ export default function CompanyDetail(props: Readonly<CompanyDetailProps>) {
       >
         <Stack gap='xs'>
           <PageDetail
-            title={`${t`Company`}: ${company.name}`}
+            title={`${t`往来单位`}: ${company.name}`}
             subtitle={company.description}
             actions={companyActions}
             imageUrl={company.image}

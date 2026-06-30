@@ -1,5 +1,3 @@
-import { t } from '@lingui/core/macro';
-import { Trans } from '@lingui/react/macro';
 import {
   ActionIcon,
   Divider,
@@ -56,7 +54,7 @@ export function InstanceOptions({
   }
 
   return (
-    <Wrapper titleText={t`Select Server`} smallPadding>
+    <Wrapper titleText='选择服务器' smallPadding>
       <Group gap='xs' justify='space-between' wrap='nowrap'>
         <Select
           style={{ width: '100%' }}
@@ -66,7 +64,7 @@ export function InstanceOptions({
           disabled={hostListEdit}
         />
         <Group gap='xs' wrap='nowrap'>
-          <Tooltip label={t`Edit host options`} position='top'>
+          <Tooltip label='编辑服务器选项' position='top'>
             <ActionButton
               variant='transparent'
               disabled={hostListEdit}
@@ -74,7 +72,7 @@ export function InstanceOptions({
               icon={<IconEdit />}
             />
           </Tooltip>
-          <Tooltip label={t`Save host selection`} position='top'>
+          <Tooltip label='确认服务器选择' position='top'>
             <ActionButton
               variant='transparent'
               onClick={setHostEdit}
@@ -90,7 +88,7 @@ export function InstanceOptions({
         <>
           <Divider my={'sm'} />
           <Text>
-            <Trans>Edit host options</Trans>
+            编辑服务器选项
           </Text>
           <HostOptionsForm data={hostList} saveOptions={SaveOptions} />
         </>
@@ -116,39 +114,39 @@ function ServerInfo({
   const items: any[] = [
     {
       key: 'server',
-      label: t`Server`,
+      label: '服务器',
       value: hostList[hostKey]?.host,
       icon: <IconServer />
     },
     {
       key: 'name',
-      label: t`Name`,
+      label: '名称',
       value: server.instance,
       icon: <IconInfoCircle />
     },
     {
       key: 'version',
-      label: t`Version`,
+      label: '版本',
       value: server.version,
       icon: <IconInfoCircle />
     },
     {
       key: 'api',
-      label: t`API Version`,
+      label: 'API 版本',
       value: server.apiVersion,
       icon: <IconApi />
     },
     {
       key: 'plugins',
-      label: t`Plugins`,
-      value: server.plugins_enabled ? t`Enabled` : t`Disabled`,
+      label: '插件',
+      value: server.plugins_enabled ? '已启用' : '已禁用',
       icon: <IconPlugConnected />,
       color: server.plugins_enabled ? 'green' : 'red'
     },
     {
       key: 'worker',
-      label: t`Worker`,
-      value: server.worker_running ? t`Running` : t`Stopped`,
+      label: '后台任务',
+      value: server.worker_running ? '运行中' : '已停止',
       icon: <IconServerSpark />,
       color: server.worker_running ? 'green' : 'red'
     }
