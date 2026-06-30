@@ -292,7 +292,7 @@ class InfoView(APIView):
             is_staff = self.check_auth_header(request)
 
         data = {
-            'server': 'InvenTree',
+            'server': 'ColdStorageInventory',
             'id': InvenTree.version.inventree_identifier(),
             'version': InvenTree.version.inventreeVersion(),
             'instance': InvenTree.version.inventreeInstanceName(),

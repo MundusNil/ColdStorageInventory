@@ -82,7 +82,7 @@ window.INVENTREE_SETTINGS = {
       ? {
           'server-demo': {
             host: 'https://demo.inventree.org/',
-            name: 'InvenTree Demo'
+            name: 'Upstream Demo'
           }
         }
       : {}),
