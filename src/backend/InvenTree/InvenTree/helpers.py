@@ -10,6 +10,7 @@ import re
 from decimal import Decimal, InvalidOperation
 from pathlib import Path
 from typing import Optional, TypeVar
+from urllib.parse import parse_qsl, urlencode, urlsplit, urlunsplit
 from wsgiref.util import FileWrapper
 from zoneinfo import ZoneInfo, ZoneInfoNotFoundError
 
@@ -39,6 +40,48 @@ from InvenTree.sanitizer import (
 logger = structlog.get_logger('inventree')
 
 INT_CLIP_MAX = 0x7FFFFFFF
+REDACTED_URL_VALUE = '[redacted]'
+SENSITIVE_URL_PARAM_PARTS = (
+    'api_key',
+    'auth',
+    'bearer',
+    'key',
+    'login',
+    'pass',
+    'password',
+    'secret',
+    'sesame',
+    'token',
+)
+
+
+def redact_url(url: str) -> str:
+    """Redact sensitive query string values from a URL."""
+    if not url:
+        return url
+
+    try:
+        parsed_url = urlsplit(url)
+    except ValueError:
+        return url
+
+    if not parsed_url.query:
+        return url
+
+    query_params = parse_qsl(parsed_url.query, keep_blank_values=True)
+    redacted_params = []
+
+    for key, value in query_params:
+        key_lower = key.lower()
+
+        if any(part in key_lower for part in SENSITIVE_URL_PARAM_PARTS):
+            redacted_params.append((key, REDACTED_URL_VALUE))
+        else:
+            redacted_params.append((key, value))
+
+    return urlunsplit(
+        parsed_url._replace(query=urlencode(redacted_params, doseq=True))
+    )
 
 
 def extract_int(
