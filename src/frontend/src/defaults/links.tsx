@@ -1,5 +1,3 @@
-import { t } from '@lingui/core/macro';
-import { Trans } from '@lingui/react/macro';
 import { openContextModal } from '@mantine/modals';
 
 import { StylishText } from '@lib/components/StylishText';
@@ -8,6 +6,7 @@ import type { SettingsStateProps } from '@lib/types/Settings';
 import type { UserStateProps } from '@lib/types/User';
 import {
   IconBox,
+  IconBuildingWarehouse,
   IconBuildingFactory2,
   IconDashboard,
   IconPackages,
@@ -31,12 +30,20 @@ export function getNavTabs(user: UserStateProps): NavTab[] {
   const navTabs: NavTab[] = [
     {
       name: 'home',
-      title: t`Dashboard`,
+      title: '首页',
       icon: <IconDashboard />
     },
     {
+      name: 'cold-storage',
+      title: '冷库工作台',
+      icon: <IconBuildingWarehouse />,
+      visible:
+        user.hasViewRole(UserRoles.stock) ||
+        user.hasViewRole(UserRoles.stock_location)
+    },
+    {
       name: 'part',
-      title: t`Parts`,
+      title: '货品',
       icon: <IconBox />,
       visible:
         user.hasViewRole(UserRoles.part) ||
@@ -44,7 +51,7 @@ export function getNavTabs(user: UserStateProps): NavTab[] {
     },
     {
       name: 'stock',
-      title: t`Stock`,
+      title: '库存',
       icon: <IconPackages />,
       visible:
         user.hasViewRole(UserRoles.stock) ||
@@ -54,19 +61,19 @@ export function getNavTabs(user: UserStateProps): NavTab[] {
     },
     {
       name: 'manufacturing',
-      title: t`Manufacturing`,
+      title: '组合配货',
       icon: <IconBuildingFactory2 />,
       visible: user.hasViewRole(UserRoles.build)
     },
     {
       name: 'purchasing',
-      title: t`Purchasing`,
+      title: '进货',
       icon: <IconShoppingCart />,
       visible: user.hasViewRole(UserRoles.purchase_order)
     },
     {
       name: 'sales',
-      title: t`Sales`,
+      title: '出货',
       icon: <IconTruckDelivery />,
       visible:
         user.hasViewRole(UserRoles.sales_order) ||
@@ -94,38 +101,38 @@ export function DocumentationLinks(): MenuLinkItem[] {
   return [
     {
       id: 'gettin-started',
-      title: t`Getting Started`,
+      title: '入门说明',
       link: docLinks.getting_started,
       external: true,
-      description: t`Getting started with InvenTree`
+      description: '查看系统入门文档'
     },
     {
       id: 'api',
-      title: t`API`,
+      title: '接口文档',
       link: docLinks.api,
       external: true,
-      description: t`InvenTree API documentation`
+      description: '查看系统接口文档'
     },
     {
       id: 'developer',
-      title: t`Developer Manual`,
+      title: '开发手册',
       link: docLinks.developer,
       external: true,
-      description: t`InvenTree developer manual`
+      description: '查看系统开发手册'
     },
     {
       id: 'faq',
-      title: t`FAQ`,
+      title: '常见问题',
       link: docLinks.faq,
       external: true,
-      description: t`Frequently asked questions`
+      description: '查看常见问题'
     },
     {
       id: 'github',
-      title: t`GitHub Repository`,
+      title: '源代码仓库',
       link: docLinks.github,
       external: true,
-      description: t`InvenTree source code on GitHub`
+      description: '查看 GitHub 上的系统源代码'
     }
   ];
 }
@@ -135,7 +142,7 @@ export function serverInfo() {
     modal: 'info',
     title: (
       <StylishText size='xl'>
-        <Trans>System Information</Trans>
+        系统信息
       </StylishText>
     ),
     size: 'xl',
@@ -148,7 +155,7 @@ export function aboutInvenTree() {
     modal: 'about',
     title: (
       <StylishText size='xl'>
-        <Trans>About InvenTree</Trans>
+        关于系统
       </StylishText>
     ),
     size: 'xl',
@@ -161,7 +168,7 @@ export function licenseInfo() {
     modal: 'license',
     title: (
       <StylishText size='xl'>
-        <Trans>License Information</Trans>
+        许可证信息
       </StylishText>
     ),
     size: 'xl',
@@ -176,15 +183,15 @@ export function AboutLinks(
   const base_items: MenuLinkItem[] = [
     {
       id: 'instance',
-      title: t`System Information`,
-      description: t`About this InvenTree instance`,
+      title: '系统信息',
+      description: '查看当前系统实例信息',
       icon: 'info',
       action: serverInfo
     },
     {
       id: 'licenses',
-      title: t`License Information`,
-      description: t`Licenses for dependencies of the InvenTree software`,
+      title: '许可证信息',
+      description: '查看系统依赖软件的许可证信息',
       icon: 'license',
       action: licenseInfo
     }
@@ -194,8 +201,8 @@ export function AboutLinks(
   if (user.isSuperuser() || !settings.isSet('INVENTREE_RESTRICT_ABOUT')) {
     base_items.push({
       id: 'about',
-      title: t`About InvenTree`,
-      description: t`About the InvenTree Project`,
+      title: '关于系统',
+      description: '查看系统项目信息',
       icon: 'info',
       action: aboutInvenTree
     });

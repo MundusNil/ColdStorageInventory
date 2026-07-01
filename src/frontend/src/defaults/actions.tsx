@@ -59,15 +59,15 @@ export function getActions(navigate: NavigateFunction) {
     const _actions: SpotlightActionData[] = [
       {
         id: 'dashboard',
-        label: t`Dashboard`,
-        description: t`Go to the InvenTree dashboard`,
+        label: t`首页`,
+        description: t`回到系统首页`,
         onClick: () => navigate('/'),
         leftSection: <IconLink size='1.2rem' />
       },
       {
         id: 'documentation',
-        label: t`Documentation`,
-        description: t`Visit the documentation to learn more about InvenTree`,
+        label: t`帮助文档`,
+        description: t`查看系统使用说明`,
         onClick: () => {
           window.location.href = docLinks.faq;
         },
@@ -75,43 +75,43 @@ export function getActions(navigate: NavigateFunction) {
       },
       {
         id: 'about',
-        label: t`About InvenTree`,
-        description: t`About the InvenTree org`,
+        label: t`关于系统`,
+        description: t`查看系统项目信息`,
         onClick: () => aboutInvenTree(),
         leftSection: <IconLink size='1.2rem' />
       },
       {
         id: 'server-info',
-        label: t`Server Information`,
-        description: t`About this InvenTree instance`,
+        label: t`服务器信息`,
+        description: t`查看当前系统实例信息`,
         onClick: () => serverInfo(),
         leftSection: <IconLink size='1.2rem' />
       },
       {
         id: 'license-info',
-        label: t`License Information`,
-        description: t`Licenses for dependencies of the service`,
+        label: t`许可证信息`,
+        description: t`查看系统依赖软件许可证`,
         onClick: () => licenseInfo(),
         leftSection: <IconLink size='1.2rem' />
       },
       {
         id: 'navigation',
-        label: t`Open Navigation`,
-        description: t`Open the main navigation menu`,
+        label: t`打开导航`,
+        description: t`打开主导航菜单`,
         onClick: () => setNavigationOpen(true),
         leftSection: <IconPointer size='1.2rem' />
       },
       {
         id: 'user-settings',
-        label: t`User Settings`,
-        description: t`Go to your user settings`,
+        label: t`个人设置`,
+        description: t`进入当前用户设置`,
         onClick: () => navigate('/settings/user'),
         leftSection: <IconUserCog size='1.2rem' />
       },
       {
         id: 'hotkeys',
-        label: t`Hotkeys`,
-        description: t`View a list of available hotkeys`,
+        label: t`快捷键`,
+        description: t`查看可用快捷键`,
         onClick: () => openHotkeys(),
         leftSection: <IconSettings size='1.2rem' />
       }
@@ -120,8 +120,8 @@ export function getActions(navigate: NavigateFunction) {
     staff &&
       _actions.push({
         id: 'data-import',
-        label: t`Import Data`,
-        description: t`Import data from a file`,
+        label: t`导入数据`,
+        description: t`从文件导入业务数据`,
         onClick: () => navigate('/settings/admin/import'),
         leftSection: <IconPlug size='1.2rem' />
       });
@@ -130,8 +130,8 @@ export function getActions(navigate: NavigateFunction) {
     user?.hasViewRole(UserRoles.purchase_order) &&
       _actions.push({
         id: 'purchase-orders',
-        label: t`Purchase Orders`,
-        description: t`Go to Purchase Orders`,
+        label: t`进货单`,
+        description: t`进入进货单`,
         onClick: () =>
           navigate(ModelInformationDict['purchaseorder'].url_overview!),
         leftSection: <IconLink size='1.2rem' />
@@ -140,8 +140,8 @@ export function getActions(navigate: NavigateFunction) {
     user?.hasViewRole(UserRoles.sales_order) &&
       _actions.push({
         id: 'sales-orders',
-        label: t`Sales Orders`,
-        description: t`Go to Sales Orders`,
+        label: t`出货单`,
+        description: t`进入出货单`,
         onClick: () =>
           navigate(ModelInformationDict['salesorder'].url_overview!),
         leftSection: <IconLink size='1.2rem' />
@@ -151,8 +151,8 @@ export function getActions(navigate: NavigateFunction) {
       user?.hasViewRole(UserRoles.transfer_order) &&
       _actions.push({
         id: 'transfer-orders',
-        label: t`Transfer Orders`,
-        description: t`Go to Transfer Orders`,
+        label: t`移库单`,
+        description: t`进入移库单`,
         onClick: () =>
           navigate(ModelInformationDict['transferorder'].url_overview!),
         leftSection: <IconLink size='1.2rem' />
@@ -162,8 +162,8 @@ export function getActions(navigate: NavigateFunction) {
       user?.hasViewRole(UserRoles.return_order) &&
       _actions.push({
         id: 'return-orders',
-        label: t`Return Orders`,
-        description: t`Go to Return Orders`,
+        label: t`退货单`,
+        description: t`进入退货单`,
         onClick: () =>
           navigate(ModelInformationDict['returnorder'].url_overview!),
         leftSection: <IconLink size='1.2rem' />
@@ -172,8 +172,8 @@ export function getActions(navigate: NavigateFunction) {
     globalSettings.isSet('BARCODE_ENABLE') &&
       _actions.push({
         id: 'scan',
-        label: t`Scan`,
-        description: t`Scan a barcode or QR code`,
+        label: t`扫码`,
+        description: t`扫描条码或二维码`,
         onClick: () => openQrModal(navigate),
         leftSection: <IconBarcode size='1.2rem' />
       });
@@ -181,8 +181,8 @@ export function getActions(navigate: NavigateFunction) {
     user?.hasViewRole(UserRoles.build) &&
       _actions.push({
         id: 'builds',
-        label: t`Build Orders`,
-        description: t`Go to Build Orders`,
+        label: t`组合配货单`,
+        description: t`进入组合配货单`,
         onClick: () => navigate(ModelInformationDict['build'].url_overview!),
         leftSection: <IconLink size='1.2rem' />
       });
@@ -190,8 +190,8 @@ export function getActions(navigate: NavigateFunction) {
     staff &&
       _actions.push({
         id: 'system-settings',
-        label: t`System Settings`,
-        description: t`Go to System Settings`,
+        label: t`系统设置`,
+        description: t`进入系统设置`,
         onClick: () => navigate('/settings/system'),
         leftSection: <IconSettings size='1.2rem' />
       });
@@ -199,8 +199,8 @@ export function getActions(navigate: NavigateFunction) {
     staff &&
       _actions.push({
         id: 'admin-center',
-        label: t`Admin Center`,
-        description: t`Go to the Admin Center`,
+        label: t`管理中心`,
+        description: t`进入管理中心`,
         onClick: () => navigate('/settings/admin'),
         leftSection: <IconUserBolt size='1.2rem' />
       });
@@ -209,8 +209,8 @@ export function getActions(navigate: NavigateFunction) {
       user?.hasViewPermission(ModelType.error) &&
       _actions.push({
         id: 'error-logs',
-        label: t`Error Logs`,
-        description: t`View error logs for this instance`,
+        label: t`错误日志`,
+        description: t`查看当前系统错误日志`,
         onClick: () => navigate('/settings/admin/errors'),
         leftSection: <IconReport size='1.2rem' />
       });
@@ -219,8 +219,8 @@ export function getActions(navigate: NavigateFunction) {
       user?.hasViewPermission(ModelType.user) &&
       _actions.push({
         id: 'users',
-        label: t`Users`,
-        description: t`Manage user accounts`,
+        label: t`用户`,
+        description: t`管理用户账号`,
         onClick: () => navigate('/settings/admin/user'),
         leftSection: <IconUsers size='1.2rem' />
       });
@@ -229,8 +229,8 @@ export function getActions(navigate: NavigateFunction) {
       user?.hasViewPermission(ModelType.pluginconfig) &&
       _actions.push({
         id: 'plugin-settings',
-        label: t`Plugins`,
-        description: t`Manage InvenTree plugins`,
+        label: t`插件`,
+        description: t`管理系统插件`,
         onClick: () => navigate('/settings/admin/plugin'),
         leftSection: <IconPlug size='1.2rem' />
       });
@@ -239,8 +239,8 @@ export function getActions(navigate: NavigateFunction) {
       user?.hasViewPermission(ModelType.pluginconfig) &&
       _actions.push({
         id: 'machine-management',
-        label: t`Machines`,
-        description: t`Manage machines and machine types`,
+        label: t`设备`,
+        description: t`管理设备和设备类型`,
         onClick: () => navigate('/settings/admin/machine'),
         leftSection: <IconDevicesPc size='1.2rem' />
       });
@@ -249,8 +249,8 @@ export function getActions(navigate: NavigateFunction) {
       user?.hasViewPermission(ModelType.reporttemplate) &&
       _actions.push({
         id: 'report-templates',
-        label: t`Report Templates`,
-        description: t`Manage report templates`,
+        label: t`报表模板`,
+        description: t`管理报表模板`,
         onClick: () => navigate('/settings/admin/reports'),
         leftSection: <IconReport size='1.2rem' />
       });
@@ -259,8 +259,8 @@ export function getActions(navigate: NavigateFunction) {
       user?.hasViewPermission(ModelType.labeltemplate) &&
       _actions.push({
         id: 'label-templates',
-        label: t`Label Templates`,
-        description: t`Manage label templates`,
+        label: t`标签模板`,
+        description: t`管理标签模板`,
         onClick: () => navigate('/settings/admin/labels'),
         leftSection: <IconTags size='1.2rem' />
       });

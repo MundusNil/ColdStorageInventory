@@ -564,7 +564,7 @@ export default function ImportPartWizard({
         setImportResult(importResult.data);
         showNotification({
           title: t`Success`,
-          message: t`Part imported successfully!`,
+          message: t`货品导入成功`,
           color: 'green'
         });
         wizard.nextStep();
