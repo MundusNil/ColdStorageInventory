@@ -16,6 +16,7 @@ import { type MenuLinkItem, MenuLinks } from '../items/MenuLinks';
 
 // TODO @matmair #1: implement plugin loading and menu item generation see #5269
 const plugins: MenuLinkItem[] = [];
+const showLegacyBusinessLinks = false;
 
 export function NavigationDrawer({
   opened,
@@ -61,54 +62,65 @@ function DrawerContent({ closeFunc }: Readonly<{ closeFunc?: () => void }>) {
     return [
       {
         id: 'home',
-        title: t`Dashboard`,
+        title: '首页',
         link: '/',
         icon: 'dashboard'
       },
       {
+        id: 'cold-storage',
+        title: '冷库工作台',
+        link: '/cold-storage',
+        icon: 'stock',
+        hidden:
+          !user.hasViewRole(UserRoles.stock) &&
+          !user.hasViewRole(UserRoles.stock_location)
+      },
+      {
         id: 'parts',
-        title: t`Parts`,
+        title: '货品',
         hidden: !user.hasViewPermission(ModelType.part),
         link: '/part',
         icon: 'part'
       },
       {
         id: 'stock',
-        title: t`Stock`,
+        title: '库存',
         link: '/stock',
         hidden: !user.hasViewPermission(ModelType.stockitem),
         icon: 'stock'
       },
       {
         id: 'build',
-        title: t`Manufacturing`,
+        title: '组合配货',
         link: '/manufacturing/',
-        hidden: !user.hasViewRole(UserRoles.build),
+        hidden: !showLegacyBusinessLinks || !user.hasViewRole(UserRoles.build),
         icon: 'build'
       },
       {
         id: 'purchasing',
-        title: t`Purchasing`,
+        title: '进货管理',
         link: '/purchasing/',
-        hidden: !user.hasViewRole(UserRoles.purchase_order),
+        hidden:
+          !showLegacyBusinessLinks || !user.hasViewRole(UserRoles.purchase_order),
         icon: 'purchase_orders'
       },
       {
         id: 'sales',
-        title: t`Sales`,
+        title: '出货管理',
         link: '/sales/',
-        hidden: !user.hasViewRole(UserRoles.sales_order),
+        hidden:
+          !showLegacyBusinessLinks || !user.hasViewRole(UserRoles.sales_order),
         icon: 'sales_orders'
       },
       {
         id: 'users',
-        title: t`Users`,
+        title: '用户',
         link: '/core/index/users',
         icon: 'user'
       },
       {
         id: 'groups',
-        title: t`Groups`,
+        title: '用户组',
         link: '/core/index/groups',
         icon: 'group'
       }
@@ -119,7 +131,7 @@ function DrawerContent({ closeFunc }: Readonly<{ closeFunc?: () => void }>) {
     return [
       {
         id: 'barcode',
-        title: t`Scan Barcode`,
+        title: '扫码',
         link: '/scan',
         icon: 'barcode',
         hidden: !globalSettings.isSet('BARCODE_ENABLE')
@@ -131,26 +143,26 @@ function DrawerContent({ closeFunc }: Readonly<{ closeFunc?: () => void }>) {
     return [
       {
         id: 'notifications',
-        title: t`Notifications`,
+        title: '通知',
         link: '/notifications',
         icon: 'notification'
       },
       {
         id: 'user-settings',
-        title: t`User Settings`,
+        title: '个人设置',
         link: '/settings/user',
         icon: 'user'
       },
       {
         id: 'system-settings',
-        title: t`System Settings`,
+        title: '系统设置',
         link: '/settings/system',
         icon: 'system',
         hidden: !user.isStaff()
       },
       {
         id: 'admin-center',
-        title: t`Admin Center`,
+        title: '管理中心',
         link: '/settings/admin',
         icon: 'admin',
         hidden: !user.isStaff()
@@ -177,17 +189,17 @@ function DrawerContent({ closeFunc }: Readonly<{ closeFunc?: () => void }>) {
       <Space h='xs' />
       <Container className={classes.layoutContent} p={0}>
         <MenuLinks
-          title={t`Navigation`}
+          title='导航'
           links={menuItemsNavigate}
           beforeClick={closeFunc}
         />
         <MenuLinks
-          title={t`Settings`}
+          title='设置'
           links={menuItemsSettings}
           beforeClick={closeFunc}
         />
         <MenuLinks
-          title={t`Actions`}
+          title='操作'
           links={menuItemsAction}
           beforeClick={closeFunc}
         />
@@ -205,13 +217,13 @@ function DrawerContent({ closeFunc }: Readonly<{ closeFunc?: () => void }>) {
       <div ref={ref}>
         <Space h='md' />
         <MenuLinks
-          title={t`Documentation`}
+          title='帮助文档'
           links={menuItemsDocumentation}
           beforeClick={closeFunc}
         />
         <Space h='md' />
         <MenuLinks
-          title={t`About`}
+          title='关于系统'
           links={menuItemsAbout}
           beforeClick={closeFunc}
         />

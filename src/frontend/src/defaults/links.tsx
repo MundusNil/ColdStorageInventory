@@ -8,6 +8,7 @@ import type { SettingsStateProps } from '@lib/types/Settings';
 import type { UserStateProps } from '@lib/types/User';
 import {
   IconBox,
+  IconBuildingWarehouse,
   IconBuildingFactory2,
   IconDashboard,
   IconPackages,
@@ -25,18 +26,28 @@ type NavTab = {
   visible?: boolean;
 };
 
+const showLegacyBusinessTabs = false;
+
 export function getNavTabs(user: UserStateProps): NavTab[] {
   const globalSettings = useGlobalSettingsState.getState();
 
   const navTabs: NavTab[] = [
     {
       name: 'home',
-      title: t`Dashboard`,
+      title: '首页',
       icon: <IconDashboard />
     },
     {
+      name: 'cold-storage',
+      title: '冷库工作台',
+      icon: <IconBuildingWarehouse />,
+      visible:
+        user.hasViewRole(UserRoles.stock) ||
+        user.hasViewRole(UserRoles.stock_location)
+    },
+    {
       name: 'part',
-      title: t`Parts`,
+      title: '货品',
       icon: <IconBox />,
       visible:
         user.hasViewRole(UserRoles.part) ||
@@ -44,7 +55,7 @@ export function getNavTabs(user: UserStateProps): NavTab[] {
     },
     {
       name: 'stock',
-      title: t`Stock`,
+      title: '库存',
       icon: <IconPackages />,
       visible:
         user.hasViewRole(UserRoles.stock) ||
@@ -54,24 +65,26 @@ export function getNavTabs(user: UserStateProps): NavTab[] {
     },
     {
       name: 'manufacturing',
-      title: t`Manufacturing`,
+      title: '组合配货',
       icon: <IconBuildingFactory2 />,
-      visible: user.hasViewRole(UserRoles.build)
+      visible: showLegacyBusinessTabs && user.hasViewRole(UserRoles.build)
     },
     {
       name: 'purchasing',
-      title: t`Purchasing`,
+      title: '进货',
       icon: <IconShoppingCart />,
-      visible: user.hasViewRole(UserRoles.purchase_order)
+      visible:
+        showLegacyBusinessTabs && user.hasViewRole(UserRoles.purchase_order)
     },
     {
       name: 'sales',
-      title: t`Sales`,
+      title: '出货',
       icon: <IconTruckDelivery />,
       visible:
-        user.hasViewRole(UserRoles.sales_order) ||
-        (globalSettings.isSet('RETURNORDER_ENABLED') &&
-          user.hasViewRole(UserRoles.return_order))
+        showLegacyBusinessTabs &&
+        (user.hasViewRole(UserRoles.sales_order) ||
+          (globalSettings.isSet('RETURNORDER_ENABLED') &&
+            user.hasViewRole(UserRoles.return_order)))
     }
   ];
 

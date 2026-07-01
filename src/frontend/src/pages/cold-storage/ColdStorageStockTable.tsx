@@ -37,48 +37,51 @@ function renderStatus(record: any) {
   );
 }
 
-const columns: TableColumn[] = [
-  {
-    accessor: 'part_detail.name',
-    title: '货品',
-    sortable: true,
-    render: (record: any) => renderText(record.part_detail?.name)
-  },
-  {
-    accessor: 'quantity',
-    title: '数量',
-    sortable: true,
-    render: renderQuantity
-  },
-  {
-    accessor: 'location_detail.pathstring',
-    title: '库位',
-    sortable: true,
-    render: (record: any) =>
-      renderText(record.location_detail?.pathstring || record.location_detail?.name)
-  },
-  {
-    accessor: 'batch',
-    title: '批次',
-    sortable: true,
-    render: (record: any) => renderText(record.batch)
-  },
-  {
-    accessor: 'expiry_date',
-    title: '到期日期',
-    sortable: true,
-    render: (record: any) => renderText(record.expiry_date)
-  },
-  {
-    accessor: 'status_text',
-    title: '状态',
-    render: renderStatus
-  }
-];
+function getColumns(): TableColumn[] {
+  return [
+    {
+      accessor: 'part_detail.name',
+      title: '货品',
+      sortable: true,
+      render: (record: any) => renderText(record.part_detail?.name)
+    },
+    {
+      accessor: 'quantity',
+      title: '数量',
+      sortable: true,
+      render: renderQuantity
+    },
+    {
+      accessor: 'location_detail.pathstring',
+      title: '库位',
+      sortable: true,
+      render: (record: any) =>
+        renderText(record.location_detail?.pathstring || record.location_detail?.name)
+    },
+    {
+      accessor: 'batch',
+      title: '批次',
+      sortable: true,
+      render: (record: any) => renderText(record.batch)
+    },
+    {
+      accessor: 'expiry_date',
+      title: '到期日期',
+      sortable: true,
+      render: (record: any) => renderText(record.expiry_date)
+    },
+    {
+      accessor: 'status_text',
+      title: '状态',
+      render: renderStatus
+    }
+  ];
+}
 
 export default function ColdStorageStockTable() {
   const [onlyInStock, setOnlyInStock] = useState(true);
   const table = useTable('cold-storage-simple-stockitems');
+  const columns = getColumns();
 
   return (
     <Stack gap='sm'>

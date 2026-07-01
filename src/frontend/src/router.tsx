@@ -157,7 +157,7 @@ export const routes = (
   <Routes>
     <Route path='*' element={<NotFound />} errorElement={<ErrorPage />} />
     <Route path='/' element={<LayoutComponent />} errorElement={<ErrorPage />}>
-      <Route index element={<Home />} />,
+      <Route index element={<Navigate to='cold-storage/' />} />,
       <Route path='home/' element={<Home />} />,
       <Route path='cold-storage/' element={<ColdStorageWorkbench />} />,
       <Route path='notifications/*' element={<Notifications />} />,
