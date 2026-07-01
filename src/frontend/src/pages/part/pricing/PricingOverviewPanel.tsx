@@ -218,7 +218,7 @@ export default function PricingOverviewPanel({
       },
       {
         name: panelOptions.bom,
-        title: t`BOM Pricing`,
+        title: t`组合清单成本`,
         icon: <IconChartDonut />,
         min_value: Number.parseFloat(pricing?.bom_cost_min),
         max_value: Number.parseFloat(pricing?.bom_cost_max),

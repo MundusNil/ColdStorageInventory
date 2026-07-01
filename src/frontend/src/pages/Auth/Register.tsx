@@ -1,16 +1,13 @@
-import { t } from '@lingui/core/macro';
-import { Trans } from '@lingui/react/macro';
 import { Anchor, Text } from '@mantine/core';
 import { useNavigate } from 'react-router-dom';
 import { RegistrationForm } from '../../components/forms/AuthenticationForm';
-import {} from '../../functions/auth';
 import { Wrapper } from './Layout';
 
 export default function Register() {
   const navigate = useNavigate();
 
   return (
-    <Wrapper titleText={t`Register`} smallPadding>
+    <Wrapper titleText='注册账号' smallPadding>
       <RegistrationForm />
       <Text ta='center' size={'xs'} mt={'md'}>
         <Anchor
@@ -20,7 +17,7 @@ export default function Register() {
           size='xs'
           onClick={() => navigate('/login')}
         >
-          <Trans>Go back to login</Trans>
+          返回登录
         </Anchor>
       </Text>
     </Wrapper>

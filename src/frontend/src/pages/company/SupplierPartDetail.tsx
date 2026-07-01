@@ -91,14 +91,14 @@ export default function SupplierPartDetail() {
       {
         type: 'link',
         name: 'part',
-        label: t`Internal Part`,
+        label: t`货品`,
         model: ModelType.part,
         hidden: !supplierPart.part
       },
       {
         type: 'string',
         name: 'part_detail.IPN',
-        label: t`IPN`,
+        label: t`货品编码`,
         copy: true,
         hidden: !data.part_detail?.IPN,
         icon: 'serial'
@@ -106,7 +106,7 @@ export default function SupplierPartDetail() {
       {
         type: 'string',
         name: 'part_detail.description',
-        label: t`Part Description`,
+        label: t`货品说明`,
         copy: true,
         icon: 'info',
         hidden: !data.part_detail?.description
@@ -115,14 +115,14 @@ export default function SupplierPartDetail() {
         type: 'link',
         external: true,
         name: 'link',
-        label: t`External Link`,
+        label: t`外部链接`,
         copy: true,
         hidden: !supplierPart.link
       },
       {
         type: 'string',
         name: 'note',
-        label: t`Note`,
+        label: t`备注`,
         copy: true,
         hidden: !supplierPart.note
       }
@@ -132,7 +132,7 @@ export default function SupplierPartDetail() {
       {
         type: 'link',
         name: 'supplier',
-        label: t`Supplier`,
+        label: t`供货商`,
         model: ModelType.company,
         icon: 'suppliers',
         hidden: !supplierPart.supplier
@@ -140,21 +140,21 @@ export default function SupplierPartDetail() {
       {
         type: 'string',
         name: 'SKU',
-        label: t`SKU`,
+        label: t`供货商货号`,
         copy: true,
         icon: 'reference'
       },
       {
         type: 'string',
         name: 'description',
-        label: t`Description`,
+        label: t`说明`,
         copy: true,
         hidden: !data.description
       },
       {
         type: 'link',
         name: 'manufacturer',
-        label: t`Manufacturer`,
+        label: t`生产厂家/品牌`,
         model: ModelType.company,
         icon: 'manufacturers',
         hidden: !data.manufacturer
@@ -163,7 +163,7 @@ export default function SupplierPartDetail() {
         type: 'link',
         name: 'manufacturer_part',
         model_field: 'MPN',
-        label: t`Manufacturer Part`,
+        label: t`生产厂家货号`,
         model: ModelType.manufacturerpart,
         icon: 'reference',
         hidden: !data.manufacturer_part
@@ -174,14 +174,14 @@ export default function SupplierPartDetail() {
       {
         type: 'string',
         name: 'packaging',
-        label: t`Packaging`,
+        label: t`包装`,
         copy: true,
         hidden: !data.packaging
       },
       {
         type: 'string',
         name: 'pack_quantity',
-        label: t`Pack Quantity`,
+        label: t`包装数量`,
         copy: true,
         hidden: !data.pack_quantity,
         icon: 'packages'
@@ -192,21 +192,21 @@ export default function SupplierPartDetail() {
       {
         type: 'number',
         name: 'in_stock',
-        label: t`In Stock`,
+        label: t`库存数量`,
         copy: true,
         icon: 'stock'
       },
       {
         type: 'number',
         name: 'on_order',
-        label: t`On Order`,
+        label: t`进货在途`,
         copy: true,
         icon: 'purchase_orders'
       },
       {
         type: 'number',
         name: 'available',
-        label: t`Supplier Availability`,
+        label: t`供货商可供数量`,
         hidden: !data.availability_updated,
         copy: true,
         icon: 'packages'
@@ -214,7 +214,7 @@ export default function SupplierPartDetail() {
       {
         type: 'date',
         name: 'availability_updated',
-        label: t`Availability Updated`,
+        label: t`可供数量更新时间`,
         copy: true,
         hidden: !data.availability_updated,
         icon: 'calendar'
@@ -235,14 +235,14 @@ export default function SupplierPartDetail() {
               pk={supplierPart?.part_detail?.pk}
             />
             <Grid.Col span={8}>
-              <DetailsTable title={t`Part Details`} fields={tl} item={data} />
+              <DetailsTable title={t`货品详情`} fields={tl} item={data} />
             </Grid.Col>
           </Grid>
           <TagsList tags={supplierPart.tags} />
         </Stack>
-        <DetailsTable title={t`Supplier`} fields={bl} item={data} />
-        <DetailsTable title={t`Packaging`} fields={br} item={data} />
-        <DetailsTable title={t`Availability`} fields={tr} item={data} />
+        <DetailsTable title={t`供货商`} fields={bl} item={data} />
+        <DetailsTable title={t`包装`} fields={br} item={data} />
+        <DetailsTable title={t`供货情况`} fields={tr} item={data} />
       </ItemDetailsGrid>
     );
   }, [supplierPart, instanceQuery.isFetching]);
@@ -251,13 +251,13 @@ export default function SupplierPartDetail() {
     return [
       {
         name: 'details',
-        label: t`Supplier Part Details`,
+        label: t`供货商货品详情`,
         icon: <IconInfoCircle />,
         content: detailsPanel
       },
       {
         name: 'stock',
-        label: t`Received Stock`,
+        label: t`已入库库存`,
         icon: <IconPackages />,
         content: supplierPart?.pk ? (
           <StockItemTable
@@ -271,7 +271,7 @@ export default function SupplierPartDetail() {
       },
       {
         name: 'purchaseorders',
-        label: t`Purchase Orders`,
+        label: t`进货单`,
         icon: <IconShoppingCart />,
         content: supplierPart?.pk ? (
           <PurchaseOrderTable
@@ -284,7 +284,7 @@ export default function SupplierPartDetail() {
       },
       {
         name: 'pricing',
-        label: t`Supplier Pricing`,
+        label: t`供货商报价`,
         icon: <IconCurrencyDollar />,
         content: supplierPart?.pk ? (
           <SupplierPriceBreakTable supplierPart={supplierPart} />
@@ -318,7 +318,7 @@ export default function SupplierPartDetail() {
         perm={user.hasChangeRole(UserRoles.purchase_order)}
       />,
       <OptionsActionDropdown
-        tooltip={t`Supplier Part Actions`}
+        tooltip={t`供货商货品操作`}
         actions={[
           DuplicateItemAction({
             hidden: !user.hasAddRole(UserRoles.purchase_order),
@@ -342,7 +342,7 @@ export default function SupplierPartDetail() {
   const editSupplierPart = useEditApiFormModal({
     url: ApiEndpoints.supplier_part_list,
     pk: supplierPart?.pk,
-    title: t`Edit Supplier Part`,
+    title: t`编辑供货商货品`,
     fields: supplierPartFields,
     queryParams: new URLSearchParams({ tags: 'true' }),
     onFormSuccess: refreshInstance
@@ -351,7 +351,7 @@ export default function SupplierPartDetail() {
   const deleteSupplierPart = useDeleteApiFormModal({
     url: ApiEndpoints.supplier_part_list,
     pk: supplierPart?.pk,
-    title: t`Delete Supplier Part`,
+    title: t`删除供货商货品`,
     onFormSuccess: () => {
       navigate(getDetailUrl(ModelType.part, supplierPart.part));
     }
@@ -359,7 +359,7 @@ export default function SupplierPartDetail() {
 
   const duplicateSupplierPart = useCreateApiFormModal({
     url: ApiEndpoints.supplier_part_list,
-    title: t`Add Supplier Part`,
+    title: t`新增供货商货品`,
     fields: supplierPartFields,
     initialData: {
       ...supplierPart
@@ -371,11 +371,11 @@ export default function SupplierPartDetail() {
   const breadcrumbs = useMemo(() => {
     return [
       {
-        name: t`Purchasing`,
+        name: t`进货管理`,
         url: '/purchasing/'
       },
       {
-        name: supplierPart?.supplier_detail?.name ?? t`Supplier`,
+        name: supplierPart?.supplier_detail?.name ?? t`供货商`,
         url: `/purchasing/supplier/${supplierPart?.supplier_detail?.pk ?? ''}`
       }
     ];
@@ -384,12 +384,12 @@ export default function SupplierPartDetail() {
   const badges: ReactNode[] = useMemo(() => {
     return [
       <DetailsBadge
-        label={t`Inactive`}
+        label={t`已停用`}
         color='red'
         visible={supplierPart.active == false}
       />,
       <DetailsBadge
-        label={`${t`In Stock`}: ${formatDecimal(supplierPart.in_stock)}`}
+        label={`${t`库存数量`}: ${formatDecimal(supplierPart.in_stock)}`}
         color={'green'}
         visible={
           supplierPart?.active &&
@@ -399,13 +399,13 @@ export default function SupplierPartDetail() {
         key='in_stock'
       />,
       <DetailsBadge
-        label={t`No Stock`}
+        label={t`无库存`}
         color={'red'}
         visible={supplierPart.active && supplierPart.in_stock == 0}
         key='no_stock'
       />,
       <DetailsBadge
-        label={`${t`On Order`}: ${formatDecimal(supplierPart.on_order)}`}
+        label={`${t`进货在途`}: ${formatDecimal(supplierPart.on_order)}`}
         color='blue'
         visible={supplierPart.on_order > 0}
         key='on_order'
@@ -424,7 +424,7 @@ export default function SupplierPartDetail() {
       >
         <Stack gap='xs'>
           <PageDetail
-            title={t`Supplier Part`}
+            title={t`供货商货品`}
             subtitle={`${supplierPart.SKU} - ${supplierPart?.part_detail?.name}`}
             breadcrumbs={breadcrumbs}
             lastCrumb={[

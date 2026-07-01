@@ -114,7 +114,7 @@ export default function Stock() {
       {
         type: 'text',
         name: 'name',
-        label: t`Name`,
+        label: t`库位名称`,
         copy: true,
         value_formatter: () => (
           <Group gap='xs'>
@@ -126,7 +126,7 @@ export default function Stock() {
       {
         type: 'text',
         name: 'pathstring',
-        label: t`Path`,
+        label: t`完整库位`,
         icon: 'sitemap',
         copy: true,
         hidden: !id
@@ -134,7 +134,7 @@ export default function Stock() {
       {
         type: 'text',
         name: 'description',
-        label: t`Description`,
+        label: t`说明`,
         copy: true
       },
       {
@@ -142,7 +142,7 @@ export default function Stock() {
         name: 'parent',
         model_field: 'name',
         icon: 'location',
-        label: t`Parent Location`,
+        label: t`上级库位`,
         model: ModelType.stocklocation,
         hidden: !location?.parent
       }
@@ -153,32 +153,32 @@ export default function Stock() {
         type: 'text',
         name: 'items',
         icon: 'stock',
-        label: t`Stock Items`,
+        label: t`库存批次`,
         value_formatter: () => location?.items || '0'
       },
       {
         type: 'text',
         name: 'sublocations',
         icon: 'location',
-        label: t`Sublocations`,
+        label: t`下级库位`,
         hidden: !location?.sublocations
       },
       {
         type: 'boolean',
         name: 'structural',
-        label: t`Structural`,
+        label: t`分区节点`,
         icon: 'sitemap'
       },
       {
         type: 'boolean',
         name: 'external',
-        label: t`External`
+        label: t`外部库位`
       },
       {
         type: 'string',
         // TODO: render location type icon here (ref: #7237)
         name: 'location_type_detail.name',
-        label: t`Location Type`,
+        label: t`库位类型`,
         hidden: !location?.location_type,
         icon: 'packages'
       }
@@ -199,14 +199,14 @@ export default function Stock() {
     return [
       {
         name: 'details',
-        label: t`Location Details`,
+        label: t`库位详情`,
         icon: <IconInfoCircle />,
         content: detailsPanel,
         hidden: !location?.pk
       },
       SegmentedControlPanel({
         name: 'sublocations',
-        label: id ? t`Sublocations` : t`Stock Locations`,
+        label: id ? t`下级库位` : t`冷库库位`,
         icon: <IconSitemap />,
         hidden: !user.hasViewPermission(ModelType.stocklocation),
         selection: sublocationView,
@@ -214,13 +214,13 @@ export default function Stock() {
         options: [
           {
             value: 'table',
-            label: t`Table View`,
+            label: t`表格视图`,
             icon: <IconTable />,
             content: <StockLocationTable parentId={id} />
           },
           {
             value: 'parametric',
-            label: t`Parametric View`,
+            label: t`参数视图`,
             icon: <IconListDetails />,
             content: (
               <StockLocationParametricTable
@@ -232,7 +232,7 @@ export default function Stock() {
       }),
       {
         name: 'stock-items',
-        label: t`Stock Items`,
+        label: t`库存批次`,
         icon: <IconPackages />,
         content: (
           <StockItemTable
@@ -246,7 +246,7 @@ export default function Stock() {
       },
       SegmentedControlPanel({
         name: 'transfer-orders',
-        label: t`Transfer Orders`,
+        label: t`移库单`,
         icon: <IconTransfer />,
         hidden:
           !user.hasViewRole(UserRoles.transfer_order) ||
@@ -256,19 +256,19 @@ export default function Stock() {
         options: [
           {
             value: 'table',
-            label: t`Table View`,
+            label: t`表格视图`,
             icon: <IconTable />,
             content: <TransferOrderTable />
           },
           {
             value: 'calendar',
-            label: t`Calendar View`,
+            label: t`日历视图`,
             icon: <IconCalendar />,
             content: <TransferOrderCalendar />
           },
           {
             value: 'parametric',
-            label: t`Parametric View`,
+            label: t`参数视图`,
             icon: <IconListDetails />,
             content: <TransferOrderParametricTable />
           }
@@ -276,7 +276,7 @@ export default function Stock() {
       }),
       {
         name: 'default_parts',
-        label: t`Default Parts`,
+        label: t`默认存放货品`,
         icon: <IconPackages />,
         hidden: !location.pk,
         content: (
@@ -300,7 +300,7 @@ export default function Stock() {
   const editLocation = useEditApiFormModal({
     url: ApiEndpoints.stock_location_list,
     pk: id,
-    title: t`Edit Stock Location`,
+    title: t`编辑冷库库位`,
     fields: stockLocationFields(),
     onFormSuccess: refreshInstance
   });
@@ -309,11 +309,11 @@ export default function Stock() {
     return [
       {
         value: 'false',
-        display_name: t`Move items to parent location`
+        display_name: t`移动库存到上级库位`
       },
       {
         value: 'true',
-        display_name: t`Delete items`
+        display_name: t`删除库存批次`
       }
     ];
   }, []);
@@ -321,19 +321,19 @@ export default function Stock() {
   const deleteLocation = useDeleteApiFormModal({
     url: ApiEndpoints.stock_location_list,
     pk: id,
-    title: t`Delete Stock Location`,
+    title: t`删除冷库库位`,
     fields: {
       delete_stock_items: {
-        label: t`Items Action`,
+        label: t`库存处理方式`,
         required: true,
-        description: t`Action for stock items in this location`,
+        description: t`当前库位中库存批次的处理方式`,
         field_type: 'choice',
         choices: deleteOptions
       },
       delete_sub_locations: {
-        label: t`Location Actions`,
+        label: t`下级库位处理方式`,
         required: true,
-        description: t`Action for child locations in this location`,
+        description: t`当前库位中下级库位的处理方式`,
         field_type: 'choice',
         choices: deleteOptions
       }
@@ -368,7 +368,7 @@ export default function Stock() {
   });
 
   const scanInStockItem = useBarcodeScanDialog({
-    title: t`Scan Stock Item`,
+    title: t`扫描库存批次`,
     modelType: ModelType.stockitem,
     callback: async (barcode, response) => {
       const item = response.stockitem.instance;
@@ -386,20 +386,20 @@ export default function Stock() {
         })
         .then(() => {
           return {
-            success: t`Scanned stock item into location`
+            success: t`库存批次已扫描入库位`
           };
         })
         .catch((error) => {
           console.error('Error scanning stock item:', error);
           return {
-            error: t`Error scanning stock item`
+            error: t`扫描库存批次失败`
           };
         });
     }
   });
 
   const scanInStockLocation = useBarcodeScanDialog({
-    title: t`Scan Stock Location`,
+    title: t`扫描冷库库位`,
     modelType: ModelType.stocklocation,
     callback: async (barcode, response) => {
       const pk = response.stocklocation.pk;
@@ -411,13 +411,13 @@ export default function Stock() {
         })
         .then(() => {
           return {
-            success: t`Scanned stock location into location`
+            success: t`冷库库位已扫描到当前库位`
           };
         })
         .catch((error) => {
           console.error('Error scanning stock location:', error);
           return {
-            error: t`Error scanning stock location`
+            error: t`扫描冷库库位失败`
           };
         });
     }
@@ -435,15 +435,15 @@ export default function Stock() {
           perm={user.hasChangeRole(UserRoles.stock_location)}
           actions={[
             {
-              name: t`Scan in stock items`,
+              name: t`扫码入库`,
               icon: <InvenTreeIcon icon='stock' />,
-              tooltip: t`Scan item into this location`,
+              tooltip: t`扫描库存批次到当前库位`,
               onClick: scanInStockItem.open
             },
             {
-              name: t`Scan in container`,
+              name: t`扫码加入库位`,
               icon: <InvenTreeIcon icon='unallocated_stock' />,
-              tooltip: t`Scan container into this location`,
+              tooltip: t`扫描容器或库位到当前库位`,
               onClick: scanInStockLocation.open
             }
           ]}
@@ -458,16 +458,16 @@ export default function Stock() {
       />,
       stockAdjustActions.dropdown,
       <OptionsActionDropdown
-        tooltip={t`Location Actions`}
+        tooltip={t`库位操作`}
         actions={[
           EditItemAction({
             hidden: !id || !user.hasChangeRole(UserRoles.stock_location),
-            tooltip: t`Edit Stock Location`,
+            tooltip: t`编辑冷库库位`,
             onClick: () => editLocation.open()
           }),
           DeleteItemAction({
             hidden: !id || !user.hasDeleteRole(UserRoles.stock_location),
-            tooltip: t`Delete Stock Location`,
+            tooltip: t`删除冷库库位`,
             onClick: () => deleteLocation.open()
           })
         ]}
@@ -478,7 +478,7 @@ export default function Stock() {
 
   const breadcrumbs = useMemo(
     () => [
-      { name: t`Stock`, url: '/stock' },
+      { name: t`库存`, url: '/stock' },
       ...(location.path ?? []).map((l: any) => ({
         name: l.name,
         url: getDetailUrl(ModelType.stocklocation, l.pk),
@@ -511,7 +511,7 @@ export default function Stock() {
       >
         <Stack>
           <NavigationTree
-            title={t`Stock Locations`}
+            title={t`冷库库位`}
             modelType={ModelType.stocklocation}
             endpoint={ApiEndpoints.stock_location_tree}
             childIdentifier='sublocations'
@@ -520,7 +520,7 @@ export default function Stock() {
             selectedId={location?.pk}
           />
           <PageDetail
-            title={(location?.name ?? id) ? t`Stock Location` : t`Stock`}
+            title={(location?.name ?? id) ? t`冷库库位` : t`库存`}
             subtitle={location?.description}
             icon={location?.icon && <ApiIcon name={location?.icon} />}
             actions={location?.pk ? locationActions : undefined}

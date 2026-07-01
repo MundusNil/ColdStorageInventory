@@ -61,8 +61,8 @@ export function BomActions({
 
   useBackgroundTask({
     taskId: taskId,
-    message: t`Validating BOM`,
-    successMessage: t`BOM validated`,
+    message: t`正在校验组合清单`,
+    successMessage: t`组合清单已校验`,
     onComplete: () => {
       bomInformation.instanceQuery.refetch();
     }
@@ -107,18 +107,18 @@ export function BomActions({
   if (bomInformation.instance?.bom_validated) {
     color = 'green';
     icon = <IconListCheck />;
-    title = t`BOM Validated`;
-    description = t`The Bill of Materials for this part has been validated`;
+    title = t`组合清单已校验`;
+    description = t`该货品的组合清单已经校验`;
   } else if (bomInformation.instance?.bom_checked_date) {
     color = 'yellow';
     icon = <IconExclamationCircle />;
-    title = t`BOM Not Validated`;
-    description = t`The Bill of Materials for this part has previously been checked, but requires revalidation`;
+    title = t`组合清单需重新校验`;
+    description = t`该货品的组合清单曾经校验过，但现在需要重新校验`;
   } else {
     color = 'red';
     icon = <IconExclamationCircle />;
-    title = t`BOM Not Validated`;
-    description = t`The Bill of Materials for this part has not yet been validated`;
+    title = t`组合清单未校验`;
+    description = t`该货品的组合清单还没有校验`;
   }
 
   return (
