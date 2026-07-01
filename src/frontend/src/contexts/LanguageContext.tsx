@@ -1,4 +1,4 @@
-import { i18n } from '@lingui/core';
+import { i18n, type Messages } from '@lingui/core';
 import { I18nProvider } from '@lingui/react';
 import { LoadingOverlay, Text } from '@mantine/core';
 import { type JSX, useEffect, useRef, useState } from 'react';
@@ -10,7 +10,13 @@ import { useLocalState } from '../states/LocalState';
 import { useServerApiState } from '../states/ServerApiState';
 import { fetchGlobalStates } from '../states/states';
 
-export const defaultLocale = 'en';
+export const defaultLocale = 'zh_Hans';
+
+type LocaleMessagesModule = { messages: Messages };
+
+const localeMessages = import.meta.glob<LocaleMessagesModule>(
+  '../locales/*/messages.ts'
+);
 
 /*
  * Function which returns a record of supported languages.
@@ -59,6 +65,24 @@ export const getSupportedLanguages = (): Record<string, string> => {
   };
 };
 
+export function normalizeLocaleCode(locale: string): string {
+  return locale.replaceAll('_', '-').toLowerCase();
+}
+
+export function getSupportedLocaleKey(locale: string): string | null {
+  const normalizedLocale = normalizeLocaleCode(locale);
+
+  return (
+    Object.keys(getSupportedLanguages()).find(
+      (key) => normalizeLocaleCode(key) === normalizedLocale
+    ) ?? null
+  );
+}
+
+export function getLocaleDirectory(locale: string): string {
+  return getSupportedLocaleKey(locale) ?? locale.split('-')[0];
+}
+
 export function LanguageContext({
   children
 }: Readonly<{ children: JSX.Element }>) {
@@ -97,10 +121,10 @@ export function LanguageContext({
   useEffect(() => {
     isMounted.current = true;
 
-    let lang: string = language || defaultLocale;
+    let lang: string = language || server.default_locale || defaultLocale;
 
     // Ensure that the selected language is supported
-    if (!Object.keys(getSupportedLanguages()).includes(lang)) {
+    if (!getSupportedLocaleKey(lang)) {
       lang = defaultLocale;
     }
 
@@ -155,7 +179,7 @@ export function LanguageContext({
     return () => {
       isMounted.current = false;
     };
-  }, [language]);
+  }, [language, server.default_locale]);
 
   if (loadedState === 'loading') {
     return <LoadingOverlay visible={true} />;
@@ -164,10 +188,7 @@ export function LanguageContext({
   /* istanbul ignore next */
   if (loadedState === 'error') {
     return (
-      <Text>
-        An error occurred while loading translations, see browser console for
-        details.
-      </Text>
+      <Text>加载中文界面失败，请打开浏览器控制台查看详细错误。</Text>
     );
   }
 
@@ -189,13 +210,21 @@ export async function activateLocale(locale: string | null) {
     locale = getPriorityLocale();
   }
 
-  const localeDir = locale.split('-')[0]; // Extract the base locale (e.g., 'en' from 'en-US')
+  const localeDir = getLocaleDirectory(locale);
+  const localePath = `../locales/${localeDir}/messages.ts`;
+  const loadLocaleMessages = localeMessages[localePath];
 
-  try {
-    const { messages } = await import(`../locales/${localeDir}/messages.ts`);
-    i18n.load(locale, messages);
+  if (loadLocaleMessages) {
+    const { messages } = await loadLocaleMessages();
+    i18n.load(locale, messages as Messages);
     i18n.activate(locale);
-  } catch (err) {
-    console.error(`Failed to load locale ${locale}:`, err);
+    return;
   }
+
+  if (locale !== 'en') {
+    console.warn(`Failed to load locale ${locale}, falling back to en`);
+    return activateLocale('en');
+  }
+
+  throw new Error(`Failed to load locale ${locale}`);
 }
