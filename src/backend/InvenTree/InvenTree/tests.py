@@ -612,6 +612,25 @@ class FormatTest(TestCase):
 class TestHelpers(TestCase):
     """Tests for InvenTree helper functions."""
 
+    def test_redact_url(self):
+        """Test helper function for redacting sensitive URL parameters."""
+        url = (
+            'https://example.com/login?next=/stock/'
+            '&login=admin&password=secret&token=abc123&safe=value'
+        )
+
+        redacted = helpers.redact_url(url)
+
+        self.assertIn('next=%2Fstock%2F', redacted)
+        self.assertIn('safe=value', redacted)
+        self.assertIn('login=%5Bredacted%5D', redacted)
+        self.assertIn('password=%5Bredacted%5D', redacted)
+        self.assertIn('token=%5Bredacted%5D', redacted)
+        self.assertNotIn('secret', redacted)
+        self.assertNotIn('abc123', redacted)
+
+        self.assertEqual(helpers.redact_url('/api/part/'), '/api/part/')
+
     def test_absolute_url(self):
         """Test helper function for generating an absolute URL."""
         base = InvenTreeSetting.get_setting('INVENTREE_BASE_URL')

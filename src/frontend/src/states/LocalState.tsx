@@ -61,6 +61,14 @@ export const useLocalState = create<LocalStateProps>()(
 
         let host = state.host;
 
+        if (
+          import.meta.env.DEV &&
+          state.hostKey === 'server-localhost' &&
+          window.location.hostname
+        ) {
+          host = `${window.location.protocol}//${window.location.hostname}:8000`;
+        }
+
         // If the server provides an override for the host, use that
         if (window.INVENTREE_SETTINGS?.api_host) {
           host = window.INVENTREE_SETTINGS.api_host;

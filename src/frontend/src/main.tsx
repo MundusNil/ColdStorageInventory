@@ -54,6 +54,7 @@ declare global {
 export const IS_DEV = import.meta.env.DEV;
 export const IS_DEMO = import.meta.env.VITE_DEMO === 'true';
 export const IS_DEV_OR_DEMO = IS_DEV || IS_DEMO;
+const devApiHost = `${window.location.protocol}//${window.location.hostname}:8000`;
 
 // Filter out any settings that are not defined
 const loaded_vals = (window.INVENTREE_SETTINGS || {}) as any;
@@ -73,7 +74,7 @@ window.INVENTREE_SETTINGS = {
     ...(IS_DEV
       ? {
           'server-localhost': {
-            host: 'http://localhost:8000',
+            host: devApiHost,
             name: 'Localhost'
           }
         }
@@ -82,7 +83,7 @@ window.INVENTREE_SETTINGS = {
       ? {
           'server-demo': {
             host: 'https://demo.inventree.org/',
-            name: 'InvenTree Demo'
+            name: 'Upstream Demo'
           }
         }
       : {}),

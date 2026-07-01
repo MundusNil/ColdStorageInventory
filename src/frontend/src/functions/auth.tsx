@@ -84,6 +84,7 @@ export async function doBasicLogin(
 
   clearCsrfCookie();
   await ensureCsrf();
+  const csrfToken = getCsrfCookie();
 
   let loginDone = false;
   let success = false;
@@ -99,7 +100,8 @@ export async function doBasicLogin(
         password: password
       },
       {
-        baseURL: host
+        baseURL: host,
+        headers: csrfToken ? { 'X-CSRFToken': csrfToken } : undefined
       }
     )
     .then((response) => {
@@ -332,7 +334,8 @@ function observeProfile() {
 export async function ensureCsrf() {
   const cookie = getCsrfCookie();
   if (cookie == undefined) {
-    await api.get(apiUrl(ApiEndpoints.auth_session)).catch(() => {});
+    const { getHost } = useLocalState.getState();
+    await api.get(apiUrl(ApiEndpoints.auth_csrf), { baseURL: getHost() });
   }
 }
 
