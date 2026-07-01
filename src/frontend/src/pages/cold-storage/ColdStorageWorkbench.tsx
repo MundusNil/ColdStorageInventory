@@ -55,10 +55,12 @@ type DraftField = {
   kind?: FieldKind;
 };
 
+type WorkbenchActionStatus = 'enabled' | 'draft' | 'readonly';
+
 type WorkbenchAction = {
   title: string;
   description: string;
-  status: '已启用' | '表单草稿' | '只读';
+  status: WorkbenchActionStatus;
   icon: ReactNode;
   buttonLabel: string;
   kind: WorkbenchActionKind;
@@ -76,7 +78,7 @@ const actions: WorkbenchAction[] = [
   {
     title: '新货入库',
     description: '登记新到货品、数量、批次、库位和到期日期。',
-    status: '已启用',
+    status: 'enabled',
     icon: <IconPackageImport />,
     buttonLabel: '新增库存',
     kind: 'inbound'
@@ -84,7 +86,7 @@ const actions: WorkbenchAction[] = [
   {
     title: '出库扣数',
     description: '先在下方库存卡片找到批次，再从卡片里扣减数量。',
-    status: '已启用',
+    status: 'enabled',
     icon: <IconPackageExport />,
     buttonLabel: '去下方选择批次',
     kind: 'outbound'
@@ -92,7 +94,7 @@ const actions: WorkbenchAction[] = [
   {
     title: '查库存',
     description: '按品名、库位、批次查当前库存。',
-    status: '只读',
+    status: 'readonly',
     icon: <IconSearch />,
     buttonLabel: '见下方库存卡片',
     kind: 'search'
@@ -100,7 +102,7 @@ const actions: WorkbenchAction[] = [
   {
     title: '改库位',
     description: '把货品从一个库位转到另一个库位。',
-    status: '表单草稿',
+    status: 'draft',
     icon: <IconArrowsExchange />,
     buttonLabel: '填写草稿',
     kind: 'transfer'
@@ -108,7 +110,7 @@ const actions: WorkbenchAction[] = [
   {
     title: '盘点改数',
     description: '录入实际数量，保留差异记录。',
-    status: '表单草稿',
+    status: 'draft',
     icon: <IconClipboardCheck />,
     buttonLabel: '填写草稿',
     kind: 'count'
@@ -116,7 +118,7 @@ const actions: WorkbenchAction[] = [
   {
     title: '报损/过期',
     description: '登记过期、破损、变质或盘亏数量。',
-    status: '表单草稿',
+    status: 'draft',
     icon: <IconTrash />,
     buttonLabel: '填写草稿',
     kind: 'waste'
@@ -192,16 +194,28 @@ const draftDialogs: Record<DraftAction, DraftDialog> = {
   }
 };
 
-function actionStatusColor(status: WorkbenchAction['status']) {
-  if (status === '已启用') {
+function actionStatusColor(status: WorkbenchActionStatus) {
+  if (status === 'enabled') {
     return 'green';
   }
 
-  if (status === '表单草稿') {
+  if (status === 'draft') {
     return 'blue';
   }
 
   return 'gray';
+}
+
+function actionStatusLabel(status: WorkbenchActionStatus) {
+  if (status === 'enabled') {
+    return '已启用';
+  }
+
+  if (status === 'draft') {
+    return '表单草稿';
+  }
+
+  return '只读';
 }
 
 function renderDraftField(field: DraftField) {
@@ -289,6 +303,12 @@ export default function ColdStorageWorkbench() {
     fields.purchase_price = {
       ...fields.purchase_price,
       label: '进价'
+    };
+
+    fields.purchase_price_currency = {
+      ...fields.purchase_price_currency,
+      label: '进价币种',
+      description: '选择本批货进价使用的货币'
     };
 
     fields.packaging = {
@@ -420,7 +440,7 @@ export default function ColdStorageWorkbench() {
                     color={actionStatusColor(action.status)}
                     variant='light'
                   >
-                    {action.status}
+                    {actionStatusLabel(action.status)}
                   </Badge>
                 </Group>
                 <Box>

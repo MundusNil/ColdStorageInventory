@@ -280,7 +280,9 @@ export default function ColdStorageStockCards({
           ))}
         </SimpleGrid>
       ) : (
-        <Alert color='gray'>没有查到库存。换个货品名、库位或批次再试。</Alert>
+        <Alert color='gray'>
+          没有查到库存。换个货品名、库位或批次再试。
+        </Alert>
       )}
     </Stack>
   );
