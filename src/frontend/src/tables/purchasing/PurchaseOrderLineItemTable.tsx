@@ -150,7 +150,7 @@ export function PurchaseOrderLineItemTable({
       ProjectCodeColumn({}),
       {
         accessor: 'build_order',
-        title: t`Build Order`,
+        title: t`组合配货单`,
         sortable: true,
         defaultVisible: false,
         render: (record: any) => {
@@ -244,7 +244,7 @@ export function PurchaseOrderLineItemTable({
       {
         accessor: 'mpn',
         ordering: 'MPN',
-        title: t`Manufacturer Code`,
+        title: t`厂家货号`,
         sortable: true,
         defaultVisible: false,
         copyable: true
@@ -378,7 +378,7 @@ export function PurchaseOrderLineItemTable({
         }),
         RowViewAction({
           hidden: !record.build_order,
-          title: t`View Build Order`,
+          title: t`查看组合配货单`,
           modelType: ModelType.build,
           modelId: record.build_order,
           navigate: navigate

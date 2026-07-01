@@ -64,7 +64,7 @@ export function ContactTable({
       // Add company column if not in company detail view
       corecols.unshift({
         accessor: 'company_name',
-        title: t`Company`,
+        title: t`往来单位`,
         sortable: false,
         switchable: true,
         render: (record: any) => {

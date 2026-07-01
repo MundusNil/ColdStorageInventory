@@ -131,7 +131,7 @@ export default function SalesOrderShipmentTable({
       {
         switchable: false,
         accessor: 'order_detail.reference',
-        title: t`Sales Order`,
+        title: t`出货单`,
         hidden: !showOrderInfo,
         sortable: false,
         copyable: true

@@ -451,8 +451,8 @@ export function UserFilter({
 export function ManufacturerFilter(): TableFilter {
   return {
     name: 'manufacturer',
-    label: t`Manufacturer`,
-    description: t`Filter by manufacturer`,
+    label: t`生产厂家/品牌`,
+    description: t`按生产厂家或品牌筛选`,
     type: 'api',
     apiUrl: apiUrl(ApiEndpoints.company_list),
     model: ModelType.company,
@@ -464,8 +464,8 @@ export function ManufacturerFilter(): TableFilter {
 export function SupplierFilter(): TableFilter {
   return {
     name: 'supplier',
-    label: t`Supplier`,
-    description: t`Filter by supplier`,
+    label: t`供货商`,
+    description: t`按供货商筛选`,
     type: 'api',
     apiUrl: apiUrl(ApiEndpoints.company_list),
     model: ModelType.company,
@@ -477,24 +477,24 @@ export function SupplierFilter(): TableFilter {
 export function CreatedByFilter(): TableFilter {
   return UserFilter({
     name: 'created_by',
-    label: t`Created By`,
-    description: t`Filter by user who created the order`
+    label: t`创建人`,
+    description: t`按创建人筛选`
   });
 }
 
 export function IssuedByFilter(): TableFilter {
   return UserFilter({
     name: 'issued_by',
-    label: t`Issued By`,
-    description: t`Filter by user who issued the order`
+    label: t`经办人`,
+    description: t`按经办人筛选`
   });
 }
 
 export function PartCategoryFilter(): TableFilter {
   return {
     name: 'category',
-    label: t`Part Category`,
-    description: t`Filter by part category`,
+    label: t`货品分类`,
+    description: t`按货品分类筛选`,
     apiUrl: apiUrl(ApiEndpoints.category_list),
     model: ModelType.partcategory,
     modelRenderer: (instance: any) => instance.name
@@ -504,8 +504,8 @@ export function PartCategoryFilter(): TableFilter {
 export function StockLocationFilter(): TableFilter {
   return {
     name: 'location',
-    label: t`Location`,
-    description: t`Filter by stock location`,
+    label: t`库位`,
+    description: t`按冷库库位筛选`,
     apiUrl: apiUrl(ApiEndpoints.stock_location_list),
     model: ModelType.stocklocation,
     modelRenderer: (instance: any) => instance.name

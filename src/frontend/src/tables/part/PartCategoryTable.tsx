@@ -36,6 +36,7 @@ export function PartCategoryTable({ parentId }: Readonly<{ parentId?: any }>) {
     return [
       {
         accessor: 'name',
+        title: t`分类名称`,
         sortable: true,
         switchable: false,
         copyable: true,
@@ -48,7 +49,7 @@ export function PartCategoryTable({ parentId }: Readonly<{ parentId?: any }>) {
             <Group gap='xs' justify='flex-end' wrap='nowrap'>
               {record.starred && (
                 <Tooltip
-                  label={t`You are subscribed to notifications for this category`}
+                  label={t`你已订阅此分类的通知`}
                 >
                   <IconBell color='green' size={16} />
                 </Tooltip>
@@ -60,16 +61,19 @@ export function PartCategoryTable({ parentId }: Readonly<{ parentId?: any }>) {
       DescriptionColumn({}),
       {
         accessor: 'pathstring',
+        title: t`完整分类`,
         copyable: true,
         sortable: true
       },
       BooleanColumn({
         accessor: 'structural',
+        title: t`分类节点`,
         sortable: true,
         defaultVisible: false
       }),
       {
         accessor: 'part_count',
+        title: t`货品数`,
         sortable: true
       }
     ];
@@ -79,18 +83,18 @@ export function PartCategoryTable({ parentId }: Readonly<{ parentId?: any }>) {
     return [
       {
         name: 'cascade',
-        label: t`Include Subcategories`,
-        description: t`Include subcategories in results`
+        label: t`包含下级分类`,
+        description: t`结果中包含下级分类`
       },
       {
         name: 'structural',
-        label: t`Structural`,
-        description: t`Show structural categories`
+        label: t`分类节点`,
+        description: t`显示仅用于分组的分类`
       },
       {
         name: 'starred',
-        label: t`Subscribed`,
-        description: t`Show categories to which the user is subscribed`
+        label: t`已订阅`,
+        description: t`显示当前用户订阅的分类`
       }
     ];
   }, []);
@@ -99,7 +103,7 @@ export function PartCategoryTable({ parentId }: Readonly<{ parentId?: any }>) {
 
   const newCategory = useCreateApiFormModal({
     url: ApiEndpoints.category_list,
-    title: t`New Part Category`,
+    title: t`新增货品分类`,
     fields: newCategoryFields,
     focus: 'name',
     initialData: {
@@ -118,7 +122,7 @@ export function PartCategoryTable({ parentId }: Readonly<{ parentId?: any }>) {
   const editCategory = useEditApiFormModal({
     url: ApiEndpoints.category_list,
     pk: selectedCategory,
-    title: t`Edit Part Category`,
+    title: t`编辑货品分类`,
     fields: editCategoryFields,
     onFormSuccess: (record: any) => table.updateRecord(record)
   });
@@ -126,9 +130,11 @@ export function PartCategoryTable({ parentId }: Readonly<{ parentId?: any }>) {
   const setParent = useBulkEditApiFormModal({
     url: ApiEndpoints.category_list,
     items: table.selectedIds,
-    title: t`Set Parent Category`,
+    title: t`设置上级分类`,
     fields: {
-      parent: {}
+      parent: {
+        label: t`上级分类`
+      }
     },
     onFormSuccess: table.refreshTable
   });
@@ -139,14 +145,14 @@ export function PartCategoryTable({ parentId }: Readonly<{ parentId?: any }>) {
 
     return [
       <ActionDropdown
-        tooltip={t`Category Actions`}
+        tooltip={t`分类操作`}
         icon={<InvenTreeIcon icon='category' />}
         disabled={!table.hasSelectedRecords}
         actions={[
           {
-            name: t`Set Parent`,
+            name: t`设置上级分类`,
             icon: <InvenTreeIcon icon='category' />,
-            tooltip: t`Set parent category for the selected items`,
+            tooltip: t`给选中分类设置上级分类`,
             hidden: !can_edit,
             disabled: !table.hasSelectedRecords,
             onClick: () => {
@@ -157,7 +163,7 @@ export function PartCategoryTable({ parentId }: Readonly<{ parentId?: any }>) {
       />,
       <AddItemButton
         key='add-part-category'
-        tooltip={t`Add Part Category`}
+        tooltip={t`新增货品分类`}
         onClick={() => newCategory.open()}
         hidden={!can_add}
       />

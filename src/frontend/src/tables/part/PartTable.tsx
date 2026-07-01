@@ -87,7 +87,7 @@ function partTableColumns(): TableColumn[] {
         if (record.virtual) {
           return (
             <Text size='sm' c='dimmed' fs='italic'>
-              {t`Virtual part`}
+              {t`虚拟货品`}
             </Text>
           );
         }
@@ -109,7 +109,7 @@ function partTableColumns(): TableColumn[] {
         if (min_stock > stock) {
           extra.push(
             <Text key='min-stock' c='orange'>
-              {`${t`Minimum stock`}: ${formatDecimal(min_stock)}`}
+              {`${t`最低库存`}: ${formatDecimal(min_stock)}`}
             </Text>
           );
 
@@ -119,27 +119,27 @@ function partTableColumns(): TableColumn[] {
         if (max_stock > 0 && stock > max_stock) {
           extra.push(
             <Text key='max-stock' c='teal'>
-              {`${t`Maximum stock`}: ${formatDecimal(max_stock)}`}
+              {`${t`最高库存`}: ${formatDecimal(max_stock)}`}
             </Text>
           );
         }
 
         if (record.ordering > 0) {
           extra.push(
-            <Text key='on-order'>{`${t`On Order`}: ${formatDecimal(record.ordering)}`}</Text>
+            <Text key='on-order'>{`${t`进货在途`}: ${formatDecimal(record.ordering)}`}</Text>
           );
         }
 
         if (record.building) {
           extra.push(
-            <Text key='building'>{`${t`Building`}: ${formatDecimal(record.building)}`}</Text>
+            <Text key='building'>{`${t`组合配货中`}: ${formatDecimal(record.building)}`}</Text>
           );
         }
 
         if (record.allocated_to_build_orders > 0) {
           extra.push(
             <Text key='bo-allocations'>
-              {`${t`Build Order Allocations`}: ${formatDecimal(record.allocated_to_build_orders)}`}
+              {`${t`组合配货占用`}: ${formatDecimal(record.allocated_to_build_orders)}`}
             </Text>
           );
         }
@@ -147,7 +147,7 @@ function partTableColumns(): TableColumn[] {
         if (record.allocated_to_sales_orders > 0) {
           extra.push(
             <Text key='so-allocations'>
-              {`${t`Sales Order Allocations`}: ${formatDecimal(record.allocated_to_sales_orders)}`}
+              {`${t`出货单占用`}: ${formatDecimal(record.allocated_to_sales_orders)}`}
             </Text>
           );
         }
@@ -155,7 +155,7 @@ function partTableColumns(): TableColumn[] {
         if (available != stock) {
           extra.push(
             <Text key='available'>
-              {t`Available`}: {formatDecimal(available)}
+              {t`可用数量`}: {formatDecimal(available)}
             </Text>
           );
         }
@@ -163,14 +163,14 @@ function partTableColumns(): TableColumn[] {
         if (record.external_stock > 0) {
           extra.push(
             <Text key='external'>
-              {t`External stock`}: {formatDecimal(record.external_stock)}
+              {t`外部库存`}: {formatDecimal(record.external_stock)}
             </Text>
           );
         }
 
         if (stock <= 0) {
           color = 'red';
-          text = t`No stock`;
+          text = t`无库存`;
         } else if (available <= 0) {
           color = 'orange';
         } else if (available < min_stock) {
@@ -191,7 +191,7 @@ function partTableColumns(): TableColumn[] {
                 )}
               </Group>
             }
-            title={t`Stock Information`}
+            title={t`库存信息`}
             extra={extra}
           />
         );
@@ -199,7 +199,7 @@ function partTableColumns(): TableColumn[] {
     },
     {
       accessor: 'price_range',
-      title: t`Price Range`,
+      title: t`价格区间`,
       sortable: true,
       ordering: 'pricing_max',
       filter: 'has_pricing',
@@ -269,7 +269,7 @@ export function PartListTable({
 
   const importParts = useCreateApiFormModal({
     url: ApiEndpoints.import_session_list,
-    title: t`Import Parts`,
+    title: t`导入货品`,
     fields: importSessionFields,
     onFormSuccess: (response: any) => {
       openImporter(response.pk, {
@@ -289,7 +289,7 @@ export function PartListTable({
 
   const newPart = useCreateApiFormModal({
     url: ApiEndpoints.part_list,
-    title: t`Add Part`,
+    title: t`新增货品`,
     fields: newPartFields,
     initialData: initialPartData,
     follow: true,
@@ -302,7 +302,7 @@ export function PartListTable({
   const editPart = useEditApiFormModal({
     url: ApiEndpoints.part_list,
     pk: selectedPart.pk,
-    title: t`Edit Part`,
+    title: t`编辑货品`,
     fields: usePartFields({ create: false }),
     onFormSuccess: table.refreshTable
   });
@@ -343,7 +343,7 @@ export function PartListTable({
 
   const duplicatePart = useCreateApiFormModal({
     url: ApiEndpoints.part_list,
-    title: t`Add Part`,
+    title: t`新增货品`,
     fields: duplicatePartFields,
     initialData: {
       ...selectedPart,
@@ -358,9 +358,11 @@ export function PartListTable({
   const setCategory = useBulkEditApiFormModal({
     url: ApiEndpoints.part_list,
     items: table.selectedIds,
-    title: t`Set Category`,
+    title: t`设置分类`,
     fields: {
-      category: {}
+      category: {
+        label: t`货品分类`
+      }
     },
     onFormSuccess: table.refreshTable
   });
@@ -400,15 +402,15 @@ export function PartListTable({
   const tableActions = useMemo(() => {
     return [
       <ActionDropdown
-        tooltip={t`Part Actions`}
+        tooltip={t`货品操作`}
         icon={<InvenTreeIcon icon='part' />}
         disabled={!table.hasSelectedRecords}
         position='bottom-start'
         actions={[
           {
-            name: t`Set Category`,
+            name: t`设置分类`,
             icon: <InvenTreeIcon icon='category' />,
-            tooltip: t`Set category for selected parts`,
+            tooltip: t`给选中的货品设置分类`,
             hidden: !user.hasChangeRole(UserRoles.part),
             disabled: !table.hasSelectedRecords,
             onClick: () => {
@@ -416,9 +418,9 @@ export function PartListTable({
             }
           },
           {
-            name: t`Order Parts`,
+            name: t`生成进货单`,
             icon: <IconShoppingCart color='blue' />,
-            tooltip: t`Order selected parts`,
+            tooltip: t`将选中货品加入进货流程`,
             hidden: !user.hasAddRole(UserRoles.purchase_order),
             onClick: () => {
               orderPartsWizard.openWizard();
@@ -428,28 +430,28 @@ export function PartListTable({
       />,
       <ActionDropdown
         key='add-parts-actions'
-        tooltip={t`Add Parts`}
+        tooltip={t`新增货品`}
         position='bottom-start'
         icon={<IconPlus />}
         hidden={!user.hasAddRole(UserRoles.part)}
         actions={[
           {
-            name: t`Create Part`,
+            name: t`新建货品`,
             icon: <IconPlus />,
-            tooltip: t`Create a new part`,
+            tooltip: t`创建一个新货品`,
             onClick: () => newPart.open()
           },
           {
-            name: t`Import from File`,
+            name: t`从文件导入`,
             icon: <IconFileUpload />,
-            tooltip: t`Import parts from a file`,
+            tooltip: t`从文件导入货品`,
             onClick: () => importParts.open(),
             hidden: !enableImport
           },
           {
-            name: t`Import from Supplier`,
+            name: t`从供货商导入`,
             icon: <IconPackageImport />,
-            tooltip: t`Import parts from a supplier plugin`,
+            tooltip: t`从供货商插件导入货品`,
             hidden: !enableImport || supplierPlugins.length === 0,
             onClick: () => importPartWizard.openWizard()
           }

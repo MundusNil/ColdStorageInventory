@@ -35,27 +35,27 @@ export function StockLocationTable({ parentId }: Readonly<{ parentId?: any }>) {
     return [
       {
         name: 'cascade',
-        label: t`Include Sublocations`,
-        description: t`Include sublocations in results`
+        label: t`包含下级库位`,
+        description: t`结果中包含下级库位`
       },
       {
         name: 'structural',
-        label: t`Structural`,
-        description: t`Show structural locations`
+        label: t`分区节点`,
+        description: t`显示仅用于分区的库位`
       },
       {
         name: 'external',
-        label: t`External`,
-        description: t`Show external locations`
+        label: t`外部库位`,
+        description: t`显示外部库位`
       },
       {
         name: 'has_location_type',
-        label: t`Has location type`
+        label: t`有库位类型`
       },
       {
         name: 'location_type',
-        label: t`Location Type`,
-        description: t`Filter by location type`,
+        label: t`库位类型`,
+        description: t`按库位类型筛选`,
         apiUrl: apiUrl(ApiEndpoints.stock_location_type_list),
         model: ModelType.stocklocationtype,
         modelRenderer: (instance: any) => instance.name
@@ -67,6 +67,7 @@ export function StockLocationTable({ parentId }: Readonly<{ parentId?: any }>) {
     return [
       {
         accessor: 'name',
+        title: t`库位名称`,
         switchable: false,
         copyable: true,
         render: (record: any) => (
@@ -79,23 +80,28 @@ export function StockLocationTable({ parentId }: Readonly<{ parentId?: any }>) {
       DescriptionColumn({}),
       {
         accessor: 'pathstring',
+        title: t`完整库位`,
         copyable: true,
         sortable: true
       },
       {
         accessor: 'items',
+        title: t`库存批次数`,
         sortable: true
       },
       BooleanColumn({
         accessor: 'structural',
+        title: t`分区节点`,
         defaultVisible: false
       }),
       BooleanColumn({
         accessor: 'external',
+        title: t`外部库位`,
         defaultVisible: false
       }),
       {
         accessor: 'location_type',
+        title: t`库位类型`,
         sortable: false,
         filter: ['has_location_type', 'location_type'],
         render: (record: any) => record.location_type_detail?.name
@@ -105,7 +111,7 @@ export function StockLocationTable({ parentId }: Readonly<{ parentId?: any }>) {
 
   const newLocation = useCreateApiFormModal({
     url: ApiEndpoints.stock_location_list,
-    title: t`Add Stock Location`,
+    title: t`新增冷库库位`,
     fields: stockLocationFields(),
     focus: 'name',
     initialData: {
@@ -122,7 +128,7 @@ export function StockLocationTable({ parentId }: Readonly<{ parentId?: any }>) {
   const editLocation = useEditApiFormModal({
     url: ApiEndpoints.stock_location_list,
     pk: selectedLocation,
-    title: t`Edit Stock Location`,
+    title: t`编辑冷库库位`,
     fields: stockLocationFields(),
     onFormSuccess: (record: any) => table.updateRecord(record)
   });
@@ -130,9 +136,11 @@ export function StockLocationTable({ parentId }: Readonly<{ parentId?: any }>) {
   const setParent = useBulkEditApiFormModal({
     url: ApiEndpoints.stock_location_list,
     items: table.selectedIds,
-    title: t`Set Parent Location`,
+    title: t`设置上级库位`,
     fields: {
-      parent: {}
+      parent: {
+        label: t`上级库位`
+      }
     },
     onFormSuccess: table.refreshTable
   });
@@ -143,14 +151,14 @@ export function StockLocationTable({ parentId }: Readonly<{ parentId?: any }>) {
 
     return [
       <ActionDropdown
-        tooltip={t`Location Actions`}
+        tooltip={t`库位操作`}
         icon={<InvenTreeIcon icon='location' />}
         disabled={!table.hasSelectedRecords}
         actions={[
           {
-            name: t`Set Parent`,
+            name: t`设置上级库位`,
             icon: <InvenTreeIcon icon='location' />,
-            tooltip: t`Set parent location for the selected items`,
+            tooltip: t`给选中库位设置上级库位`,
             hidden: !can_edit,
             disabled: !table.hasSelectedRecords,
             onClick: () => {
@@ -161,7 +169,7 @@ export function StockLocationTable({ parentId }: Readonly<{ parentId?: any }>) {
       />,
       <AddItemButton
         key='add-stock-location'
-        tooltip={t`Add Stock Location`}
+        tooltip={t`新增冷库库位`}
         onClick={() => newLocation.open()}
         hidden={!can_add}
       />

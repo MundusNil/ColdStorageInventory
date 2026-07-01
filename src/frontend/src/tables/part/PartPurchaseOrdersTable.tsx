@@ -30,7 +30,7 @@ export default function PartPurchaseOrdersTable({
         sortable: true,
         switchable: false,
         filter: ['pending', 'received'],
-        title: t`Purchase Order`
+        title: t`进货单`
       }),
       StatusColumn({
         accessor: 'order_detail.status',
@@ -49,13 +49,13 @@ export default function PartPurchaseOrdersTable({
       {
         accessor: 'supplier_part_detail.SKU',
         ordering: 'sku',
-        title: t`Supplier Part`,
+        title: t`供货商货品`,
         sortable: true
       },
       {
         accessor: 'supplier_part_detail.manufacturer_part_detail.MPN',
         ordering: 'mpn',
-        title: t`Manufacturer Part`,
+        title: t`厂家货号`,
         sortable: true
       },
       {

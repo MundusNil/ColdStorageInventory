@@ -63,14 +63,14 @@ export function StockTrackingTable({
 
       const entries: StockTrackingEntry[] = [
         {
-          label: t`Stock Item`,
+          label: t`库存批次`,
           key: 'stockitem',
           details:
             deltas.stockitem_detail &&
             RenderStockItem({ instance: deltas.stockitem_detail, link: true })
         },
         {
-          label: t`Stock Item`,
+          label: t`库存批次`,
           key: 'item',
           details:
             deltas.item_detail &&
@@ -117,7 +117,7 @@ export function StockTrackingTable({
           details: deltas.removed
         },
         {
-          label: t`Part`,
+          label: t`货品`,
           key: 'part',
           details:
             deltas.part_detail &&
@@ -139,7 +139,7 @@ export function StockTrackingTable({
             })
         },
         {
-          label: t`Build Order`,
+          label: t`组合配货单`,
           key: 'buildorder',
           details:
             deltas.buildorder_detail &&
@@ -150,7 +150,7 @@ export function StockTrackingTable({
             })
         },
         {
-          label: t`Purchase Order`,
+          label: t`进货单`,
           key: 'purchaseorder',
           details:
             deltas.purchaseorder_detail &&
@@ -161,7 +161,7 @@ export function StockTrackingTable({
             })
         },
         {
-          label: t`Sales Order`,
+          label: t`出货单`,
           key: 'salesorder',
           details:
             deltas.salesorder_detail &&
@@ -246,7 +246,7 @@ export function StockTrackingTable({
         switchable: false
       }),
       PartColumn({
-        title: t`Part`,
+        title: t`货品`,
         part: 'part_detail',
         switchable: true,
         hidden: !partId
@@ -256,7 +256,7 @@ export function StockTrackingTable({
         hidden: !partId
       }),
       StockColumn({
-        title: t`Stock Item`,
+        title: t`库存批次`,
         accessor: 'item_detail',
         nullMessage: (
           <Text size='sm' c='red'>{t`Stock item no longer exists`}</Text>

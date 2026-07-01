@@ -67,17 +67,17 @@ export function RenderPartColumn({
       />
       <Group justify='flex-end' wrap='nowrap' gap='xs'>
         {part?.active == false && (
-          <Tooltip label={t`Part is not active`}>
+          <Tooltip label={t`货品未启用`}>
             <IconExclamationCircle color='red' size={16} />
           </Tooltip>
         )}
         {globalSettings.isSet('PART_ENABLE_LOCKING') && part?.locked && (
-          <Tooltip label={t`Part is Locked`}>
+          <Tooltip label={t`货品已锁定`}>
             <IconLock size={16} />
           </Tooltip>
         )}
         {part?.starred && (
-          <Tooltip label={t`You are subscribed to notifications for this part`}>
+          <Tooltip label={t`你已订阅此货品的通知`}>
             <IconBell size={16} color='green' />
           </Tooltip>
         )}
@@ -90,7 +90,7 @@ export function RenderPartColumn({
 export function PartColumn(props: PartColumnProps): TableColumn {
   return {
     accessor: 'part',
-    title: t`Part`,
+    title: t`货品`,
     sortable: true,
     switchable: false,
     minWidth: '175px',
@@ -122,7 +122,7 @@ export function IPNColumn(props: TableColumnProps): TableColumn {
     sortable: true,
     ordering: 'IPN',
     switchable: true,
-    title: t`IPN`,
+    title: t`货品编码`,
     copyable: true,
     filter: 'has_ipn',
     ...props
@@ -136,7 +136,7 @@ export type StockColumnProps = TableColumnProps & {
 // Render a StockItem instance within a table
 export function StockColumn(props: StockColumnProps): TableColumn {
   return {
-    title: t`Stock Item`,
+    title: t`库存批次`,
     ...props,
     ordering: props.ordering || 'stock',
     accessor: props.accessor || 'stock',
@@ -169,52 +169,52 @@ export function StockColumn(props: StockColumnProps): TableColumn {
           <Text
             key='production'
             size='sm'
-          >{t`This stock item is in production`}</Text>
+          >{t`此库存批次正在组合配货`}</Text>
         );
       } else if (stock_item.sales_order) {
         extra.push(
           <Text
             key='sales-order'
             size='sm'
-          >{t`This stock item has been assigned to a sales order`}</Text>
+          >{t`此库存批次已分配给出货单`}</Text>
         );
       } else if (stock_item.customer) {
         extra.push(
           <Text
             key='customer'
             size='sm'
-          >{t`This stock item has been assigned to a customer`}</Text>
+          >{t`此库存批次已分配给客户`}</Text>
         );
       } else if (stock_item.belongs_to) {
         extra.push(
           <Text
             key='belongs-to'
             size='sm'
-          >{t`This stock item is installed in another stock item`}</Text>
+          >{t`此库存批次已关联到其他库存批次`}</Text>
         );
       } else if (stock_item.consumed_by) {
         extra.push(
           <Text
             key='consumed-by'
             size='sm'
-          >{t`This stock item has been consumed by a build order`}</Text>
+          >{t`此库存批次已被组合配货单消耗`}</Text>
         );
       } else if (!stock_item.in_stock) {
         extra.push(
           <Text
             key='unavailable'
             size='sm'
-          >{t`This stock item is unavailable`}</Text>
+          >{t`此库存批次不可用`}</Text>
         );
       }
 
       if (stock_item.expired) {
         extra.push(
-          <Text key='expired' size='sm'>{t`This stock item has expired`}</Text>
+          <Text key='expired' size='sm'>{t`此库存批次已过期`}</Text>
         );
       } else if (stock_item.stale) {
         extra.push(
-          <Text key='stale' size='sm'>{t`This stock item is stale`}</Text>
+          <Text key='stale' size='sm'>{t`此库存批次长期未盘点`}</Text>
         );
       }
 
@@ -250,7 +250,7 @@ export function StockColumn(props: StockColumnProps): TableColumn {
           if (available > 0) {
             extra.push(
               <Text key='available' size='sm' c='orange'>
-                {`${t`Available`}: ${formatDecimal(available)}`}
+                {`${t`可用数量`}: ${formatDecimal(available)}`}
               </Text>
             );
           } else {
@@ -259,7 +259,7 @@ export function StockColumn(props: StockColumnProps): TableColumn {
                 key='no-stock'
                 size='sm'
                 c='red'
-              >{t`No stock available`}</Text>
+              >{t`无可用库存`}</Text>
             );
           }
         }
@@ -269,7 +269,7 @@ export function StockColumn(props: StockColumnProps): TableColumn {
             <Text
               key='depleted'
               size='sm'
-            >{t`This stock item has been depleted`}</Text>
+            >{t`此库存批次已清空`}</Text>
           );
         }
       }
@@ -286,7 +286,7 @@ export function StockColumn(props: StockColumnProps): TableColumn {
               {part.units && <Text size='xs'>[{part.units}]</Text>}
             </Group>
           }
-          title={t`Stock Information`}
+          title={t`库存信息`}
           extra={extra}
           iconColor={color}
         />
@@ -370,7 +370,7 @@ export function LocationColumn(props: TableColumnProps): TableColumn {
   if (enabled) {
     return PathColumnPlainText({
       accessor: 'location',
-      title: t`Location`,
+      title: t`库位`,
       sortable: true,
       ordering: 'location',
       minWidth: '150px',
@@ -379,7 +379,7 @@ export function LocationColumn(props: TableColumnProps): TableColumn {
   } else {
     return PathColumn({
       accessor: 'location',
-      title: t`Location`,
+      title: t`库位`,
       sortable: true,
       ordering: 'location',
       minWidth: '125px',
@@ -394,7 +394,7 @@ export function DefaultLocationColumn(props: TableColumnProps): TableColumn {
   if (enabled) {
     return PathColumnPlainText({
       accessor: 'default_location',
-      title: t`Default Location`,
+      title: t`默认库位`,
       sortable: true,
       defaultVisible: false,
       ordering: 'default_location',
@@ -403,7 +403,7 @@ export function DefaultLocationColumn(props: TableColumnProps): TableColumn {
   } else {
     return PathColumn({
       accessor: 'default_location',
-      title: t`Default Location`,
+      title: t`默认库位`,
       sortable: true,
       defaultVisible: false,
       ordering: 'default_location',
@@ -418,7 +418,7 @@ export function CategoryColumn(props: TableColumnProps): TableColumn {
   if (enabled) {
     return PathColumnPlainText({
       accessor: 'category',
-      title: t`Category`,
+      title: t`分类`,
       sortable: true,
       ordering: 'category',
       minWidth: '150px',
@@ -427,7 +427,7 @@ export function CategoryColumn(props: TableColumnProps): TableColumn {
   } else {
     return PathColumn({
       accessor: 'category',
-      title: t`Category`,
+      title: t`分类`,
       sortable: true,
       ordering: 'category',
       minWidth: '125px',
@@ -464,7 +464,7 @@ export function DecimalColumn(props: TableColumn): TableColumn {
 export function DescriptionColumn(props: TableColumnProps): TableColumn {
   return {
     accessor: 'description',
-    title: t`Description`,
+    title: t`说明`,
     sortable: false,
     switchable: true,
     minWidth: '200px',
@@ -510,7 +510,7 @@ export function LinkColumn(props: TableColumnProps): TableColumn {
 export function ReferenceColumn(props: TableColumnProps): TableColumn {
   return {
     accessor: 'reference',
-    title: t`Reference`,
+    title: t`单号`,
     sortable: true,
     switchable: true,
     copyable: true,
@@ -522,7 +522,7 @@ export function NoteColumn(props: TableColumnProps): TableColumn {
   return {
     accessor: 'note',
     sortable: false,
-    title: t`Note`,
+    title: t`备注`,
     render: (record: any) => record.note ?? record.notes,
     ...props
   };
@@ -550,7 +550,7 @@ export function AllocatedLinesProgressColumn(
   return {
     accessor: 'allocated_lines',
     sortable: true,
-    title: t`Allocated Lines`,
+    title: t`已分配明细`,
     minWidth: 125,
     render: (record: any) => (
       <ProgressBar
@@ -571,7 +571,7 @@ export function ProjectCodeColumn(props: TableColumnProps): TableColumn {
     accessor: 'project_code',
     ordering: 'project_code',
     sortable: true,
-    title: t`Project Code`,
+    title: t`业务编号`,
     hidden: !enabled,
     filter: 'project_code',
     render: (record: any) => {
@@ -606,7 +606,7 @@ export function StatusColumn(props: StatusColumnProps): TableColumn {
 export function UserColumn(props: TableColumnProps): TableColumn {
   return {
     accessor: 'user',
-    title: t`User`,
+    title: t`用户`,
     sortable: true,
     switchable: true,
     render: (record: any) => {
@@ -629,7 +629,7 @@ export function UserColumn(props: TableColumnProps): TableColumn {
         return (
           <TableHoverCard
             value={instance.username}
-            title={t`User Information`}
+            title={t`用户信息`}
             icon='user'
             extra={extra}
           />
@@ -646,7 +646,7 @@ export function CreatedByColumn(props: TableColumnProps): TableColumn {
   return UserColumn({
     accessor: 'created_by',
     ordering: 'created_by',
-    title: t`Created By`,
+    title: t`创建人`,
     filter: 'created_by',
     ...props
   });
@@ -656,7 +656,7 @@ export function OwnerColumn(props: TableColumnProps): TableColumn {
   return {
     accessor: 'owner_detail',
     ordering: 'owner',
-    title: t`Owner`,
+    title: t`负责人`,
     sortable: true,
     switchable: true,
     render: (record: any) => {
@@ -676,7 +676,7 @@ export function ResponsibleColumn(props: TableColumnProps): TableColumn {
   return OwnerColumn({
     accessor: 'responsible_detail',
     ordering: 'responsible',
-    title: t`Responsible`,
+    title: t`负责人`,
     filter: 'assigned_to',
     ...props
   });
@@ -686,7 +686,7 @@ export function DateColumn(props: TableColumnProps): TableColumn {
   return {
     accessor: 'date',
     sortable: true,
-    title: t`Date`,
+    title: t`日期`,
     switchable: true,
     render: (record: any) =>
       formatDate(resolveItem(record, props.accessor ?? 'date'), {
@@ -700,7 +700,7 @@ export function DateColumn(props: TableColumnProps): TableColumn {
 export function StartDateColumn(props: TableColumnProps): TableColumn {
   return DateColumn({
     accessor: 'start_date',
-    title: t`Start Date`,
+    title: t`开始日期`,
     filter: ['has_start_date', 'start_date_before', 'start_date_after'],
     ...props
   });
@@ -709,7 +709,7 @@ export function StartDateColumn(props: TableColumnProps): TableColumn {
 export function TargetDateColumn(props: TableColumnProps): TableColumn {
   return DateColumn({
     accessor: 'target_date',
-    title: t`Target Date`,
+    title: t`目标日期`,
     filter: ['has_target_date', 'target_date_before', 'target_date_after'],
     ...props
   });
@@ -718,7 +718,7 @@ export function TargetDateColumn(props: TableColumnProps): TableColumn {
 export function CreationDateColumn(props: TableColumnProps): TableColumn {
   return DateColumn({
     accessor: 'creation_date',
-    title: t`Creation Date`,
+    title: t`创建日期`,
     filter: ['created_before', 'created_after'],
     ...props
   });
@@ -727,7 +727,7 @@ export function CreationDateColumn(props: TableColumnProps): TableColumn {
 export function CompletionDateColumn(props: TableColumnProps): TableColumn {
   return DateColumn({
     accessor: 'completion_date',
-    title: t`Completion Date`,
+    title: t`完成日期`,
     filter: ['completed_before', 'completed_after'],
     ...props
   });
@@ -736,7 +736,7 @@ export function CompletionDateColumn(props: TableColumnProps): TableColumn {
 export function ShipmentDateColumn(props: TableColumnProps): TableColumn {
   return DateColumn({
     accessor: 'shipment_date',
-    title: t`Shipment Date`,
+    title: t`发货日期`,
     filter: ['shipment_date_before', 'shipment_date_after'],
     ...props
   });
@@ -745,7 +745,7 @@ export function ShipmentDateColumn(props: TableColumnProps): TableColumn {
 export function UpdatedAtColumn(props: TableColumnProps): TableColumn {
   return DateColumn({
     accessor: 'updated_at',
-    title: t`Updated`,
+    title: t`更新时间`,
     defaultVisible: false,
     filter: ['updated_before', 'updated_after'],
     extra: { showTime: true },
@@ -768,7 +768,7 @@ export function CurrencyColumn({
 }): TableColumn {
   return {
     accessor: accessor,
-    title: title ?? t`Currency`,
+    title: title ?? t`币种`,
     sortable: sortable ?? true,
     render: (record: any) => {
       const currency_key = currency_accessor ?? `${accessor}_currency`;
@@ -782,14 +782,14 @@ export function CurrencyColumn({
 export function TotalPriceColumn(): TableColumn {
   return CurrencyColumn({
     accessor: 'total_price',
-    title: t`Total Price`
+    title: t`总价`
   });
 }
 
 export function LineItemColumn(props: TableColumnProps): TableColumn {
   return {
     accessor: 'line',
-    title: t`Line Item`,
+    title: t`明细`,
     sortable: true,
     switchable: true,
     ...props
