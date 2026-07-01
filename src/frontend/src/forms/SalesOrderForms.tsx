@@ -431,9 +431,9 @@ export function useAllocateToSalesOrderForm({
         field_type: 'table',
         value: [],
         headers: [
-          { title: t`Part`, style: { minWidth: '200px' } },
+          { title: t`货品`, style: { minWidth: '200px' } },
           { title: t`Allocated`, style: { minWidth: '200px' } },
-          { title: t`Stock Item`, style: { width: '100%' } },
+          { title: t`库存批次`, style: { width: '100%' } },
           { title: t`Quantity`, style: { minWidth: '200px' } },
           { title: '', style: { width: '50px' } }
         ],

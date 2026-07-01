@@ -241,7 +241,7 @@ export function useReceiveReturnOrderLineItems(
         );
       },
       headers: [
-        { title: t`Part`, style: { minWidth: '250px' } },
+        { title: t`货品`, style: { minWidth: '250px' } },
         { title: t`Quantity`, style: { minWidth: '250px' } },
         { title: t`Status`, style: { minWidth: '250px' } },
         { title: '', style: { width: '50px' } }

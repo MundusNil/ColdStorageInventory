@@ -331,7 +331,7 @@ export function useCreateStockItem() {
     url: ApiEndpoints.stock_item_list,
     fields: fields,
     modalId: 'create-stock-item',
-    title: t`Add Stock Item`,
+    title: t`新增库存批次`,
     keepOpenOption: true
   });
 }
@@ -375,7 +375,7 @@ export function useStockItemInstallFields({
         field_type: 'related field',
         required: true,
         exclude: true,
-        label: t`Part`,
+        label: t`货品`,
         description: t`Select the part to install`,
         model: ModelType.part,
         api_url: apiUrl(ApiEndpoints.part_list),
@@ -862,21 +862,24 @@ function stockTransferFields(
         );
       },
       headers: [
-        { title: t`Part` },
-        { title: t`Location` },
-        { title: t`Batch` },
-        { title: t`Stock` },
-        { title: t`Move`, style: { width: '200px' } },
-        { title: t`Actions` }
+        { title: t`货品` },
+        { title: t`库位` },
+        { title: t`批次` },
+        { title: t`库存` },
+        { title: t`移库数量`, style: { width: '200px' } },
+        { title: t`操作` }
       ]
     },
     location: {
+      label: t`目标库位`,
       value: locations.length === 1 ? locations[0] : undefined,
       filters: {
         structural: false
       }
     },
-    notes: {}
+    notes: {
+      label: t`备注`
+    }
   };
   return fields;
 }
@@ -910,16 +913,17 @@ function stockReturnFields(items: any[]): ApiFormFieldSet {
         );
       },
       headers: [
-        { title: t`Part` },
-        { title: t`Location` },
-        { title: t`Batch` },
-        { title: t`Quantity` },
-        { title: t`Return`, style: { width: '200px' } },
-        { title: t`Actions` }
+        { title: t`货品` },
+        { title: t`库位` },
+        { title: t`批次` },
+        { title: t`数量` },
+        { title: t`退回数量`, style: { width: '200px' } },
+        { title: t`操作` }
       ]
     },
     location: {
       field_type: 'related field',
+      label: t`退回库位`,
       api_url: apiUrl(ApiEndpoints.stock_location_list),
       model: ModelType.stocklocation,
       required: true,
@@ -929,14 +933,14 @@ function stockReturnFields(items: any[]): ApiFormFieldSet {
     },
     merge: {
       field_type: 'boolean',
-      label: t`Merge into existing stock`,
-      description: t`Merge returned items into existing stock items if possible`,
+      label: t`并入已有库存批次`,
+      description: t`如有相同货品和批次，尽量合并为已有库存批次`,
       value: false
     },
     notes: {
       field_type: 'string',
-      label: t`Notes`,
-      description: t`Stock transaction notes`
+      label: t`备注`,
+      description: t`库存流水备注`
     }
   };
 
@@ -976,15 +980,17 @@ function stockRemoveFields(items: any[]): ApiFormFieldSet {
         );
       },
       headers: [
-        { title: t`Part` },
-        { title: t`Location` },
-        { title: t`Batch` },
-        { title: t`In Stock` },
-        { title: t`Remove`, style: { width: '200px' } },
-        { title: t`Actions` }
+        { title: t`货品` },
+        { title: t`库位` },
+        { title: t`批次` },
+        { title: t`当前库存` },
+        { title: t`出库数量`, style: { width: '200px' } },
+        { title: t`操作` }
       ]
     },
-    notes: {}
+    notes: {
+      label: t`备注`
+    }
   };
 
   return fields;
@@ -1022,15 +1028,17 @@ function stockAddFields(items: any[]): ApiFormFieldSet {
         );
       },
       headers: [
-        { title: t`Part` },
-        { title: t`Location` },
-        { title: t`Batch` },
-        { title: t`In Stock` },
-        { title: t`Add`, style: { width: '200px' } },
-        { title: t`Actions` }
+        { title: t`货品` },
+        { title: t`库位` },
+        { title: t`批次` },
+        { title: t`当前库存` },
+        { title: t`补入数量`, style: { width: '200px' } },
+        { title: t`操作` }
       ]
     },
-    notes: {}
+    notes: {
+      label: t`备注`
+    }
   };
 
   return fields;
@@ -1063,21 +1071,24 @@ function stockCountFields(items: any[]): ApiFormFieldSet {
         );
       },
       headers: [
-        { title: t`Part` },
-        { title: t`Location` },
-        { title: t`Batch` },
-        { title: t`In Stock` },
-        { title: t`Count`, style: { width: '200px' } },
-        { title: t`Actions` }
+        { title: t`货品` },
+        { title: t`库位` },
+        { title: t`批次` },
+        { title: t`当前库存` },
+        { title: t`盘点数量`, style: { width: '200px' } },
+        { title: t`操作` }
       ]
     },
     location: {
+      label: t`盘点库位`,
       value: locations.length === 1 ? locations[0] : undefined,
       filters: {
         structural: false
       }
     },
-    notes: {}
+    notes: {
+      label: t`备注`
+    }
   };
 
   return fields;
@@ -1112,17 +1123,20 @@ function stockChangeStatusFields(items: any[]): ApiFormFieldSet {
         );
       },
       headers: [
-        { title: t`Part` },
-        { title: t`Location` },
-        { title: t`Batch` },
-        { title: t`In Stock` },
+        { title: t`货品` },
+        { title: t`库位` },
+        { title: t`批次` },
+        { title: t`当前库存` },
         { title: '', style: { width: '50px' } }
       ]
     },
     status: {
+      label: t`库存状态`,
       value: statusValues.length === 1 ? statusValues[0] : undefined
     },
-    note: {}
+    note: {
+      label: t`备注`
+    }
   };
 
   return fields;
@@ -1180,22 +1194,29 @@ function stockMergeFields(items: any[]): ApiFormFieldSet {
         );
       },
       headers: [
-        { title: t`Part` },
-        { title: t`Location` },
-        { title: t`Batch` },
-        { title: t`In Stock` },
-        { title: t`Actions` }
+        { title: t`货品` },
+        { title: t`库位` },
+        { title: t`批次` },
+        { title: t`当前库存` },
+        { title: t`操作` }
       ]
     },
     location: {
+      label: t`合并后库位`,
       default: defaultLocation,
       filters: {
         structural: false
       }
     },
-    notes: {},
-    allow_mismatched_suppliers: {},
-    allow_mismatched_status: {}
+    notes: {
+      label: t`备注`
+    },
+    allow_mismatched_suppliers: {
+      label: t`允许不同供货商合并`
+    },
+    allow_mismatched_status: {
+      label: t`允许不同状态合并`
+    }
   };
 
   return fields;
@@ -1228,19 +1249,22 @@ function stockAssignFields(items: any[]): ApiFormFieldSet {
         );
       },
       headers: [
-        { title: t`Part` },
-        { title: t`Location` },
-        { title: t`Batch` },
-        { title: t`In Stock` },
+        { title: t`货品` },
+        { title: t`库位` },
+        { title: t`批次` },
+        { title: t`当前库存` },
         { title: '', style: { width: '50px' } }
       ]
     },
     customer: {
+      label: t`客户`,
       filters: {
         is_customer: true
       }
     },
-    notes: {}
+    notes: {
+      label: t`备注`
+    }
   };
 
   return fields;
@@ -1272,10 +1296,10 @@ function stockDeleteFields(items: any[]): ApiFormFieldSet {
         );
       },
       headers: [
-        { title: t`Part` },
-        { title: t`Location` },
-        { title: t`Batch` },
-        { title: t`In Stock` },
+        { title: t`货品` },
+        { title: t`库位` },
+        { title: t`批次` },
+        { title: t`当前库存` },
         { title: '', style: { width: '50px' } }
       ]
     }
@@ -1380,11 +1404,11 @@ export function useAddStockItem(props: StockOperationProps) {
     ...props,
     fieldGenerator: stockAddFields,
     endpoint: ApiEndpoints.stock_add,
-    title: t`Add Stock`,
-    successMessage: t`Stock added`,
+    title: t`补入库存`,
+    successMessage: t`库存已补入`,
     preFormContent: (
       <Alert color='blue'>
-        {t`Increase the quantity of the selected stock items by a given amount.`}
+        {t`按输入数量增加所选库存批次。`}
       </Alert>
     )
   });
@@ -1395,11 +1419,11 @@ export function useRemoveStockItem(props: StockOperationProps) {
     ...props,
     fieldGenerator: stockRemoveFields,
     endpoint: ApiEndpoints.stock_remove,
-    title: t`Remove Stock`,
-    successMessage: t`Stock removed`,
+    title: t`出库扣数`,
+    successMessage: t`库存已扣减`,
     preFormContent: (
       <Alert color='blue'>
-        {t`Decrease the quantity of the selected stock items by a given amount.`}
+        {t`按输入数量扣减所选库存批次。`}
       </Alert>
     )
   });
@@ -1421,11 +1445,11 @@ export function useTransferStockItem(props: StockOperationProps) {
     ...props,
     fieldGenerator: fieldGenerator,
     endpoint: ApiEndpoints.stock_transfer,
-    title: t`Transfer Stock`,
-    successMessage: t`Stock transferred`,
+    title: t`移库`,
+    successMessage: t`库存已移库`,
     preFormContent: (
       <Alert color='blue'>
-        {t`Transfer selected items to the specified location.`}
+        {t`将所选库存批次移动到指定库位。`}
       </Alert>
     )
   });
@@ -1436,11 +1460,11 @@ export function useReturnStockItem(props: StockOperationProps) {
     ...props,
     fieldGenerator: stockReturnFields,
     endpoint: ApiEndpoints.stock_return,
-    title: t`Return Stock`,
-    successMessage: t`Stock returned`,
+    title: t`退回库存`,
+    successMessage: t`库存已退回`,
     preFormContent: (
       <Alert color='blue'>
-        {t`Return selected items into stock, to the specified location.`}
+        {t`将所选库存批次退回到指定库位。`}
       </Alert>
     )
   });
@@ -1451,11 +1475,11 @@ export function useCountStockItem(props: StockOperationProps) {
     ...props,
     fieldGenerator: stockCountFields,
     endpoint: ApiEndpoints.stock_count,
-    title: t`Count Stock`,
-    successMessage: t`Stock counted`,
+    title: t`盘点改数`,
+    successMessage: t`库存已盘点`,
     preFormContent: (
       <Alert color='blue'>
-        {t`Count the selected stock items, and adjust the quantity accordingly.`}
+        {t`录入所选库存批次的实际数量，并同步调整库存。`}
       </Alert>
     )
   });
@@ -1466,11 +1490,11 @@ export function useChangeStockStatus(props: StockOperationProps) {
     ...props,
     fieldGenerator: stockChangeStatusFields,
     endpoint: ApiEndpoints.stock_change_status,
-    title: t`Change Stock Status`,
-    successMessage: t`Stock status changed`,
+    title: t`修改库存状态`,
+    successMessage: t`库存状态已修改`,
     preFormContent: (
       <Alert color='blue'>
-        {t`Change the status of the selected stock items.`}
+        {t`修改所选库存批次的状态。`}
       </Alert>
     )
   });
@@ -1493,14 +1517,15 @@ export function useChangeStockBatchCode(props: StockOperationProps) {
   return useBulkEditApiFormModal({
     url: ApiEndpoints.stock_item_list,
     items: props.items?.map((item: any) => item.pk) ?? [],
-    title: t`Change Batch Code`,
+    title: t`修改批次`,
     preFormContent: (
       <Alert color='blue'>
-        {t`Change batch code for the selected stock items`}
+        {t`修改所选库存批次的批次号`}
       </Alert>
     ),
     fields: {
       batch: {
+        label: t`批次`,
         value: batchCode
       }
     },
@@ -1513,14 +1538,14 @@ export function useMergeStockItem(props: StockOperationProps) {
     ...props,
     fieldGenerator: stockMergeFields,
     endpoint: ApiEndpoints.stock_merge,
-    title: t`Merge Stock`,
-    successMessage: t`Stock merged`,
+    title: t`合并库存批次`,
+    successMessage: t`库存批次已合并`,
     preFormContent: (
-      <Alert title={t`Merge Stock Items`} color='yellow'>
+      <Alert title={t`合并库存批次`} color='yellow'>
         <List>
-          <List.Item>{t`Merge operation cannot be reversed`}</List.Item>
-          <List.Item>{t`Tracking information may be lost when merging items`}</List.Item>
-          <List.Item>{t`Supplier information may be lost when merging items`}</List.Item>
+          <List.Item>{t`合并操作不可撤销`}</List.Item>
+          <List.Item>{t`合并后部分追踪信息可能丢失`}</List.Item>
+          <List.Item>{t`合并后供货商信息可能丢失`}</List.Item>
         </List>
       </Alert>
     )
@@ -1538,8 +1563,8 @@ export function useAssignStockItem(props: StockOperationProps) {
     items: items,
     fieldGenerator: stockAssignFields,
     endpoint: ApiEndpoints.stock_assign,
-    title: t`Assign Stock to Customer`,
-    successMessage: t`Stock assigned to customer`
+    title: t`分配给客户`,
+    successMessage: t`库存已分配给客户`
   });
 }
 
@@ -1549,11 +1574,11 @@ export function useDeleteStockItem(props: StockOperationProps) {
     fieldGenerator: stockDeleteFields,
     endpoint: ApiEndpoints.stock_item_list,
     modalFunc: useDeleteApiFormModal,
-    title: t`Delete Stock Items`,
-    successMessage: t`Stock deleted`,
+    title: t`删除库存批次`,
+    successMessage: t`库存批次已删除`,
     preFormContent: (
       <Alert color='red'>
-        {t`This operation will permanently delete the selected stock items.`}
+        {t`此操作会永久删除所选库存批次。`}
       </Alert>
     )
   });
@@ -1562,17 +1587,29 @@ export function useDeleteStockItem(props: StockOperationProps) {
 export function stockLocationFields(): ApiFormFieldSet {
   const fields: ApiFormFieldSet = {
     parent: {
-      description: t`Parent stock location`,
+      label: t`上级库位`,
+      description: t`上级冷库库位`,
       required: false
     },
-    name: {},
-    description: {},
-    structural: {},
-    external: {},
+    name: {
+      label: t`库位名称`
+    },
+    description: {
+      label: t`说明`
+    },
+    structural: {
+      label: t`仅作为分区节点`
+    },
+    external: {
+      label: t`外部库位`
+    },
     custom_icon: {
+      label: t`图标`,
       field_type: 'icon'
     },
-    location_type: {}
+    location_type: {
+      label: t`库位类型`
+    }
   };
 
   return fields;
