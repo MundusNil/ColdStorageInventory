@@ -63,7 +63,7 @@ export function BuildOrderTable({
       IPNColumn({}),
       {
         accessor: 'part_detail.revision',
-        title: t`Revision`,
+        title: t`规格版本`,
         sortable: true,
         defaultVisible: false
       },
@@ -73,7 +73,7 @@ export function BuildOrderTable({
       }),
       {
         accessor: 'completed',
-        title: t`Completed`,
+        title: t`已完成`,
         minWidth: 125,
         sortable: true,
         switchable: false,
@@ -103,7 +103,7 @@ export function BuildOrderTable({
       },
       BooleanColumn({
         accessor: 'external',
-        title: t`External`,
+        title: t`外部配货`,
         filter: 'external',
         sortable: true,
         switchable: true,
@@ -121,7 +121,7 @@ export function BuildOrderTable({
         accessor: 'issued_by_detail',
         ordering: 'issued_by',
         filter: 'issued_by',
-        title: t`Issued By`
+        title: t`经办人`
       }),
       ResponsibleColumn({}),
       LinkColumn({})
@@ -145,7 +145,7 @@ export function BuildOrderTable({
 
   const newBuild = useCreateApiFormModal({
     url: ApiEndpoints.build_order_list,
-    title: t`Add Build Order`,
+    title: t`新增组合配货单`,
     modalId: 'create-build-order',
     fields: buildOrderFields,
     initialData: {
@@ -162,7 +162,7 @@ export function BuildOrderTable({
     return [
       <AddItemButton
         hidden={!user.hasAddRole(UserRoles.build)}
-        tooltip={t`Add Build Order`}
+        tooltip={t`新增组合配货单`}
         onClick={() => newBuild.open()}
         key='add-build-order'
       />

@@ -26,7 +26,7 @@ export default function ParametricCompanyTable({
     return [
       {
         accessor: 'name',
-        title: t`Company`,
+        title: t`往来单位`,
         sortable: true,
         switchable: false,
         render: (record: any) => {

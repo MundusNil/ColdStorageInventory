@@ -28,8 +28,8 @@ export function PartTableFilters(): TableFilter[] {
     },
     {
       name: 'bom_valid',
-      label: t`BOM Valid`,
-      description: t`Filter by parts with a valid BOM`,
+      label: t`组合清单已校验`,
+      description: t`筛选组合清单已校验的货品`,
       type: 'boolean'
     },
     {

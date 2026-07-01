@@ -65,7 +65,7 @@ export function PurchaseOrderTable({
       DescriptionColumn({}),
       {
         accessor: 'supplier__name',
-        title: t`Supplier`,
+        title: t`供货商`,
         sortable: true,
         render: (record: any) => (
           <CompanyColumn company={record.supplier_detail} />
@@ -73,6 +73,7 @@ export function PurchaseOrderTable({
       },
       {
         accessor: 'supplier_reference',
+        title: t`供货商单号`,
         copyable: true
       },
       LineItemsProgressColumn({}),
@@ -98,7 +99,7 @@ export function PurchaseOrderTable({
       }),
       {
         accessor: 'total_price',
-        title: t`Total Price`,
+        title: t`总价`,
         sortable: true,
         render: (record: any) => {
           return formatCurrency(record.total_price, {
@@ -115,7 +116,7 @@ export function PurchaseOrderTable({
 
   const newPurchaseOrder = useCreateApiFormModal({
     url: ApiEndpoints.purchase_order_list,
-    title: t`Add Purchase Order`,
+    title: t`新增进货单`,
     fields: purchaseOrderFields,
     initialData: {
       supplier: supplierId
@@ -129,7 +130,7 @@ export function PurchaseOrderTable({
     return [
       <AddItemButton
         key='add-purchase-order'
-        tooltip={t`Add Purchase Order`}
+        tooltip={t`新增进货单`}
         onClick={() => newPurchaseOrder.open()}
         hidden={!user.hasAddRole(UserRoles.purchase_order)}
       />

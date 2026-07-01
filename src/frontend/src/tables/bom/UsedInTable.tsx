@@ -123,7 +123,7 @@ export function UsedInTable({
     fields: bomItemFields({
       showAssembly: true
     }),
-    successMessage: t`BOM item updated`,
+    successMessage: t`组合清单明细已更新`,
     table: table
   });
 

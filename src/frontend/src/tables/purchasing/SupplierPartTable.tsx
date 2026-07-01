@@ -107,14 +107,14 @@ export function SupplierPartTable({
       },
       {
         accessor: 'SKU',
-        title: t`Supplier Part`,
+        title: t`供货商货品`,
         sortable: true,
         copyable: true
       },
       DescriptionColumn({}),
       {
         accessor: 'manufacturer',
-        title: t`Manufacturer`,
+        title: t`生产厂家/品牌`,
         sortable: true,
         render: (record: any) => (
           <CompanyColumn company={record?.manufacturer_detail} />

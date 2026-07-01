@@ -50,7 +50,7 @@ export function RelatedPartTable({
     return [
       {
         accessor: 'part',
-        title: t`Part`,
+        title: t`货品`,
         switchable: false,
         render: (record: any) => {
           const part = getPart(record);
@@ -80,7 +80,7 @@ export function RelatedPartTable({
       },
       {
         accessor: 'description',
-        title: t`Part Description`,
+        title: t`货品说明`,
         ellipsis: true,
         render: (record: any) => {
           return getPart(record).description;
@@ -102,7 +102,7 @@ export function RelatedPartTable({
 
   const newRelatedPart = useCreateApiFormModal({
     url: ApiEndpoints.related_part_list,
-    title: t`Add Related Part`,
+    title: t`新增关联货品`,
     fields: relatedPartFields,
     initialData: {
       part_1: partId
@@ -117,14 +117,14 @@ export function RelatedPartTable({
   const deleteRelatedPart = useDeleteApiFormModal({
     url: ApiEndpoints.related_part_list,
     pk: selectedRelatedPart,
-    title: t`Delete Related Part`,
+    title: t`删除关联货品`,
     table: table
   });
 
   const editRelatedPart = useEditApiFormModal({
     url: ApiEndpoints.related_part_list,
     pk: selectedRelatedPart,
-    title: t`Edit Related Part`,
+    title: t`编辑关联货品`,
     fields: {
       note: {}
     },
@@ -135,7 +135,7 @@ export function RelatedPartTable({
     return [
       <AddItemButton
         key='add-related-part'
-        tooltip={t`Add Related Part`}
+        tooltip={t`新增关联货品`}
         hidden={!user.hasAddRole(UserRoles.part)}
         onClick={() => newRelatedPart.open()}
       />

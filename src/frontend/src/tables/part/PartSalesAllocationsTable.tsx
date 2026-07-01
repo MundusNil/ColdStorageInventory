@@ -39,7 +39,7 @@ export default function PartSalesAllocationsTable({
     return [
       {
         accessor: 'order',
-        title: t`Sales Order`,
+        title: t`出货单`,
         switchable: false,
         render: (record: any) => (
           <Group wrap='nowrap' gap='xs'>
@@ -85,7 +85,7 @@ export default function PartSalesAllocationsTable({
     (record: any) => {
       return [
         RowViewAction({
-          title: t`View Sales Order`,
+          title: t`查看出货单`,
           modelType: ModelType.salesorder,
           modelId: record.order,
           hidden: !user.hasViewRole(UserRoles.sales_order),

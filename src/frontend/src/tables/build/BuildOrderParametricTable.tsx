@@ -26,7 +26,7 @@ export default function BuildOrderParametricTable({
       }),
       PartColumn({
         part: 'part_detail',
-        title: t`Part`
+        title: t`货品`
       }),
       DescriptionColumn({
         accessor: 'title'

@@ -54,7 +54,7 @@ export function CompanyTable({
     return [
       {
         accessor: 'name',
-        title: t`Company`,
+        title: t`往来单位`,
         sortable: true,
         switchable: false,
         render: (record: any) => {
@@ -65,7 +65,7 @@ export function CompanyTable({
       BooleanColumn({
         accessor: 'active',
         filter: 'active',
-        title: t`Active`,
+        title: t`启用`,
         sortable: true,
         switchable: true
       }),
@@ -78,7 +78,7 @@ export function CompanyTable({
 
   const newCompany = useCreateApiFormModal({
     url: ApiEndpoints.company_list,
-    title: t`Add Company`,
+    title: t`新增往来单位`,
     fields: companyFields(),
     initialData: params,
     follow: true,
@@ -91,7 +91,7 @@ export function CompanyTable({
   const editCompany = useEditApiFormModal({
     url: ApiEndpoints.company_list,
     pk: selectedCompany,
-    title: t`Edit Company`,
+    title: t`编辑往来单位`,
     fields: companyFields(),
     onFormSuccess: (record: any) => table.updateRecord(record)
   });
@@ -100,23 +100,23 @@ export function CompanyTable({
     return [
       {
         name: 'active',
-        label: t`Active`,
-        description: t`Show active companies`
+        label: t`启用`,
+        description: t`显示启用的往来单位`
       },
       {
         name: 'is_supplier',
-        label: t`Supplier`,
-        description: t`Show companies which are suppliers`
+        label: t`供货商`,
+        description: t`显示供货商单位`
       },
       {
         name: 'is_manufacturer',
-        label: t`Manufacturer`,
-        description: t`Show companies which are manufacturers`
+        label: t`生产厂家/品牌`,
+        description: t`显示生产厂家或品牌方`
       },
       {
         name: 'is_customer',
-        label: t`Customer`,
-        description: t`Show companies which are customers`
+        label: t`客户`,
+        description: t`显示客户单位`
       },
       TagsFilter({ modelType: ModelType.company })
     ];
@@ -130,7 +130,7 @@ export function CompanyTable({
     return [
       <AddItemButton
         key='add-company'
-        tooltip={t`Add Company`}
+        tooltip={t`新增往来单位`}
         onClick={() => newCompany.open()}
         hidden={!can_add}
       />
