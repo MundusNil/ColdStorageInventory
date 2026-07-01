@@ -16,6 +16,9 @@ export const LoginLayoutComponent = Loadable(
 );
 
 export const Home = Loadable(lazy(() => import('./pages/Index/Home')));
+export const ColdStorageWorkbench = Loadable(
+  lazy(() => import('./pages/cold-storage/ColdStorageWorkbench'))
+);
 
 export const CompanyDetail = Loadable(
   lazy(() => import('./pages/company/CompanyDetail'))
@@ -156,6 +159,7 @@ export const routes = (
     <Route path='/' element={<LayoutComponent />} errorElement={<ErrorPage />}>
       <Route index element={<Home />} />,
       <Route path='home/' element={<Home />} />,
+      <Route path='cold-storage/' element={<ColdStorageWorkbench />} />,
       <Route path='notifications/*' element={<Notifications />} />,
       <Route path='scan/' element={<Scan />} />,
       <Route path='settings/'>
