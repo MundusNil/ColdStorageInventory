@@ -33,15 +33,25 @@ export function usePartFields({
   return useMemo(() => {
     const fields: ApiFormFieldSet = {
       category: {
+        label: t`货品分类`,
         filters: {
           structural: false
         }
       },
-      name: {},
-      IPN: {},
-      description: {},
-      revision: {},
+      name: {
+        label: t`货品名称`
+      },
+      IPN: {
+        label: t`货品编码`
+      },
+      description: {
+        label: t`说明`
+      },
+      revision: {
+        label: t`规格版本`
+      },
       revision_of: {
+        label: t`关联规格`,
         filters: {
           is_template: false,
           assembly: globalSettings.isSet('PART_REVISION_ASSEMBLY_ONLY')
@@ -50,43 +60,64 @@ export function usePartFields({
         }
       },
       variant_of: {
+        label: t`所属模板货品`,
         filters: {
           is_template: true
         }
       },
-      keywords: {},
+      keywords: {
+        label: t`搜索关键词`
+      },
       tags: TagsField({}),
-      units: {},
-      link: {},
+      units: {
+        label: t`计量单位`
+      },
+      link: {
+        label: t`外部链接`
+      },
       default_location: {
+        label: t`默认库位`,
         filters: {
           structural: false
         }
       },
-      default_expiry: {},
-      minimum_stock: {},
-      maximum_stock: {},
+      default_expiry: {
+        label: t`默认保质期`
+      },
+      minimum_stock: {
+        label: t`最低库存`
+      },
+      maximum_stock: {
+        label: t`最高库存`
+      },
       responsible: {
+        label: t`负责人`,
         filters: {
           is_active: true
         }
       },
       component: {
+        label: t`可作为配货组成`,
         default: globalSettings.isSet('PART_COMPONENT')
       },
       assembly: {
+        label: t`组合货品`,
         default: globalSettings.isSet('PART_ASSEMBLY')
       },
       is_template: {
+        label: t`模板货品`,
         default: globalSettings.isSet('PART_TEMPLATE')
       },
       testable: {
+        label: t`需要质检`,
         default: false
       },
       trackable: {
+        label: t`追踪批次/条码`,
         default: globalSettings.isSet('PART_TRACKABLE')
       },
       purchaseable: {
+        label: t`可进货`,
         value: purchaseable,
         default: globalSettings.isSet('PART_PURCHASEABLE'),
         onValueChange: (value: boolean) => {
@@ -94,21 +125,27 @@ export function usePartFields({
         }
       },
       salable: {
+        label: t`可出货`,
         default: globalSettings.isSet('PART_SALABLE')
       },
       virtual: {
+        label: t`虚拟货品`,
         default: globalSettings.isSet('PART_VIRTUAL'),
         value: virtual,
         onValueChange: (value: boolean) => {
           setVirtual(value);
         }
       },
-      locked: {},
-      active: {},
+      locked: {
+        label: t`锁定货品`
+      },
+      active: {
+        label: t`启用`
+      },
       starred: {
         field_type: 'boolean',
-        label: t`Subscribed`,
-        description: t`Subscribe to notifications for this part`,
+        label: t`订阅`,
+        description: t`订阅此货品的通知`,
         disabled: false,
         required: false
       }
@@ -123,9 +160,12 @@ export function usePartFields({
           icon: <IconPackages />,
           children: {
             quantity: {
+              label: t`初始库存`,
               value: 0
             },
-            location: {}
+            location: {
+              label: t`初始库位`
+            }
           }
         };
       }
@@ -135,17 +175,23 @@ export function usePartFields({
           icon: <IconBuildingStore />,
           children: {
             supplier: {
+              label: t`供货商`,
               filters: {
                 is_supplier: true
               }
             },
-            sku: {},
+            sku: {
+              label: t`供货商货号`
+            },
             manufacturer: {
+              label: t`生产厂家/品牌`,
               filters: {
                 is_manufacturer: true
               }
             },
-            mpn: {}
+            mpn: {
+              label: t`厂家货号`
+            }
           }
         };
       }
@@ -161,19 +207,24 @@ export function usePartFields({
             hidden: true
           },
           copy_image: {
+            label: t`复制图片`,
             value: true
           },
           copy_bom: {
+            label: t`复制组合清单`,
             value: globalSettings.isSet('PART_COPY_BOM'),
             hidden: !duplicatePartInstance?.assembly
           },
           copy_notes: {
+            label: t`复制备注`,
             value: true
           },
           copy_parameters: {
+            label: t`复制参数`,
             value: globalSettings.isSet('PART_COPY_PARAMETERS')
           },
           copy_tests: {
+            label: t`复制质检项`,
             value: true,
             hidden: !duplicatePartInstance?.testable
           }
@@ -227,22 +278,32 @@ export function partCategoryFields({
   const fields: ApiFormFieldSet = useMemo(() => {
     const fields: ApiFormFieldSet = {
       parent: {
-        description: t`Parent part category`,
+        label: t`上级分类`,
+        description: t`上级货品分类`,
         required: false
       },
-      name: {},
-      description: {},
+      name: {
+        label: t`分类名称`
+      },
+      description: {
+        label: t`说明`
+      },
       default_location: {
+        label: t`默认库位`,
         filters: {
           structural: false
         }
       },
-      default_keywords: {},
-      structural: {},
+      default_keywords: {
+        label: t`默认关键词`
+      },
+      structural: {
+        label: t`仅作为分类节点`
+      },
       starred: {
         field_type: 'boolean',
-        label: t`Subscribed`,
-        description: t`Subscribe to notifications for this category`,
+        label: t`订阅`,
+        description: t`订阅此分类的通知`,
         disabled: false,
         required: false
       },
