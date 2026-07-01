@@ -1,211 +1,110 @@
-<div align="center">
-  <img src="assets/images/logo/inventree.png" alt="InvenTree logo" width="200" height="auto" />
-  <h1>InvenTree</h1>
-  <p>Open Source Inventory Management System </p>
+# ColdStorageInventory
 
-<!-- Badges -->
-[![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/license/MIT)![GitHub tag (latest SemVer)](https://img.shields.io/github/v/tag/inventree/inventree)[![Artifact Hub](https://img.shields.io/endpoint?url=https://artifacthub.io/badge/repository/inventree)](https://artifacthub.io/packages/search?repo=inventree)
-![CI](https://github.com/inventree/inventree/actions/workflows/qc_checks.yaml/badge.svg)
-[![Documentation Status](https://readthedocs.org/projects/inventree/badge/?version=latest)](https://inventree.readthedocs.io/en/latest/?badge=latest)
-![Docker Build](https://github.com/inventree/inventree/actions/workflows/docker.yaml/badge.svg)
-[![Netlify Status](https://api.netlify.com/api/v1/badges/9bbb2101-0a4d-41e7-ad56-b63fb6053094/deploy-status)](https://app.netlify.com/sites/inventree/deploys)
+ColdStorageInventory 是面向冻品批发和冷库日常作业的库存管理系统。
 
-[![OpenSSF Best Practices](https://bestpractices.coreinfrastructure.org/projects/7179/badge)](https://bestpractices.coreinfrastructure.org/projects/7179)
-[![OpenSSF Scorecard](https://api.securityscorecards.dev/projects/github.com/inventree/InvenTree/badge)](https://securityscorecards.dev/viewer/?uri=github.com/inventree/InvenTree)
-[![Maintainability Rating](https://sonarcloud.io/api/project_badges/measure?project=inventree_InvenTree&metric=sqale_rating)](https://sonarcloud.io/summary/new_code?id=inventree_InvenTree)
+本项目基于 InvenTree 改造，保留原有库存、批次、库位和权限基础，同时为老板、仓管和现场人员提供更直接的中文冷库工作台。当前重点不是推倒原系统，而是在原库存模型旁边逐步补出冷库业务入口，先验证流程，再替换不适合现场使用的页面。
 
-[![codecov](https://codecov.io/gh/inventree/InvenTree/graph/badge.svg?token=9DZRGUUV7B)](https://codecov.io/gh/inventree/InvenTree)
-[![Crowdin](https://badges.crowdin.net/inventree/localized.svg)](https://crowdin.com/project/inventree)
-![GitHub commit activity](https://img.shields.io/github/commit-activity/m/inventree/inventree)
-[![Docker Pulls](https://img.shields.io/docker/pulls/inventree/inventree)](https://hub.docker.com/r/inventree/inventree)
+## 当前范围
 
-[![GitHub Org's stars](https://img.shields.io/github/stars/inventree?style=social)](https://github.com/inventree/InvenTree/)
-[![Twitter Follow](https://img.shields.io/twitter/follow/inventreedb?style=social)](https://twitter.com/inventreedb)
-[![Subreddit subscribers](https://img.shields.io/reddit/subreddit-subscribers/inventree?style=social)](https://www.reddit.com/r/InvenTree/)
-[![Mastdon](https://img.shields.io/badge/dynamic/json?label=Mastodon&query=followers_count&url=https%3A%2F%2Fchaos.social%2Fapi%2Fv1%2Faccounts%2Flookup%3Facct=InvenTree&logo=mastodon&style=social)](https://chaos.social/@InvenTree)
+- 冷库工作台默认入口
+- 基于现有库存 API 的库存卡片查询
+- 新货入库和出库扣数主流程
+- 改库位、盘点改数、报损/过期的表单草稿
+- 面向中文团队的导航和登录入口
+- 本地启动脚本和项目设计记录
 
-<h4>
-    <a href="https://demo.inventree.org/">View Demo</a>
-  <span> · </span>
-    <a href="https://docs.inventree.org/en/latest/">Documentation</a>
-  <span> · </span>
-    <a href="https://github.com/inventree/InvenTree/issues/new?template=bug_report.md&title=[BUG]">Report Bug</a>
-  <span> · </span>
-    <a href="https://github.com/inventree/InvenTree/issues/new?template=feature_request.md&title=[FR]">Request Feature</a>
-  </h4>
-</div>
+## 开发策略
 
-<!-- About the Project -->
-## :star2: About the Project
+项目采用渐进改造策略：
 
-InvenTree is an open-source Inventory Management System which provides powerful low-level stock control and part tracking. The core of the InvenTree system is a Python/Django database backend which provides an admin interface (web-based) and a REST API for interaction with external interfaces and applications. A powerful plugin system provides support for custom applications and extensions.
+1. 保留原 InvenTree 后端和库存模型。
+2. 并行新增冷库业务页面。
+3. 先让真实操作人员验证字段、入口和流程。
+4. 确认业务规则后，再逐步接入写入接口和替换旧入口。
 
-Check out [our website](https://inventree.org) for more details.
+这样可以避免冷库流程还没稳定时破坏已有库存能力，也方便按功能分组 review 和回滚。
 
-<!-- Roadmap -->
-### :compass: Roadmap
+## i18n 和中文源码约定
 
-Want to see what we are working on? Check out the [roadmap tag](https://github.com/inventree/InvenTree/issues?q=is%3Aopen+is%3Aissue+label%3Aroadmap) and [horizon milestone](https://github.com/inventree/InvenTree/milestone/42).
+本系统主要服务纯中文团队，因此冷库业务页面、登录入口和冷库导航允许直接写中文 UI 文案。
 
-<!-- Integration -->
-### :hammer_and_wrench: Integration
+原 InvenTree 通用页面仍尽量保留原有 i18n 体系，除非该页面已经明确纳入冷库业务改造范围。新增冷库页面不需要为每个按钮和表单字段额外维护英文 msgid 与中文翻译文件。
 
-InvenTree is designed to be **extensible**, and provides multiple options for **integration** with external applications or addition of custom plugins:
+## 目录结构
 
-* [InvenTree API](https://docs.inventree.org/en/latest/api/)
-* [Python module](https://docs.inventree.org/en/latest/api/python/)
-* [Plugin interface](https://docs.inventree.org/en/latest/plugins/)
-* [Third party tools](https://inventree.org/extend/integrate/)
-
-<!-- TechStack -->
-### :space_invader: Tech Stack
-
-<details>
-  <summary>Server</summary>
-  <ul>
-    <li><a href="https://www.python.org/">Python</a></li>
-    <li><a href="https://www.djangoproject.com/">Django</a></li>
-    <li><a href="https://www.django-rest-framework.org/">DRF</a></li>
-    <li><a href="https://django-q.readthedocs.io/">Django Q</a></li>
-    <li><a href="https://docs.allauth.org/">Django-Allauth</a></li>
-  </ul>
-</details>
-
-<details>
-<summary>Database</summary>
-  <ul>
-    <li><a href="https://www.postgresql.org/">PostgreSQL</a></li>
-    <li><a href="https://www.mysql.com/">MySQL</a></li>
-    <li><a href="https://www.mariadb.org/">MariaDB</a></li>
-    <li><a href="https://www.sqlite.org/">SQLite</a></li>
-    <li><a href="https://redis.io/">Redis</a></li>
-  </ul>
-</details>
-
-<details>
-  <summary>Client</summary>
-  <ul>
-    <li><a href="https://react.dev/">React</a></li>
-    <li><a href="https://lingui.dev/">Lingui</a></li>
-    <li><a href="https://reactrouter.com/">React Router</a></li>
-    <li><a href="https://tanstack.com/query/">TanStack Query</a></li>
-    <li><a href="https://github.com/pmndrs/zustand">Zustand</a></li>
-    <li><a href="https://mantine.dev/">Mantine</a></li>
-    <li><a href="https://icflorescu.github.io/mantine-datatable/">Mantine Data Table</a></li>
-    <li><a href="https://codemirror.net/">CodeMirror</a></li>
-  </ul>
-</details>
-
-<details>
-<summary>DevOps</summary>
-  <ul>
-    <li><a href="https://hub.docker.com/r/inventree/inventree">Docker</a></li>
-    <li><a href="https://crowdin.com/project/inventree">Crowdin</a></li>
-    <li><a href="https://app.codecov.io/gh/inventree/InvenTree">Codecov</a></li>
-    <li><a href="https://sonarcloud.io/project/overview?id=inventree_InvenTree">SonarCloud</a></li>
-    <li><a href="https://packager.io/gh/inventree/InvenTree">Packager.io</a></li>
-  </ul>
-</details>
-
-<!-- Getting Started -->
-## 	:toolbox: Deployment / Getting Started
-
-There are several options to deploy InvenTree.
-
-<div align="center"><h4>
-    <a href="https://docs.inventree.org/en/latest/start/docker/">Docker</a>
-    <span> · </span>
-    <a href="https://inventree.org/digitalocean"><img src="https://www.deploytodo.com/do-btn-blue-ghost.svg" alt="Deploy to DO" width="auto" height="40" /></a>
-    <span> · </span>
-    <a href="https://docs.inventree.org/en/latest/start/install/">Bare Metal</a>
-</h4></div>
-
-Single line install - read [the docs](https://docs.inventree.org/en/latest/start/installer/) for supported distros and details about the function:
-```bash
-wget -qO install.sh https://get.inventree.org && bash install.sh
+```text
+src/backend/InvenTree/     Django 后端和 REST API
+src/frontend/              React 前端
+src/frontend/src/pages/cold-storage/  冷库业务页面
+project_notes/             冷库方案、开发记录和流程文档
+config/                    本地配置模板
+assets/                    项目资源
+scripts/                   本地启动脚本
 ```
 
-Refer to the [getting started guide](https://docs.inventree.org/en/latest/start/install/) for a full set of installation and setup instructions.
+## 本地运行
 
-<!-- Mobile App -->
-## 	:iphone: Mobile App
+安装后端依赖：
 
-InvenTree is supported by a [companion mobile app](https://docs.inventree.org/en/latest/app/) which allows users access to stock control information and functionality.
+```bash
+pip install -r src/backend/requirements.txt
+```
 
-<div align="center"><h4>
-    <a href="https://play.google.com/store/apps/details?id=inventree.inventree_app">Android Play Store</a>
-     <span> · </span>
-    <a href="https://apps.apple.com/au/app/inventree/id1581731101#?platform=iphone">Apple App Store</a>
-</h4></div>
+安装前端依赖：
 
-<!-- Security -->
-## :lock: Code of Conduct & Security Policy
+```bash
+cd src/frontend
+yarn install
+```
 
-The InvenTree project team is committed to providing a safe and welcoming environment for all users. Please read our [Code of Conduct](CODE_OF_CONDUCT.md) for more information.
+启动后端：
 
-InvenTree is following industry best practices for security. Our security policy is included [in this repo](SECURITY.md). We provide dedicated security pages on [our documentation site](https://docs.inventree.org/en/latest/security/).
+```bash
+invoke server
+```
 
-<!-- Contributing -->
-## :wave: Contributing
+启动前端开发服务：
 
-Contributions are welcomed and encouraged. Please help to make this project even better! Refer to the [contribution page](https://docs.inventree.org/en/latest/develop/contributing/).
+```bash
+cd src/frontend
+yarn run dev
+```
 
-<!-- Translation -->
-## :scroll: Translation
+也可以使用本地脚本启动开发环境：
 
-Native language translation of the InvenTree web application is [community contributed via crowdin](https://crowdin.com/project/inventree). **Contributions are welcomed and encouraged**.
+```bash
+scripts/start-dev.ps1
+```
 
-<!-- Sponsor -->
-## :money_with_wings: Sponsor
+## 验证命令
 
-If you use InvenTree and find it to be useful, please consider [sponsoring the project](https://github.com/sponsors/inventree).
+前端改动提交前至少执行：
 
-<!-- Acknowledgments -->
-## :gem: Acknowledgements
+```bash
+cd src/frontend
+yarn harness
+yarn tsc --noEmit
+```
 
-We want to acknowledge [PartKeepr](https://github.com/partkeepr/PartKeepr) as a valuable predecessor and inspiration.
-Find a full list of used third-party libraries in the license information dialog of your instance.
+如果改动涉及语言包，再执行：
 
-## :heart: Support
+```bash
+yarn compile
+```
 
-<p>This project is supported by the following sponsors:</p>
+## Git 工作流
 
-<p align="center">
-<a href="https://github.com/MartinLoeper"><img src="https://github.com/MartinLoeper.png" width="60px" alt="Martin Löper" /></a>
-<a href="https://github.com/lippoliv"><img src="https://github.com/lippoliv.png" width="60px" alt="Oliver Lippert" /></a>
-<a href="https://github.com/lfg-seth"><img src="https://github.com/lfg-seth.png" width="60px" alt="Seth Smith" /></a>
-<a href="https://github.com/snorkrat"><img src="https://github.com/snorkrat.png" width="60px" alt="" /></a>
-<a href="https://github.com/spacequest-ltd"><img src="https://github.com/spacequest-ltd.png" width="60px" alt="SpaceQuest Ltd" /></a>
-<a href="https://github.com/appwrite"><img src="https://github.com/appwrite.png" width="60px" alt="Appwrite" /></a>
-<a href="https://github.com/PricelessToolkit"><img src="https://github.com/PricelessToolkit.png" width="60px" alt="" /></a>
-<a href="https://github.com/cabottech"><img src="https://github.com/cabottech.png" width="60px" alt="Cabot Technologies" /></a>
-<a href="https://github.com/markus-k"><img src="https://github.com/markus-k.png" width="60px" alt="Markus Kasten" /></a>
-<a href="https://github.com/jefffhaynes"><img src="https://github.com/jefffhaynes.png" width="60px" alt="Jeff Haynes" /></a>
-<a href="https://github.com/dnviti"><img src="https://github.com/dnviti.png" width="60px" alt="Daniele Viti" /></a>
-<a href="https://github.com/Islendur"><img src="https://github.com/Islendur.png" width="60px" alt="Islendur" /></a>
-<a href="https://github.com/Gibeon-NL"><img src="https://github.com/Gibeon-NL.png" width="60px" alt="Gibeon-NL" /></a>
-<a href="https://github.com/Motrac-Research-Engineering"><img src="https://github.com/Motrac-Research-Engineering.png" width="60px" alt="Motrac Research" /></a>
-<a href="https://github.com/trytuna"><img src="https://github.com/trytuna.png" width="60px" alt="Timo Scrappe" /></a>
-<a href="https://github.com/ATLAS2246"><img src="https://github.com/ATLAS2246.png" width="60px" alt="ATLAS2246" /></a>
-<a href="https://github.com/Kedarius"><img src="https://github.com/Kedarius.png" width="60px" alt="Radek Hladik" /></a>
+本仓库按 fork 项目维护：
 
-</p>
+```text
+origin   -> https://github.com/MundusNil/ColdStorageInventory.git
+upstream -> https://github.com/inventree/InvenTree.git
+```
 
-<p>With ongoing resources provided by:</p>
+功能开发应在独立分支完成，通过人工 review 后再合入 `main`。本仓库的“落主线”表示：按可独立 review、可独立回滚的边界分组，分别提交、推送并通过 PR 合入远程 `main`。
 
-<p align="center">
-  <a href="https://depot.dev?utm_source=inventree"><img src="https://depot.dev/badges/built-with-depot.svg" alt="Built with Depot" /></a>
-  <a href="https://inventree.org/digitalocean">
-    <img src="https://opensource.nyc3.cdn.digitaloceanspaces.com/attribution/assets/SVG/DO_Logo_horizontal_blue.svg" width="201px" alt="Servers by Digital Ocean">
-  </a>
-  <a href="https://www.netlify.com"> <img src="https://www.netlify.com/v3/img/components/netlify-color-bg.svg" alt="Deploys by Netlify" /> </a>
-  <a href="https://crowdin.com"> <img src="https://crowdin.com/images/crowdin-logo.svg" alt="Translation by Crowdin" /> </a> <br>
-  <a href="https://codspeed.io/inventree/InvenTree?utm_source=badge"><img src="https://img.shields.io/endpoint?url=https://codspeed.io/badge.json" alt="CodSpeed Badge"/></a>
-  <a href="https://flakiness.io/InvenTree/InvenTree"><img src="https://img.shields.io/endpoint?url=https%3A%2F%2Fflakiness.io%2Fapi%2Fbadge%3Finput%3D%257B%2522badgeToken%2522%253A%2522badge-35mqq5Ht4uL3vGF8lR9P2D%2522%257D" alt="Flakiness Badge"/></a>
-</p>
+不得把多组无关改动硬塞进一个 PR。不得在没有人工 review 的情况下直接打开或合并 PR。
 
+## 来源说明
 
-<!-- License -->
-## :warning: License
-
-Distributed under the [MIT](https://choosealicense.com/licenses/mit/) License. See [LICENSE.txt](https://github.com/inventree/InvenTree/blob/master/LICENSE) for more information.
+ColdStorageInventory 基于 InvenTree 开源库存系统改造。InvenTree 使用 MIT License，原始许可证随本仓库保留。

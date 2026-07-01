@@ -4,6 +4,7 @@
     "version": "1.4.6",
     "private": false,
     "type": "module",
+    "packageManager": "yarn@1.22.22",
     "license": "MIT",
     "keywords": [
         "inventree"
@@ -38,7 +39,10 @@
         "lib": "tsc --p ./tsconfig.lib.json && vite --config vite.lib.config.ts build",
         "preview": "vite preview",
         "extract": "lingui extract",
-        "compile": "lingui compile --typescript"
+        "compile": "lingui compile --typescript",
+        "harness": "node ./scripts/harness.mjs",
+        "harness:i18n": "node ./scripts/harness.mjs no-cjk-in-source",
+        "harness:package-manager": "node ./scripts/harness.mjs package-manager no-npm-commands-in-project-scripts"
     },
     "dependencies": {
         "@codemirror/autocomplete": "^6.20.1",
