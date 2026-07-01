@@ -1,5 +1,3 @@
-import { t } from '@lingui/core/macro';
-import { Trans } from '@lingui/react/macro';
 import { Button, Checkbox, TextInput } from '@mantine/core';
 import { useForm } from '@mantine/form';
 import { useEffect, useState } from 'react';
@@ -26,22 +24,22 @@ export default function Mfa() {
   }, [mfa_types]);
 
   return (
-    <Wrapper titleText={t`Multi-Factor Authentication`} logOff>
+    <Wrapper titleText='二次验证' logOff>
       {(mfa_types.includes('recovery_codes') || mfa_types.includes('totp')) && (
         <TextInput
           required
-          label={t`TOTP Code`}
+          label='验证码'
           name='TOTP'
-          description={t`Enter one of your codes: ${mfa_types}`}
+          description={`请输入验证码：${mfa_types.join(' / ')}`}
           {...simpleForm.getInputProps('code')}
           error={loginError}
         />
       )}
 
       <Checkbox
-        label={t`Remember this device`}
+        label='记住这台设备'
         name='remember'
-        description={t`If enabled, you will not be asked for MFA on this device for 30 days.`}
+        description='启用后，30 天内这台设备不再要求二次验证。'
         {...simpleForm.getInputProps('remember', { type: 'checkbox' })}
       />
       <Button
@@ -50,7 +48,7 @@ export default function Mfa() {
           handleMfaLogin(navigate, location, simpleForm.values, setLoginError)
         }
       >
-        <Trans>Log in</Trans>
+        登录
       </Button>
     </Wrapper>
   );

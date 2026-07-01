@@ -89,7 +89,7 @@ export default function PurchaseOrderDetail() {
   const editPurchaseOrder = useEditApiFormModal({
     url: ApiEndpoints.purchase_order_list,
     pk: id,
-    title: t`Edit Purchase Order`,
+    title: t`编辑进货单`,
     fields: purchaseOrderFields,
     queryParams: new URLSearchParams({ tags: 'true' }),
     onFormSuccess: () => {
@@ -126,7 +126,7 @@ export default function PurchaseOrderDetail() {
 
   const duplicatePurchaseOrder = useCreateApiFormModal({
     url: ApiEndpoints.purchase_order_list,
-    title: t`Add Purchase Order`,
+    title: t`新增进货单`,
     fields: duplicatePurchaseOrderFields,
     initialData: duplicatePurchaseOrderInitialData,
     follow: true,
@@ -148,7 +148,7 @@ export default function PurchaseOrderDetail() {
       {
         type: 'text',
         name: 'supplier_reference',
-        label: t`Supplier Reference`,
+        label: t`供货商单号`,
         icon: 'reference',
         hidden: !order.supplier_reference,
         copy: true
@@ -157,7 +157,7 @@ export default function PurchaseOrderDetail() {
         type: 'link',
         name: 'supplier',
         icon: 'suppliers',
-        label: t`Supplier`,
+        label: t`供货商`,
         model: ModelType.company
       },
       {
@@ -429,7 +429,7 @@ export default function PurchaseOrderDetail() {
 
   const issueOrder = useCreateApiFormModal({
     url: apiUrl(ApiEndpoints.purchase_order_issue, order.pk),
-    title: t`Issue Purchase Order`,
+    title: t`下达进货单`,
     onFormSuccess: refreshInstance,
     preFormWarning: t`Issue this order`,
     successMessage: t`Order issued`
@@ -437,7 +437,7 @@ export default function PurchaseOrderDetail() {
 
   const cancelOrder = useCreateApiFormModal({
     url: apiUrl(ApiEndpoints.purchase_order_cancel, order.pk),
-    title: t`Cancel Purchase Order`,
+    title: t`取消进货单`,
     onFormSuccess: refreshInstance,
     preFormWarning: t`Cancel this order`,
     successMessage: t`Order cancelled`
@@ -445,7 +445,7 @@ export default function PurchaseOrderDetail() {
 
   const holdOrder = useCreateApiFormModal({
     url: apiUrl(ApiEndpoints.purchase_order_hold, order.pk),
-    title: t`Hold Purchase Order`,
+    title: t`暂停进货单`,
     onFormSuccess: refreshInstance,
     preFormWarning: t`Place this order on hold`,
     successMessage: t`Order placed on hold`
@@ -453,8 +453,8 @@ export default function PurchaseOrderDetail() {
 
   const completeOrder = useCreateApiFormModal({
     url: apiUrl(ApiEndpoints.purchase_order_complete, order.pk),
-    title: t`Complete Purchase Order`,
-    successMessage: t`Order completed`,
+    title: t`完成进货单`,
+    successMessage: t`进货单已完成`,
     timeout: 10000,
     fields: {
       accept_incomplete: {}
@@ -574,10 +574,10 @@ export default function PurchaseOrderDetail() {
       >
         <Stack gap='xs'>
           <PageDetail
-            title={`${t`Purchase Order`}: ${order.reference}`}
+            title={`${t`进货单`}: ${order.reference}`}
             subtitle={subtitle}
             imageUrl={order.supplier_detail?.image}
-            breadcrumbs={[{ name: t`Purchasing`, url: '/purchasing/' }]}
+            breadcrumbs={[{ name: t`进货管理`, url: '/purchasing/' }]}
             lastCrumb={[
               {
                 name: order.reference,

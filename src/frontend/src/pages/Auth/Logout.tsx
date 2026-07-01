@@ -12,5 +12,5 @@ export default function Logout() {
     doLogout(navigate);
   }, []);
 
-  return <Wrapper titleText='Logging out' loader />;
+  return <Wrapper titleText='正在退出登录' loader />;
 }

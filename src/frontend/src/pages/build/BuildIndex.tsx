@@ -44,7 +44,7 @@ function BuildOrderCalendar() {
 
     if (order?.quantity) {
       extraEntries.push({
-        label: t`Quantity`,
+        label: t`数量`,
         value: order.quantity
       });
     }
@@ -84,26 +84,26 @@ export default function BuildIndex() {
     return [
       SegmentedControlPanel({
         name: 'buildorder',
-        label: t`Build Orders`,
+        label: t`组合配货单`,
         icon: <IconTools />,
         selection: buildOrderView,
         onChange: setBuildOrderView,
         options: [
           {
             value: 'table',
-            label: t`Table View`,
+            label: t`表格视图`,
             icon: <IconTable />,
             content: <BuildOrderTable />
           },
           {
             value: 'calendar',
-            label: t`Calendar View`,
+            label: t`日历视图`,
             icon: <IconCalendar />,
             content: <BuildOrderCalendar />
           },
           {
             value: 'parametric',
-            label: t`Parametric View`,
+            label: t`参数视图`,
             icon: <IconListDetails />,
             content: <BuildOrderParametricTable />
           }
@@ -118,7 +118,7 @@ export default function BuildIndex() {
 
   return (
     <Stack>
-      <PageDetail title={t`Manufacturing`} actions={[]} />
+      <PageDetail title={t`组合配货`} actions={[]} />
       <PanelGroup
         pageKey='build-index'
         panels={panels}

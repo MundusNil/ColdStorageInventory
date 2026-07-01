@@ -119,7 +119,7 @@ export default function PartPricingPanel({ part }: Readonly<{ part: any }>) {
           <PricingPanel
             content={<BomPricingPanel part={part} pricing={pricing} />}
             label={panelOptions.bom}
-            title={t`BOM Pricing`}
+            title={t`组合清单成本`}
             visible={part?.assembly}
             disabled={!pricing?.bom_cost_min || !pricing?.bom_cost_max}
           />

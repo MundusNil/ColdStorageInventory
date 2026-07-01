@@ -1,5 +1,4 @@
 import { StylishText } from '@lib/components/StylishText';
-import { Trans } from '@lingui/react/macro';
 import {
   Button,
   Center,
@@ -56,7 +55,7 @@ export function Wrapper({
           <>
             <Divider p='xs' />
             <Button onClick={() => doLogout(navigate)} color='red'>
-              <Trans>Log off</Trans>
+              退出登录
             </Button>
           </>
         )}

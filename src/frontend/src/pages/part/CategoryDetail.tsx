@@ -135,7 +135,7 @@ export default function CategoryDetail() {
       {
         type: 'text',
         name: 'part_count',
-        label: t`Parts`,
+        label: t`货品`,
         icon: 'part',
         value_formatter: () => category?.part_count || '0'
       },
@@ -179,7 +179,7 @@ export default function CategoryDetail() {
   const editCategory = useEditApiFormModal({
     url: ApiEndpoints.category_list,
     pk: id,
-    title: t`Edit Part Category`,
+    title: t`编辑货品分类`,
     fields: partCategoryFields({}),
     onFormSuccess: refreshInstance
   });
@@ -200,10 +200,10 @@ export default function CategoryDetail() {
   const deleteCategory = useDeleteApiFormModal({
     url: ApiEndpoints.category_list,
     pk: id,
-    title: t`Delete Part Category`,
+    title: t`删除货品分类`,
     fields: {
       delete_parts: {
-        label: t`Parts Action`,
+        label: t`货品处理方式`,
         description: t`Action for parts in this category`,
         choices: deleteOptions,
         required: true,
@@ -247,12 +247,12 @@ export default function CategoryDetail() {
         actions={[
           EditItemAction({
             hidden: !id || !user.hasChangeRole(UserRoles.part_category),
-            tooltip: t`Edit Part Category`,
+            tooltip: t`编辑货品分类`,
             onClick: () => editCategory.open()
           }),
           DeleteItemAction({
             hidden: !id || !user.hasDeleteRole(UserRoles.part_category),
-            tooltip: t`Delete Part Category`,
+            tooltip: t`删除货品分类`,
             onClick: () => deleteCategory.open()
           })
         ]}
@@ -276,20 +276,20 @@ export default function CategoryDetail() {
       },
       {
         name: 'subcategories',
-        label: id ? t`Subcategories` : t`Part Categories`,
+        label: id ? t`下级分类` : t`货品分类`,
         icon: <IconSitemap />,
         content: <PartCategoryTable parentId={id} />
       },
       SegmentedControlPanel({
         name: 'parts',
-        label: t`Parts`,
+        label: t`货品`,
         icon: <IconCategory />,
         selection: partsView,
         onChange: setPartsView,
         options: [
           {
             value: 'table',
-            label: t`Table View`,
+            label: t`表格视图`,
             icon: <IconTable />,
             content: (
               <PartListTable
@@ -303,7 +303,7 @@ export default function CategoryDetail() {
           },
           {
             value: 'parametric',
-            label: t`Parametric View`,
+            label: t`参数视图`,
             icon: <IconListDetails />,
             content: <ParametricPartTable categoryId={id} />
           }
@@ -311,7 +311,7 @@ export default function CategoryDetail() {
       }),
       {
         name: 'stockitem',
-        label: t`Stock Items`,
+        label: t`库存批次`,
         icon: <IconPackages />,
         hidden: !id,
         content: (
@@ -342,7 +342,7 @@ export default function CategoryDetail() {
 
   const breadcrumbs = useMemo(
     () => [
-      { name: t`Parts`, url: '/part' },
+      { name: t`货品`, url: '/part' },
       ...(category.path ?? []).map((c: any) => ({
         name: c.name,
         url: getDetailUrl(ModelType.partcategory, c.pk),
@@ -375,7 +375,7 @@ export default function CategoryDetail() {
           <LoadingOverlay visible={instanceQuery.isFetching} />
           <NavigationTree
             modelType={ModelType.partcategory}
-            title={t`Part Categories`}
+            title={t`货品分类`}
             endpoint={ApiEndpoints.category_tree}
             childIdentifier='subcategories'
             opened={treeOpen}
@@ -385,7 +385,7 @@ export default function CategoryDetail() {
             selectedId={category?.pk}
           />
           <PageDetail
-            title={(category?.name ?? id) ? t`Part Category` : t`Parts`}
+            title={(category?.name ?? id) ? t`货品分类` : t`货品`}
             subtitle={category?.description}
             icon={category?.icon && <ApiIcon name={category?.icon} />}
             breadcrumbs={breadcrumbs}

@@ -12,7 +12,7 @@ export default function PartSupplierDetail({
     <Accordion multiple defaultValue={['part-suppliers', 'part-manufacturers']}>
       <Accordion.Item value='part-suppliers'>
         <Accordion.Control>
-          <StylishText size='lg'>{t`Suppliers`}</StylishText>
+          <StylishText size='lg'>{t`供货商`}</StylishText>
         </Accordion.Control>
         <Accordion.Panel>
           <SupplierPartTable partId={partId} />
@@ -20,7 +20,7 @@ export default function PartSupplierDetail({
       </Accordion.Item>
       <Accordion.Item value='part-manufacturers'>
         <Accordion.Control>
-          <StylishText size='lg'>{t`Manufacturers`}</StylishText>
+          <StylishText size='lg'>{t`生产厂家/品牌`}</StylishText>
         </Accordion.Control>
         <Accordion.Panel>
           <ManufacturerPartTable partId={partId} />

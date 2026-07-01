@@ -1,6 +1,4 @@
 import { StylishText } from '@lib/components/StylishText';
-import { t } from '@lingui/core/macro';
-import { Trans } from '@lingui/react/macro';
 import {
   Button,
   Divider,
@@ -29,11 +27,11 @@ export default function Set_Password() {
   const navigate = useNavigate();
 
   return (
-    <Wrapper titleText={t`Reset Password`}>
+    <Wrapper titleText='修改密码'>
       {user.username() && (
         <Paper>
           <Group>
-            <StylishText size='md'>{t`User`}</StylishText>
+            <StylishText size='md'>用户</StylishText>
             <Text>{user.username()}</Text>
           </Group>
         </Paper>
@@ -43,22 +41,22 @@ export default function Set_Password() {
         <PasswordInput
           required
           aria-label='password'
-          label={t`Current Password`}
-          description={t`Enter your current password`}
+          label='当前密码'
+          description='请输入当前密码'
           {...simpleForm.getInputProps('current_password')}
         />
         <PasswordInput
           required
           aria-label='input-password-1'
-          label={t`New Password`}
-          description={t`Enter your new password`}
+          label='新密码'
+          description='请输入新密码'
           {...simpleForm.getInputProps('new_password1')}
         />
         <PasswordInput
           required
           aria-label='input-password-2'
-          label={t`Confirm New Password`}
-          description={t`Confirm your new password`}
+          label='确认新密码'
+          description='请再次输入新密码'
           {...simpleForm.getInputProps('new_password2')}
         />
       </Stack>
@@ -77,7 +75,7 @@ export default function Set_Password() {
           simpleForm.values.new_password1 === ''
         }
       >
-        <Trans>Confirm</Trans>
+        确认
       </Button>
     </Wrapper>
   );

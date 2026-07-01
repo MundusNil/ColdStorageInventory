@@ -419,20 +419,20 @@ export default function PartDetail() {
         name: 'unallocated_stock',
         total: data.total_in_stock,
         progress: data.unallocated,
-        label: t`Available Stock`,
+        label: t`可用库存`,
         hidden: part.virtual || data.total_in_stock == data.unallocated
       },
       {
         type: 'number',
         name: 'ordering',
-        label: t`On order`,
+        label: t`进货在途`,
         unit: part.units,
         hidden: !part.purchaseable || part.ordering <= 0
       },
       {
         type: 'number',
         name: 'required',
-        label: t`Required for Orders`,
+        label: t`订单需求`,
         unit: part.units,
         hidden: data.required <= 0,
         icon: 'stocktake'
@@ -443,7 +443,7 @@ export default function PartDetail() {
         icon: 'manufacturers',
         total: partRequirements.required_for_build_orders,
         progress: partRequirements.allocated_to_build_orders,
-        label: t`Allocated to Build Orders`,
+        label: t`组合配货占用`,
         hidden:
           fetching ||
           (partRequirements.required_for_build_orders <= 0 &&
@@ -455,7 +455,7 @@ export default function PartDetail() {
         name: 'allocated_to_sales_orders',
         total: partRequirements.required_for_sales_orders,
         progress: partRequirements.allocated_to_sales_orders,
-        label: t`Allocated to Sales Orders`,
+        label: t`出货单占用`,
         hidden:
           fetching ||
           (partRequirements.required_for_sales_orders <= 0 &&
@@ -464,7 +464,7 @@ export default function PartDetail() {
       {
         type: 'progressbar',
         name: 'building',
-        label: t`In Production`,
+        label: t`组合配货中`,
         progress: partRequirements.building,
         total: partRequirements.scheduled_to_build,
         hidden:
@@ -475,21 +475,21 @@ export default function PartDetail() {
         type: 'number',
         name: 'can_build',
         unit: part.units,
-        label: t`Can Build`,
+        label: t`可组合数量`,
         hidden: !part.assembly || fetching
       },
       {
         type: 'number',
         name: 'minimum_stock',
         unit: part.units,
-        label: t`Minimum Stock`,
+        label: t`最低库存`,
         hidden: part.minimum_stock <= 0
       },
       {
         type: 'number',
         name: 'maximum_stock',
         unit: part.units,
-        label: t`Maximum Stock`,
+        label: t`最高库存`,
         hidden: part.maximum_stock <= 0
       }
     ];
@@ -499,60 +499,60 @@ export default function PartDetail() {
       {
         type: 'boolean',
         name: 'active',
-        label: t`Active`
+        label: t`启用`
       },
       {
         type: 'boolean',
         name: 'locked',
-        label: t`Locked`
+        label: t`锁定`
       },
       {
         type: 'boolean',
         icon: 'template',
         name: 'is_template',
-        label: t`Template Part`
+        label: t`模板货品`
       },
       {
         type: 'boolean',
         name: 'assembly',
-        label: t`Assembled Part`
+        label: t`组合货品`
       },
       {
         type: 'boolean',
         name: 'component',
-        label: t`Component Part`
+        label: t`可作为配货组成`
       },
       {
         type: 'boolean',
         name: 'testable',
-        label: t`Testable Part`,
+        label: t`需要质检`,
         icon: 'test'
       },
       {
         type: 'boolean',
         name: 'trackable',
-        label: t`Trackable Part`
+        label: t`可追踪批次`
       },
       {
         type: 'boolean',
         name: 'purchaseable',
-        label: t`Purchaseable Part`
+        label: t`可进货`
       },
       {
         type: 'boolean',
         name: 'salable',
         icon: 'saleable',
-        label: t`Saleable Part`
+        label: t`可出货`
       },
       {
         type: 'boolean',
         name: 'virtual',
-        label: t`Virtual Part`
+        label: t`虚拟货品`
       },
       {
         type: 'boolean',
         name: 'starred',
-        label: t`Subscribed`,
+        label: t`已订阅`,
         icon: 'bell'
       }
     ];
@@ -562,12 +562,12 @@ export default function PartDetail() {
       {
         type: 'string',
         name: 'creation_date',
-        label: t`Creation Date`
+        label: t`创建日期`
       },
       {
         type: 'string',
         name: 'creation_user',
-        label: t`Created By`,
+        label: t`创建人`,
         badge: 'user',
         icon: 'user',
         hidden: !part.creation_user
@@ -575,13 +575,13 @@ export default function PartDetail() {
       {
         type: 'string',
         name: 'responsible',
-        label: t`Responsible`,
+        label: t`负责人`,
         badge: 'owner',
         hidden: !part.responsible
       },
       {
         name: 'default_expiry',
-        label: t`Default Expiry`,
+        label: t`默认保质期`,
         hidden: !part.default_expiry,
         icon: 'calendar',
         type: 'string',
@@ -596,7 +596,7 @@ export default function PartDetail() {
       br.push({
         type: 'string',
         name: 'pricing',
-        label: t`Price Range`,
+        label: t`价格区间`,
         value_formatter: () => {
           return formatPriceRange(part.pricing_min, part.pricing_max);
         }
@@ -606,7 +606,7 @@ export default function PartDetail() {
     br.push({
       type: 'string',
       name: 'latest_serial_number',
-      label: t`Latest Serial Number`,
+      label: t`最新追踪码`,
       hidden: !part.trackable || !data.latest_serial_number,
       icon: 'serial'
     });
@@ -641,7 +641,7 @@ export default function PartDetail() {
                   <ActionIcon variant='transparent'>
                     <IconVersions />
                   </ActionIcon>
-                  <Text>{t`Select Part Revision`}</Text>
+                  <Text>{t`选择货品规格版本`}</Text>
                 </Group>
                 <RevisionSelector part={part} options={partRevisionOptions} />
               </Stack>
@@ -673,13 +673,13 @@ export default function PartDetail() {
     return [
       {
         name: 'details',
-        label: t`Part Details`,
+        label: t`货品详情`,
         icon: <IconInfoCircle />,
         content: detailsPanel
       },
       {
         name: 'stock',
-        label: t`Stock`,
+        label: t`库存`,
         icon: <IconPackages />,
         hidden: part.virtual || !user.hasViewRole(UserRoles.stock),
         content: part.pk ? (
@@ -698,21 +698,21 @@ export default function PartDetail() {
       },
       {
         name: 'variants',
-        label: t`Variants`,
+        label: t`规格/变体`,
         icon: <IconVersions />,
         hidden: !part.is_template,
         content: <PartVariantTable part={part} />
       },
       {
         name: 'allocations',
-        label: t`Allocations`,
+        label: t`库存占用`,
         icon: <IconBookmarks />,
         hidden: (!part.component && !part.salable) || part.virtual,
         content: part.pk ? <PartAllocationPanel part={part} /> : <Skeleton />
       },
       {
         name: 'bom',
-        label: t`Bill of Materials`,
+        label: t`组合清单`,
         controls: (
           <BomActions bomInformation={bomInformation} partInstance={part} />
         ),
@@ -725,9 +725,9 @@ export default function PartDetail() {
                 <Alert
                   color='yellow'
                   icon={<IconExclamationCircle />}
-                  title={t`BOM Not Validated`}
+                  title={t`组合清单未校验`}
                 >
-                  <Text>{t`The Bill of Materials for this assembly has not been validated.`}</Text>
+                  <Text>{t`此组合货品的组合清单尚未校验。`}</Text>
                 </Alert>
               )}
             <BomTable
@@ -741,20 +741,20 @@ export default function PartDetail() {
       },
       {
         name: 'used_in',
-        label: t`Used In`,
+        label: t`用于哪些组合`,
         icon: <IconStack2 />,
         hidden: !part.component,
         content: <UsedInTable partId={part.pk ?? -1} />
       },
       {
         name: 'pricing',
-        label: t`Part Pricing`,
+        label: t`货品价格`,
         icon: <IconCurrencyDollar />,
         content: part ? <PartPricingPanel part={part} /> : <Skeleton />
       },
       {
         name: 'suppliers',
-        label: t`Suppliers`,
+        label: t`供货信息`,
         icon: <IconBuilding />,
         hidden:
           !part.purchaseable || !user.hasViewRole(UserRoles.purchase_order),
@@ -767,7 +767,7 @@ export default function PartDetail() {
       },
       {
         name: 'purchase_orders',
-        label: t`Purchase Orders`,
+        label: t`进货单`,
         icon: <IconShoppingCart />,
         hidden:
           !part.purchaseable || !user.hasViewRole(UserRoles.purchase_order),
@@ -779,14 +779,14 @@ export default function PartDetail() {
       },
       {
         name: 'sales_orders',
-        label: t`Sales Orders`,
+        label: t`出货单`,
         icon: <IconTruckDelivery />,
         hidden: !part.salable || !user.hasViewRole(UserRoles.sales_order),
         content: part.pk ? <SalesOrderTable partId={part.pk} /> : <Skeleton />
       },
       {
         name: 'return_orders',
-        label: t`Return Orders`,
+        label: t`退货单`,
         icon: <IconTruckReturn />,
         hidden:
           !part.salable ||
@@ -796,14 +796,14 @@ export default function PartDetail() {
       },
       {
         name: 'builds',
-        label: t`Build Orders`,
+        label: t`组合配货单`,
         icon: <IconTools />,
         hidden: !part.assembly || !user.hasViewRole(UserRoles.build),
         content: part.pk ? <BuildOrderTable partId={part.pk} /> : <Skeleton />
       },
       {
         name: 'transfer_orders',
-        label: t`Transfer Orders`,
+        label: t`移库单`,
         icon: <IconTransfer />,
         hidden:
           part.virtual ||
@@ -817,7 +817,7 @@ export default function PartDetail() {
       },
       {
         name: 'stocktake',
-        label: t`Stock History`,
+        label: t`库存流水`,
         icon: <IconClipboardList />,
         content: part ? (
           <PartStockHistoryDetail partId={part.pk} />
@@ -832,7 +832,7 @@ export default function PartDetail() {
       },
       {
         name: 'test_templates',
-        label: t`Test Templates`,
+        label: t`质检模板`,
         icon: <IconTestPipe />,
         hidden: !part.testable,
         content: part?.pk ? (
@@ -871,12 +871,12 @@ export default function PartDetail() {
           <>
             {lockingEnabled && part.locked && (
               <Alert
-                title={t`Part is Locked`}
+                title={t`货品已锁定`}
                 color='orange'
                 icon={<IconLock />}
                 p='xs'
               >
-                <Text>{t`Part parameters cannot be edited, as the part is locked`}</Text>
+                <Text>{t`货品已锁定，不能编辑货品参数`}</Text>
               </Alert>
             )}
             <ParameterTable
@@ -909,7 +909,7 @@ export default function PartDetail() {
 
   const breadcrumbs = useMemo(() => {
     return [
-      { name: t`Parts`, url: '/part' },
+      { name: t`货品`, url: '/part' },
       ...(part.category_path ?? []).map((c: any) => ({
         name: c.name,
         url: getDetailUrl(ModelType.partcategory, c.pk)
@@ -1002,7 +1002,7 @@ export default function PartDetail() {
         key='inactive'
       />,
       <DetailsBadge
-        label={t`Virtual Part`}
+        label={t`虚拟货品`}
         color='cyan.4'
         visible={part.virtual}
         key='virtual'
@@ -1018,7 +1018,7 @@ export default function PartDetail() {
   const editPart = useEditApiFormModal({
     url: ApiEndpoints.part_list,
     pk: part.pk,
-    title: t`Edit Part`,
+    title: t`编辑货品`,
     fields: partFields,
     queryParams: new URLSearchParams({ tags: 'true' }),
     onFormSuccess: refreshInstance
@@ -1031,7 +1031,7 @@ export default function PartDetail() {
 
   const duplicatePart = useCreateApiFormModal({
     url: ApiEndpoints.part_list,
-    title: t`Add Part`,
+    title: t`新增货品`,
     fields: duplicatePartFields,
     initialData: {
       ...part,
@@ -1045,7 +1045,7 @@ export default function PartDetail() {
   const deletePart = useDeleteApiFormModal({
     url: ApiEndpoints.part_list,
     pk: part.pk,
-    title: t`Delete Part`,
+    title: t`删除货品`,
     onFormSuccess: () => {
       if (part.category) {
         navigate(getDetailUrl(ModelType.partcategory, part.category));
@@ -1054,7 +1054,7 @@ export default function PartDetail() {
       }
     },
     preFormContent: (
-      <Alert color='red' title={t`Deleting this part cannot be reversed`}>
+      <Alert color='red' title={t`删除此货品后无法撤销`}>
         <Stack gap='xs'>
           <Thumbnail src={part.thumbnail ?? part.image} text={part.full_name} />
         </Stack>
@@ -1111,14 +1111,14 @@ export default function PartDetail() {
         enableLabels
       />,
       <ActionDropdown
-        tooltip={t`Stock Actions`}
+        tooltip={t`库存操作`}
         icon={<IconPackages />}
         hidden={part.virtual || !user.hasViewRole(UserRoles.stock)}
         actions={[
           ...stockAdjustActions.menuActions,
           {
-            name: t`Order`,
-            tooltip: t`Order Stock`,
+            name: t`进货`,
+            tooltip: t`为此货品创建进货流程`,
             hidden:
               !user.hasAddRole(UserRoles.purchase_order) ||
               !part?.active ||
@@ -1129,8 +1129,8 @@ export default function PartDetail() {
             }
           },
           {
-            name: t`Search`,
-            tooltip: t`Search by serial number`,
+            name: t`查追踪码`,
+            tooltip: t`按追踪码查询`,
             hidden: !part.trackable,
             icon: <IconSearch />,
             onClick: findBySerialNumber.open
@@ -1138,7 +1138,7 @@ export default function PartDetail() {
         ]}
       />,
       <OptionsActionDropdown
-        tooltip={t`Part Actions`}
+        tooltip={t`货品操作`}
         actions={[
           DuplicateItemAction({
             hidden: !user.hasAddRole(UserRoles.part),
@@ -1170,7 +1170,7 @@ export default function PartDetail() {
         <Stack gap='xs'>
           {user.hasViewRole(UserRoles.part_category) && (
             <NavigationTree
-              title={t`Part Categories`}
+              title={t`货品分类`}
               childIdentifier='subcategories'
               modelType={ModelType.partcategory}
               endpoint={ApiEndpoints.category_tree}
@@ -1182,7 +1182,7 @@ export default function PartDetail() {
             />
           )}
           <PageDetail
-            title={`${t`Part`}: ${part.full_name}`}
+            title={`${t`货品`}: ${part.full_name}`}
             icon={
               lockingEnabled ? (
                 <ActionIcon
@@ -1199,7 +1199,7 @@ export default function PartDetail() {
                         notifications.hide('part-lock');
                         notifications.show({
                           id: 'part-lock',
-                          message: locking ? t`Part locked` : t`Part unlocked`,
+                          message: locking ? t`货品已锁定` : t`货品已解锁`,
                           color: 'green',
                           icon: locking ? (
                             <IconLock size='1rem' />

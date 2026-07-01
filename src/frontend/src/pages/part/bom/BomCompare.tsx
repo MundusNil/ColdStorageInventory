@@ -180,8 +180,8 @@ function BomTableRow({
               {partMatch
                 ? t`No changes`
                 : !!item.primary
-                  ? t`Part removed from BOM`
-                  : t`Part added to BOM`}
+                  ? t`货品已从组合清单移除`
+                  : t`货品已加入组合清单`}
             </Text>
           )}
         </Group>
@@ -200,7 +200,7 @@ function BomTable({
       <Table>
         <Table.Thead>
           <Table.Tr>
-            <Table.Th>{t`Part`}</Table.Th>
+            <Table.Th>{t`货品`}</Table.Th>
             <Table.Th>{t`Quantity`}</Table.Th>
             <Table.Th>{t`Changes`}</Table.Th>
           </Table.Tr>

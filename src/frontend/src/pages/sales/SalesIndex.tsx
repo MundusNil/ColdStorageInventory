@@ -104,7 +104,7 @@ export default function SalesIndex() {
     return [
       SegmentedControlPanel({
         name: 'salesorders',
-        label: t`Sales Orders`,
+        label: t`出货单`,
         icon: <IconTruckDelivery />,
         hidden: !user.hasViewRole(UserRoles.sales_order),
         selection: salesOrderView,
@@ -112,19 +112,19 @@ export default function SalesIndex() {
         options: [
           {
             value: 'table',
-            label: t`Table View`,
+            label: t`表格视图`,
             icon: <IconTable />,
             content: <SalesOrderTable />
           },
           {
             value: 'calendar',
-            label: t`Calendar View`,
+            label: t`日历视图`,
             icon: <IconCalendar />,
             content: <SalesOrderCalendar />
           },
           {
             value: 'parametric',
-            label: t`Parametric View`,
+            label: t`参数视图`,
             icon: <IconListDetails />,
             content: <SalesOrderParametricTable />
           }
@@ -132,7 +132,7 @@ export default function SalesIndex() {
       }),
       {
         name: 'shipments',
-        label: t`Pending Shipments`,
+        label: t`待发货`,
         icon: <IconCubeSend />,
         content: (
           <SalesOrderShipmentTable
@@ -144,7 +144,7 @@ export default function SalesIndex() {
       },
       SegmentedControlPanel({
         name: 'returnorders',
-        label: t`Return Orders`,
+        label: t`退货单`,
         icon: <IconTruckReturn />,
         hidden: !user.hasViewRole(UserRoles.return_order),
         selection: returnOrderView,
@@ -152,19 +152,19 @@ export default function SalesIndex() {
         options: [
           {
             value: 'table',
-            label: t`Table View`,
+            label: t`表格视图`,
             icon: <IconTable />,
             content: <ReturnOrderTable />
           },
           {
             value: 'calendar',
-            label: t`Calendar View`,
+            label: t`日历视图`,
             icon: <IconCalendar />,
             content: <ReturnOrderCalendar />
           },
           {
             value: 'parametric',
-            label: t`Parametric View`,
+            label: t`参数视图`,
             icon: <IconListDetails />,
             content: <ReturnOrderParametricTable />
           }
@@ -172,14 +172,14 @@ export default function SalesIndex() {
       }),
       SegmentedControlPanel({
         name: 'customers',
-        label: t`Customers`,
+        label: t`客户`,
         icon: <IconBuildingStore />,
         selection: customersView,
         onChange: setCustomersView,
         options: [
           {
             value: 'table',
-            label: t`Table View`,
+            label: t`表格视图`,
             icon: <IconTable />,
             content: (
               <CompanyTable
@@ -191,7 +191,7 @@ export default function SalesIndex() {
           },
           {
             value: 'parametric',
-            label: t`Parametric View`,
+            label: t`参数视图`,
             icon: <IconListDetails />,
             content: (
               <ParametricCompanyTable queryParams={{ is_customer: true }} />
@@ -208,7 +208,7 @@ export default function SalesIndex() {
 
   return (
     <Stack>
-      <PageDetail title={t`Sales`} />
+      <PageDetail title={t`出货管理`} />
       <PanelGroup
         pageKey='sales-index'
         panels={panels}

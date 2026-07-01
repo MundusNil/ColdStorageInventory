@@ -1,5 +1,3 @@
-import { t } from '@lingui/core/macro';
-import { Trans } from '@lingui/react/macro';
 import { Button } from '@mantine/core';
 import { notifications } from '@mantine/notifications';
 import { useEffect } from 'react';
@@ -16,8 +14,8 @@ export default function VerifyEmail() {
   useEffect(() => {
     if (!key) {
       notifications.show({
-        title: t`Key invalid`,
-        message: t`You need to provide a valid key.`,
+        title: '验证链接无效',
+        message: '需要有效的邮箱验证链接。',
         color: 'red'
       });
       navigate('/login');
@@ -25,9 +23,9 @@ export default function VerifyEmail() {
   }, [key]);
 
   return (
-    <Wrapper titleText={t`Verify Email`}>
+    <Wrapper titleText='验证邮箱'>
       <Button type='submit' onClick={() => handleVerifyEmail(key, navigate)}>
-        <Trans>Verify</Trans>
+        验证
       </Button>
     </Wrapper>
   );
