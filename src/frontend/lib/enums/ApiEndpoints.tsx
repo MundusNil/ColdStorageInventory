@@ -25,6 +25,7 @@ export enum ApiEndpoints {
   user_reset = 'auth/v1/auth/password/request',
   user_reset_set = 'auth/v1/auth/password/reset',
   auth_pwd_change = 'auth/v1/account/password/change',
+  auth_csrf = 'auth/csrf/',
   auth_login = 'auth/v1/auth/login',
   auth_login_2fa = 'auth/v1/auth/2fa/authenticate',
   auth_session = 'auth/v1/auth/session',

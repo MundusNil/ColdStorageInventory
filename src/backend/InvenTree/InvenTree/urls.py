@@ -34,6 +34,7 @@ from web.urls import urlpatterns as platform_urls
 
 from .api import (
     APISearchView,
+    CsrfTokenView,
     InfoView,
     LicenseView,
     NotFoundView,
@@ -102,6 +103,7 @@ apipatterns = [
     path(
         'auth/',
         include([
+            path('csrf/', CsrfTokenView.as_view(), name='api-auth-csrf'),
             path(
                 'login-redirect/',
                 users.api.LoginRedirect.as_view(),

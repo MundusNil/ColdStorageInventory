@@ -9,7 +9,9 @@ from django.contrib.contenttypes.models import ContentType
 from django.db import transaction
 from django.http import JsonResponse
 from django.urls import path, reverse
+from django.utils.decorators import method_decorator
 from django.utils.translation import gettext_lazy as _
+from django.views.decorators.csrf import ensure_csrf_cookie
 from django.views.generic.base import RedirectView
 
 import structlog
@@ -292,7 +294,7 @@ class InfoView(APIView):
             is_staff = self.check_auth_header(request)
 
         data = {
-            'server': 'InvenTree',
+            'server': 'ColdStorageInventory',
             'id': InvenTree.version.inventree_identifier(),
             'version': InvenTree.version.inventreeVersion(),
             'instance': InvenTree.version.inventreeInstanceName(),
@@ -352,6 +354,17 @@ class InfoView(APIView):
                 pass
 
         return False
+
+
+class CsrfTokenView(APIView):
+    """Ensure the browser has a CSRF cookie before session login."""
+
+    permission_classes = [InvenTree.permissions.AllowAnyOrReadScope]
+
+    @method_decorator(ensure_csrf_cookie)
+    def get(self, request, *args, **kwargs):
+        """Return a minimal response which sets the CSRF cookie."""
+        return JsonResponse({'detail': 'ok'})
 
 
 class NotFoundView(APIView):
