@@ -84,72 +84,94 @@ export async function doBasicLogin(
 
   clearCsrfCookie();
   await ensureCsrf();
-  const csrfToken = getCsrfCookie();
 
   let loginDone = false;
   let success = false;
+  let retriedAfterConflict = false;
 
   const host: string = getHost();
 
-  // Attempt login with basic info
-  await api
-    .post(
-      apiUrl(ApiEndpoints.auth_login),
-      {
-        username: username,
-        password: password
-      },
-      {
-        baseURL: host,
-        headers: csrfToken ? { 'X-CSRFToken': csrfToken } : undefined
-      }
-    )
-    .then((response) => {
-      setAuthContext(response.data?.data);
-      if (response.status == 200 && response.data?.meta?.is_authenticated) {
-        setAuthenticated(true);
-        loginDone = true;
-        success = true;
-      }
-    })
-    .catch(async (err) => {
-      notifications.hide('auth-login-error');
+  const clearConflictingSession = async () => {
+    await authApi(apiUrl(ApiEndpoints.auth_session), undefined, 'delete').catch(
+      () => {}
+    );
+    document.cookie =
+      'mfa_trusted=; expires=Thu, 01 Jan 1970 00:00:00 UTC; path=/;';
+    clearUserState();
+    clearCsrfCookie();
+    setAuthContext(undefined);
+    await ensureCsrf();
+  };
 
-      if (err?.response?.status) {
-        switch (err.response.status) {
-          case 401:
-            await handlePossibleMFAError(err);
-            break;
-          case 409:
-            doLogout(navigate);
-            notifications.show({
-              title: t`Logged Out`,
-              message: t`There was a conflicting session for this browser, which has been logged out.`,
-              color: 'red',
-              id: 'auth-login-error',
-              autoClose: true
-            });
-            break;
-          default:
-            notifications.show({
-              title: `${t`Login failed`} (${err.response.status})`,
-              message:
-                err.response?.data?.detail ??
-                t`Check your input and try again.`,
-              id: 'auth-login-error',
-              color: 'red'
-            });
-            break;
+  const submitLogin = async (): Promise<void> => {
+    const csrfToken = getCsrfCookie();
+
+    await api
+      .post(
+        apiUrl(ApiEndpoints.auth_login),
+        {
+          username: username,
+          password: password
+        },
+        {
+          baseURL: host,
+          headers: csrfToken ? { 'X-CSRFToken': csrfToken } : undefined
         }
-      } else {
-        notifications.show({
-          title: t`Login failed`,
-          message: t`No response from server.`,
-          color: 'red',
-          id: 'login-error'
-        });
-      }
-    });
+      )
+      .then((response) => {
+        setAuthContext(response.data?.data);
+        if (response.status == 200 && response.data?.meta?.is_authenticated) {
+          setAuthenticated(true);
+          loginDone = true;
+          success = true;
+        }
+      })
+      .catch(async (err) => {
+        notifications.hide('auth-login-error');
+
+        if (err?.response?.status) {
+          switch (err.response.status) {
+            case 401:
+              await handlePossibleMFAError(err);
+              break;
+            case 409:
+              if (!retriedAfterConflict) {
+                retriedAfterConflict = true;
+                await clearConflictingSession();
+                return await submitLogin();
+              }
+
+              notifications.show({
+                title: t`登录冲突`,
+                message: t`浏览器里还有旧登录状态，请刷新页面后再试。`,
+                color: 'red',
+                id: 'auth-login-error',
+                autoClose: true
+              });
+              break;
+            default:
+              notifications.show({
+                title: `${t`登录失败`} (${err.response.status})`,
+                message:
+                  err.response?.data?.detail ??
+                  t`请检查账号和密码后重试。`,
+                id: 'auth-login-error',
+                color: 'red'
+              });
+              break;
+          }
+        } else {
+          notifications.show({
+            title: t`登录失败`,
+            message: t`服务器没有响应。`,
+            color: 'red',
+            id: 'login-error'
+          });
+        }
+      });
+  };
+
+  await submitLogin();
 
   // see if mfa registration is required
   if (loginDone) {
@@ -187,8 +209,8 @@ export async function doBasicLogin(
           loginDone = true;
           success = true;
           notifications.show({
-            title: t`MFA Login successful`,
-            message: t`MFA details were automatically provided in the browser`,
+            title: t`多因素验证成功`,
+            message: t`浏览器已自动提供多因素验证信息`,
             color: 'green'
           });
         }
@@ -221,8 +243,8 @@ export const doLogout = async (navigate: NavigateFunction) => {
       'mfa_trusted=; expires=Thu, 01 Jan 1970 00:00:00 UTC; path=/;';
 
     showLoginNotification({
-      title: t`Logged Out`,
-      message: t`Successfully logged out`
+      title: t`已退出登录`,
+      message: t`已成功退出登录`
     });
   }
 
@@ -289,8 +311,8 @@ function observeProfile() {
     // set profile language
     if (user.profile?.language && language != user.profile.language) {
       showNotification({
-        title: t`Language changed`,
-        message: t`Your active language has been changed to the one set in your profile`,
+        title: t`语言已切换`,
+        message: t`已按账号设置切换当前语言`,
         color: 'blue',
         icon: 'language'
       });
@@ -311,8 +333,8 @@ function observeProfile() {
       );
       if (diff.length > 0) {
         showNotification({
-          title: t`Theme changed`,
-          message: t`Your active theme has been changed to the one set in your profile`,
+          title: t`主题已切换`,
+          message: t`已按账号设置切换当前主题`,
           color: 'blue'
         });
         setTheme(newTheme);
@@ -347,16 +369,16 @@ export function handleReset(
   api.post(apiUrl(ApiEndpoints.user_reset), values).then((val) => {
     if (val.status === 200) {
       notifications.show({
-        title: t`Mail delivery successful`,
-        message: t`Check your inbox for a reset link. This only works if you have an account. Check in spam too.`,
+        title: t`邮件发送成功`,
+        message: t`请到邮箱中查看重置链接。如果没有收到，请检查垃圾邮件。`,
         color: 'green',
         autoClose: false
       });
       navigate('/login');
     } else {
       notifications.show({
-        title: t`Reset failed`,
-        message: t`Check your input and try again.`,
+        title: t`重置失败`,
+        message: t`请检查输入内容后重试。`,
         color: 'red'
       });
     }
@@ -379,11 +401,11 @@ export async function handleMfaLogin(
       return true;
     })
     .catch(async (err) => {
-      // Already logged in, but with a different session
+      // 已登录，但浏览器里存在另一个会话
       if (err?.response?.status == 409) {
         notifications.show({
-          title: t`Already logged in`,
-          message: t`There is a conflicting session on the server for this browser. Please logout of that first.`,
+          title: t`登录冲突`,
+          message: t`浏览器里还有旧登录状态，请先退出旧会话。`,
           color: 'red',
           autoClose: false
         });
@@ -403,7 +425,7 @@ export async function handleMfaLogin(
         }
       } else {
         const errors = err.response?.data?.errors;
-        let msg = t`An error occurred`;
+        let msg = t`发生错误`;
 
         if (errors) {
           msg = errors.map((e: any) => e.message).join(', ');
@@ -439,8 +461,8 @@ export const checkLoginState = async (
   const loginSuccess = async () => {
     setLoginChecked(true);
     showLoginNotification({
-      title: t`Logged In`,
-      message: t`Successfully logged in`
+      title: t`登录成功`,
+      message: t`已成功登录`
     });
     MfaSetupOk(navigate).then(async (isOk) => {
       if (isOk) {
@@ -453,7 +475,7 @@ export const checkLoginState = async (
   };
 
   if (isLoggedIn()) {
-    // Already logged in
+    // 已登录
     await loginSuccess();
     return;
   }
@@ -574,7 +596,7 @@ export const getTotpSecret = async (setTotpQr: any) => {
       } else {
         const msg = err.response.data.errors[0].message;
         showNotification({
-          title: t`Failed to set up MFA`,
+          title: t`多因素验证设置失败`,
           message: msg,
           color: 'red'
         });
@@ -593,8 +615,8 @@ export function handleVerifyTotp(
       code: value
     }).then(() => {
       showNotification({
-        title: t`MFA Setup successful`,
-        message: t`MFA via TOTP has been set up successfully; you will need to login again.`,
+        title: t`多因素验证设置成功`,
+        message: t`动态验证码已设置成功，请重新登录。`,
         color: 'green'
       });
       doLogout(navigate);
@@ -609,8 +631,8 @@ export function handlePasswordReset(
 ) {
   function success() {
     notifications.show({
-      title: t`Password set`,
-      message: t`The password was set successfully. You can now login with your new password`,
+      title: t`密码已设置`,
+      message: t`密码已设置成功，现在可以使用新密码登录。`,
       color: 'green',
       autoClose: false
     });
@@ -619,7 +641,7 @@ export function handlePasswordReset(
 
   function passwordError(values: any) {
     notifications.show({
-      title: t`Reset failed`,
+      title: t`重置失败`,
       message: values?.errors.map((e: any) => e.message).join('\n'),
       color: 'red'
     });
@@ -684,7 +706,7 @@ export function handleChangePassword(
       values?.new_password1 ||
       values?.current_password ||
       values?.error ||
-      t`Password could not be changed`;
+      t`密码修改失败`;
 
     // If message is array
     if (!Array.isArray(message)) {
@@ -693,7 +715,7 @@ export function handleChangePassword(
 
     message.forEach((msg: string) => {
       notifications.show({
-        title: t`Error`,
+        title: t`错误`,
         message: msg,
         color: 'red'
       });
@@ -702,7 +724,7 @@ export function handleChangePassword(
 
   // check if passwords match
   if (pwd1 !== pwd2) {
-    passwordError({ new_password2: t`The two password fields didn’t match` });
+    passwordError({ new_password2: t`两次输入的密码不一致` });
     return;
   }
 
@@ -718,8 +740,8 @@ export function handleChangePassword(
     .catch((err) => {
       if (err.status === 401) {
         notifications.show({
-          title: t`Password Changed`,
-          message: t`The password was set successfully. You can now login with your new password`,
+          title: t`密码已修改`,
+          message: t`密码已设置成功，现在可以使用新密码登录。`,
           color: 'green',
           autoClose: false
         });
