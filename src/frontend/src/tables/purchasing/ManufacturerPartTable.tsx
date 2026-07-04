@@ -134,10 +134,14 @@ export function ManufacturerPartTable({
     table: table
   });
 
+  const duplicateManufacturerPartFields = useManufacturerPartFields({
+    duplicateManufacturerPartId: selectedPart?.pk
+  });
+
   const duplicateManufacturerPart = useCreateApiFormModal({
     url: ApiEndpoints.manufacturer_part_list,
     title: t`新增生产厂家货号`,
-    fields: useMemo(() => manufacturerPartFields, [manufacturerPartFields]),
+    fields: duplicateManufacturerPartFields,
     table: table,
     initialData: {
       ...selectedPart

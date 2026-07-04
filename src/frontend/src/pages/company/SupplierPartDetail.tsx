@@ -357,10 +357,14 @@ export default function SupplierPartDetail() {
     }
   });
 
+  const duplicateSupplierPartFields = useSupplierPartFields({
+    duplicateSupplierPartId: supplierPart?.pk
+  });
+
   const duplicateSupplierPart = useCreateApiFormModal({
     url: ApiEndpoints.supplier_part_list,
     title: t`新增供货商货品`,
-    fields: supplierPartFields,
+    fields: duplicateSupplierPartFields,
     initialData: {
       ...supplierPart
     },

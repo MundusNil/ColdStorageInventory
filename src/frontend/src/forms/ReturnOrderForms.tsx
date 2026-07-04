@@ -84,14 +84,9 @@ export function useReturnOrderFields({
     if (!!duplicateOrderId) {
       fields.duplicate = {
         children: {
-          order_id: {
+          original: {
             hidden: true,
             value: duplicateOrderId
-          },
-          copy_lines: {
-            // Cannot duplicate lines from a return order!
-            value: false,
-            hidden: true
           },
           copy_extra_lines: {},
           copy_parameters: {}
@@ -199,7 +194,7 @@ function ReturnOrderLineItemFormRow({
               label: t`Status`,
               choices: statusOptions,
               onValueChange: (value) => {
-                props.changeFn(props.idx, 'status', value);
+                props.changeFn(props.rowId, 'status', value);
               }
             }}
             defaultValue={record.item_detail?.status}
@@ -207,7 +202,7 @@ function ReturnOrderLineItemFormRow({
           />
         </Table.Td>
         <Table.Td>
-          <RemoveRowButton onClick={() => props.removeFn(props.idx)} />
+          <RemoveRowButton onClick={() => props.removeFn(props.rowId)} />
         </Table.Td>
       </Table.Tr>
     </>
@@ -226,6 +221,7 @@ export function useReceiveReturnOrderLineItems(
       field_type: 'table',
       value: props.items.map((item: any) => {
         return {
+          id: item.pk,
           item: item.pk
         };
       }),
@@ -236,7 +232,7 @@ export function useReceiveReturnOrderLineItems(
           <ReturnOrderLineItemFormRow
             props={row}
             record={record}
-            key={record.pk}
+            key={row.rowId}
           />
         );
       },

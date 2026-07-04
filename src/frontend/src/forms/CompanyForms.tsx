@@ -14,7 +14,7 @@ import {
   IconPhone
 } from '@tabler/icons-react';
 import { useMemo, useState } from 'react';
-import { TagsField } from './CommonFields';
+import { DuplicateField, TagsField } from './CommonFields';
 
 /**
  * Field set for SupplierPart instance
@@ -22,11 +22,13 @@ import { TagsField } from './CommonFields';
 export function useSupplierPartFields({
   manufacturerId,
   manufacturerPartId,
-  partId
+  partId,
+  duplicateSupplierPartId
 }: {
   manufacturerId?: number;
   manufacturerPartId?: number;
   partId?: number;
+  duplicateSupplierPartId?: number | null;
 }) {
   const [part, setPart] = useState<any>({});
 
@@ -124,14 +126,34 @@ export function useSupplierPartFields({
       },
       active: {
         label: t`启用`
-      }
+      },
+      duplicate: DuplicateField({
+        originalId: duplicateSupplierPartId,
+        extraFields: {
+          copy_parameters: {}
+        }
+      })
     };
 
+    if (!duplicateSupplierPartId) {
+      delete fields.duplicate;
+    }
+
     return fields;
-  }, [manufacturerId, manufacturerPartId, partId, part]);
+  }, [
+    manufacturerId,
+    manufacturerPartId,
+    partId,
+    part,
+    duplicateSupplierPartId
+  ]);
 }
 
-export function useManufacturerPartFields() {
+export function useManufacturerPartFields({
+  duplicateManufacturerPartId
+}: {
+  duplicateManufacturerPartId?: number | null;
+} = {}) {
   return useMemo(() => {
     const fields: ApiFormFieldSet = {
       part: {
@@ -162,18 +184,32 @@ export function useManufacturerPartFields() {
       tags: TagsField({}),
       link: {
         label: t`外部链接`
-      }
+      },
+      duplicate: DuplicateField({
+        originalId: duplicateManufacturerPartId,
+        extraFields: {
+          copy_parameters: {}
+        }
+      })
     };
 
+    if (!duplicateManufacturerPartId) {
+      delete fields.duplicate;
+    }
+
     return fields;
-  }, []);
+  }, [duplicateManufacturerPartId]);
 }
 
 /**
  * Field set for editing a company instance
  */
-export function companyFields(): ApiFormFieldSet {
-  return {
+export function companyFields({
+  duplicateCompanyId
+}: {
+  duplicateCompanyId?: number | null;
+} = {}): ApiFormFieldSet {
+  const fields: ApiFormFieldSet = {
     name: {
       label: t`单位名称`
     },
@@ -211,6 +247,18 @@ export function companyFields(): ApiFormFieldSet {
     },
     active: {
       label: t`启用`
-    }
+    },
+    duplicate: DuplicateField({
+      originalId: duplicateCompanyId,
+      extraFields: {
+        copy_parameters: {}
+      }
+    })
   };
+
+  if (!duplicateCompanyId) {
+    delete fields.duplicate;
+  }
+
+  return fields;
 }

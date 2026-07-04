@@ -41,15 +41,16 @@ import {
   useCallback,
   useEffect,
   useMemo,
+  useRef,
   useState
 } from 'react';
 import { useFormContext } from 'react-hook-form';
 import { useNavigate } from 'react-router-dom';
 import { api } from '../App';
 import RemoveRowButton from '../components/buttons/RemoveRowButton';
-import { StandaloneField } from '../components/forms/StandaloneField';
 import {
   TableFieldExtraRow,
+  TableFieldQuantityInput,
   type TableFieldRowProps
 } from '../components/forms/fields/TableField';
 import { Thumbnail } from '../components/images/Thumbnail';
@@ -553,19 +554,106 @@ function moveToDefault(
   });
 }
 
-type StockAdjustmentItemWithRecord = {
-  obj: any;
-} & StockAdjustmentItem;
+/*
+ * Memoize a list of stock items for use in a stock operations modal.
+ * These items may be provided directly, or fetched from the API
+ *
+ * @param opened - Is the underlying modal opened or closed?
+ * @param items - Optional list of stock items to use directly
+ * @param category - Optional category ID to filter stock items
+ * @param location - Optional location ID to filter stock items
+ * @param part - Optional part ID to filter stock items
+ * @param filters - Optional additional filters to apply to the stock item query
+ */
+function useStockItems({
+  opened,
+  items,
+  filters
+}: Readonly<{
+  opened: boolean;
+  items?: any[] | any;
+  filters?: { [key: string]: any };
+}>) {
+  const query = useQuery({
+    enabled: opened,
+    queryKey: ['stockItems', filters],
+    queryFn: async () => {
+      if (items !== undefined) {
+        return Array.isArray(items) ? items : [items];
+      }
 
-type TableFieldRefreshFn = (idx: number) => void;
-type TableFieldChangeFn = (idx: number, key: string, value: any) => void;
+      if (!opened) {
+        return [];
+      }
 
-type StockRow = {
-  item: StockAdjustmentItemWithRecord;
-  idx: number;
-  changeFn: TableFieldChangeFn;
-  removeFn: TableFieldRefreshFn;
-};
+      // Fetch via the API
+      const url = apiUrl(ApiEndpoints.stock_item_list);
+
+      return api
+        .get(url, {
+          params: {
+            ...filters,
+            part_detail: true,
+            location_detail: true,
+            cascade: false
+          }
+        })
+        .then((response) => response.data ?? []);
+    }
+  });
+
+  return useMemo(() => {
+    if (!opened) {
+      return [];
+    }
+
+    return query.data ?? [];
+  }, [opened, query.data]);
+}
+
+function ReturnStockMoveButton({
+  record,
+  quantity,
+  onRemove,
+  returnStock
+}: {
+  record: any;
+  quantity: StockItemQuantity;
+  onRemove: () => void;
+  returnStock: boolean;
+}) {
+  const form = useFormContext();
+
+  return (
+    <ActionButton
+      onClick={() =>
+        moveToDefault(
+          record,
+          quantity,
+          onRemove,
+          returnStock
+            ? {
+                title: t`Confirm Stock Return`,
+                onConfirm: (location: number) => {
+                  form.setValue('location', location, {
+                    shouldDirty: true,
+                    shouldValidate: true
+                  });
+                }
+              }
+            : undefined
+        )
+      }
+      icon={<InvenTreeIcon icon='default_location' />}
+      tooltip={t`Move to default location`}
+      tooltipAlignment='top'
+      disabled={
+        !record.part_detail?.default_location &&
+        !record.part_detail?.category_default_location
+      }
+    />
+  );
+}
 
 function StockOperationsRow({
   props,
@@ -588,7 +676,7 @@ function StockOperationsRow({
   returnStock?: boolean;
   record?: any;
 }) {
-  const form = useFormContext();
+  const rowId = props.rowId;
 
   const statusOptions: ApiFormFieldChoice[] = useMemo(() => {
     return (
@@ -607,37 +695,54 @@ function StockOperationsRow({
 
   const [status, setStatus] = useState<number | undefined>(undefined);
 
-  const removeAndRefresh = () => {
-    props.removeFn(props.idx);
-  };
+  const [packagingOpen, packagingHandlers] = useDisclosure(false);
+  const [statusOpen, statusHandlers] = useDisclosure(false);
+  const hasMountedPackagingRef = useRef(false);
+  const hasMountedStatusRef = useRef(false);
 
-  const callChangeFn = (idx: number, key: string, value: any) => {
-    setTimeout(() => props.changeFn(idx, key, value), 0);
-  };
-
-  const [packagingOpen, packagingHandlers] = useDisclosure(false, {
-    onOpen: () => {
-      if (transfer) {
-        callChangeFn(props.idx, 'packaging', record?.packaging || undefined);
-      }
-    },
-    onClose: () => {
-      if (transfer) {
-        callChangeFn(props.idx, 'packaging', undefined);
-      }
+  useEffect(() => {
+    if (!transfer) {
+      return;
     }
-  });
 
-  const [statusOpen, statusHandlers] = useDisclosure(false, {
-    onOpen: () => {
+    if (!hasMountedPackagingRef.current) {
+      hasMountedPackagingRef.current = true;
+      return;
+    }
+
+    props.changeFn(
+      rowId,
+      'packaging',
+      packagingOpen ? record?.packaging || undefined : undefined
+    );
+  }, [transfer, packagingOpen, rowId, record?.packaging, props.changeFn]);
+
+  useEffect(() => {
+    if (!changeStatus) {
+      return;
+    }
+
+    if (!hasMountedStatusRef.current) {
+      hasMountedStatusRef.current = true;
+      return;
+    }
+
+    if (statusOpen) {
       setStatus(record?.status_custom_key || record?.status || undefined);
-      props.changeFn(props.idx, 'status', record?.status || undefined);
-    },
-    onClose: () => {
-      setStatus(undefined);
-      callChangeFn(props.idx, 'status', undefined);
+      props.changeFn(rowId, 'status', record?.status || undefined);
+      return;
     }
-  });
+
+    setStatus(undefined);
+    props.changeFn(rowId, 'status', undefined);
+  }, [
+    changeStatus,
+    statusOpen,
+    rowId,
+    record?.status,
+    record?.status_custom_key,
+    props.changeFn
+  ]);
 
   const stockString: string = useMemo(() => {
     if (!record) {
@@ -652,10 +757,15 @@ function StockOperationsRow({
   }, [record]);
 
   return !record ? (
-    <div>{t`Loading...`}</div>
+    <Table.Tr>
+      <Table.Td colSpan={6}>{t`Loading...`}</Table.Td>
+    </Table.Tr>
   ) : (
     <>
-      <Table.Tr>
+      <Table.Tr
+        aria-label={`stock-op-row-${rowId}`}
+        key={`stock-op-row-${rowId}`}
+      >
         <Table.Td>
           <Stack gap='xs'>
             <Flex gap='sm' align='center'>
@@ -689,15 +799,12 @@ function StockOperationsRow({
         </Table.Td>
         {!merge && (
           <Table.Td>
-            <StandaloneField
-              fieldName='quantity'
-              fieldDefinition={{
-                field_type: 'number',
-                value: quantity,
-                onValueChange: (value: any) => {
-                  setQuantity(value);
-                  props.changeFn(props.idx, 'quantity', value);
-                }
+            <TableFieldQuantityInput
+              min={0}
+              value={quantity ?? ''}
+              onChange={(value) => {
+                setQuantity(value);
+                props.changeFn(rowId, 'quantity', value);
               }}
               error={props.rowErrors?.quantity?.message}
             />
@@ -705,35 +812,30 @@ function StockOperationsRow({
         )}
         <Table.Td>
           <Flex gap='3px'>
-            {transfer && (
-              <ActionButton
-                onClick={() =>
-                  moveToDefault(
-                    record,
-                    props.item.quantity,
-                    removeAndRefresh,
-                    returnStock
-                      ? {
-                          title: t`Confirm Stock Return`,
-                          onConfirm: (location: number) => {
-                            form.setValue('location', location, {
-                              shouldDirty: true,
-                              shouldValidate: true
-                            });
-                          }
-                        }
-                      : undefined
-                  )
-                }
-                icon={<InvenTreeIcon icon='default_location' />}
-                tooltip={t`Move to default location`}
-                tooltipAlignment='top'
-                disabled={
-                  !record.part_detail?.default_location &&
-                  !record.part_detail?.category_default_location
-                }
-              />
-            )}
+            {transfer &&
+              (returnStock ? (
+                <ReturnStockMoveButton
+                  record={record}
+                  quantity={props.item.quantity}
+                  onRemove={() => props.removeFn(rowId)}
+                  returnStock={returnStock}
+                />
+              ) : (
+                <ActionButton
+                  onClick={() =>
+                    moveToDefault(record, props.item.quantity, () =>
+                      props.removeFn(rowId)
+                    )
+                  }
+                  icon={<InvenTreeIcon icon='default_location' />}
+                  tooltip={t`Move to default location`}
+                  tooltipAlignment='top'
+                  disabled={
+                    !record.part_detail?.default_location &&
+                    !record.part_detail?.category_default_location
+                  }
+                />
+              ))}
             {changeStatus && (
               <ActionButton
                 size='sm'
@@ -758,12 +860,12 @@ function StockOperationsRow({
                 icon={<InvenTreeIcon icon='merge' />}
                 tooltip={t`Merge into existing stock`}
                 onClick={() =>
-                  callChangeFn(props.idx, 'merge', !props.item?.merge)
+                  props.changeFn(rowId, 'merge', !props.item?.merge)
                 }
                 variant={props.item?.merge ? 'filled' : 'transparent'}
               />
             )}
-            <RemoveRowButton onClick={() => props.removeFn(props.idx)} />
+            <RemoveRowButton onClick={() => props.removeFn(rowId)} />
           </Flex>
         </Table.Td>
       </Table.Tr>
@@ -772,7 +874,7 @@ function StockOperationsRow({
           visible={statusOpen}
           onValueChange={(value: any) => {
             setStatus(value);
-            props.changeFn(props.idx, 'status', value || undefined);
+            props.changeFn(rowId, 'status', value || undefined);
           }}
           fieldName='status'
           fieldDefinition={{
@@ -788,7 +890,7 @@ function StockOperationsRow({
         <TableFieldExtraRow
           visible={transfer && packagingOpen}
           onValueChange={(value: any) => {
-            props.changeFn(props.idx, 'packaging', value || undefined);
+            props.changeFn(rowId, 'packaging', value || undefined);
           }}
           fieldName='packaging'
           fieldDefinition={{
@@ -814,15 +916,15 @@ type StockAdjustmentItem = {
 };
 
 function mapAdjustmentItems(items: any[], mergeDefault?: boolean) {
-  const mappedItems: StockAdjustmentItemWithRecord[] = items.map((elem) => {
+  const mappedItems: StockAdjustmentItem[] = items.map((elem) => {
     return {
+      id: elem.pk,
       pk: elem.pk,
       quantity: elem.quantity,
       batch: elem.batch || undefined,
       status: elem.status || undefined,
       packaging: elem.packaging || undefined,
-      merge: elem.merge ?? mergeDefault ?? false,
-      obj: elem
+      merge: elem.merge ?? mergeDefault ?? false
     };
   });
 
@@ -856,7 +958,7 @@ function stockTransferFields(
             changeStatus
             setMax
             transferMerge
-            key={record.pk}
+            key={row.rowId}
             record={record}
           />
         );
@@ -904,7 +1006,7 @@ function stockReturnFields(items: any[]): ApiFormFieldSet {
         return (
           <StockOperationsRow
             props={row}
-            key={record.pk}
+            key={row.rowId}
             record={record}
             transfer
             returnStock
@@ -952,9 +1054,12 @@ function stockRemoveFields(items: any[]): ApiFormFieldSet {
     return {};
   }
 
-  const records = Object.fromEntries(items.map((item) => [item.pk, item]));
+  // Only include items which are not serialized (serial number field is empty)
+  const validItems = items.filter((item) => !item.serial && item.quantity > 0);
 
-  const initialValue = mapAdjustmentItems(items).map((elem) => {
+  const records = Object.fromEntries(validItems.map((item) => [item.pk, item]));
+
+  const initialValue = mapAdjustmentItems(validItems).map((elem) => {
     return {
       ...elem,
       quantity: 0
@@ -974,7 +1079,7 @@ function stockRemoveFields(items: any[]): ApiFormFieldSet {
             setMax
             changeStatus
             add
-            key={record.pk}
+            key={row.rowId}
             record={record}
           />
         );
@@ -1001,9 +1106,12 @@ function stockAddFields(items: any[]): ApiFormFieldSet {
     return {};
   }
 
-  const records = Object.fromEntries(items.map((item) => [item.pk, item]));
+  // Only include items which are not serialized (serial number field is empty)
+  const validItems = items.filter((item) => !item.serial);
 
-  const initialValue = mapAdjustmentItems(items).map((elem) => {
+  const records = Object.fromEntries(validItems.map((item) => [item.pk, item]));
+
+  const initialValue = mapAdjustmentItems(validItems).map((elem) => {
     return {
       ...elem,
       quantity: 0
@@ -1022,7 +1130,7 @@ function stockAddFields(items: any[]): ApiFormFieldSet {
             changeStatus
             props={row}
             add
-            key={record.pk}
+            key={row.rowId}
             record={record}
           />
         );
@@ -1045,16 +1153,14 @@ function stockAddFields(items: any[]): ApiFormFieldSet {
 }
 
 function stockCountFields(items: any[]): ApiFormFieldSet {
-  if (!items) {
-    return {};
-  }
+  const records = Object.fromEntries(
+    items?.map((item) => [item.pk, item]) ?? []
+  );
 
-  const records = Object.fromEntries(items.map((item) => [item.pk, item]));
-
-  const initialValue = mapAdjustmentItems(items);
+  const initialValue = items ? mapAdjustmentItems(items) : [];
 
   // Extract all location values from the items
-  const locations = [...new Set(items.map((item) => item.location))];
+  const locations = [...new Set(items?.map((item) => item.location))];
 
   const fields: ApiFormFieldSet = {
     items: {
@@ -1065,8 +1171,8 @@ function stockCountFields(items: any[]): ApiFormFieldSet {
           <StockOperationsRow
             props={row}
             changeStatus
-            key={row.item.pk}
-            record={records[row.item.pk]}
+            key={row.rowId}
+            record={records[row.item?.pk]}
           />
         );
       },
@@ -1116,7 +1222,7 @@ function stockChangeStatusFields(items: any[]): ApiFormFieldSet {
         return (
           <StockOperationsRow
             props={row}
-            key={row.item}
+            key={row.rowId}
             merge
             record={records[row.item]}
           />
@@ -1147,19 +1253,22 @@ function stockMergeFields(items: any[]): ApiFormFieldSet {
     return {};
   }
 
-  const records = Object.fromEntries(items.map((item) => [item.pk, item]));
+  // Only include items which are not serialized (serial number field is empty)
+  const validItems = items.filter((item) => !item.serial);
+
+  const records = Object.fromEntries(validItems.map((item) => [item.pk, item]));
 
   // Extract all non-null location values from the items
   const locationValues = [
     ...new Set(
-      items.filter((item) => item.location).map((item) => item.location)
+      validItems.filter((item) => item.location).map((item) => item.location)
     )
   ];
 
   // Extract all non-null default location values from the items
   const defaultLocationValues = [
     ...new Set(
-      items
+      validItems
         .filter((item) => item.part_detail?.default_location)
         .map((item) => item.part_detail?.default_location)
     )
@@ -1176,17 +1285,16 @@ function stockMergeFields(items: any[]): ApiFormFieldSet {
   const fields: ApiFormFieldSet = {
     items: {
       field_type: 'table',
-      value: items.map((elem) => {
+      value: validItems.map((elem) => {
         return {
-          item: elem.pk,
-          obj: elem
+          item: elem.pk
         };
       }),
       modelRenderer: (row: TableFieldRowProps) => {
         return (
           <StockOperationsRow
             props={row}
-            key={row.item.item}
+            key={row.rowId}
             merge
             changeStatus
             record={records[row.item.item]}
@@ -1234,15 +1342,14 @@ function stockAssignFields(items: any[]): ApiFormFieldSet {
       field_type: 'table',
       value: items.map((elem) => {
         return {
-          item: elem.pk,
-          obj: elem
+          item: elem.pk
         };
       }),
       modelRenderer: (row: TableFieldRowProps) => {
         return (
           <StockOperationsRow
             props={row}
-            key={row.item.item}
+            key={row.rowId}
             merge
             record={records[row.item.item]}
           />
@@ -1289,7 +1396,7 @@ function stockDeleteFields(items: any[]): ApiFormFieldSet {
         return (
           <StockOperationsRow
             props={row}
-            key={record.pk}
+            key={row.rowId}
             merge
             record={record}
           />
@@ -1317,8 +1424,6 @@ type apiModalFunc = (props: ApiFormModalProps) => {
 
 function useStockOperationModal({
   items,
-  pk,
-  model,
   refresh,
   fieldGenerator,
   endpoint,
@@ -1329,9 +1434,7 @@ function useStockOperationModal({
   modalFunc = useCreateApiFormModal
 }: {
   items?: object;
-  pk?: number;
   filters?: any;
-  model: ModelType | string;
   refresh: () => void;
   fieldGenerator: (items: any[]) => ApiFormFieldSet;
   endpoint: ApiEndpoints;
@@ -1340,51 +1443,19 @@ function useStockOperationModal({
   successMessage?: string;
   modalFunc?: apiModalFunc;
 }) {
-  const baseParams: any = {
-    part_detail: true,
-    location_detail: true,
-    cascade: false
-  };
-
-  const params = useMemo(() => {
-    const query_params: any = {
-      ...baseParams,
-      ...(filters ?? {})
-    };
-
-    query_params[model] =
-      pk === undefined && model === 'location' ? 'null' : pk;
-
-    return query_params;
-  }, [baseParams, filters, model, pk]);
-
   const [opened, setOpened] = useState<boolean>(false);
 
-  const { data } = useQuery({
-    queryKey: ['stockitems', opened, model, pk, items, params],
-    queryFn: async () => {
-      if (items) {
-        // If a list of items is provided, use that directly
-        return Array.isArray(items) ? items : [items];
-      }
-
-      if (!pk || !opened) {
-        return [];
-      }
-
-      const url = apiUrl(ApiEndpoints.stock_item_list);
-
-      return api
-        .get(url, {
-          params: params
-        })
-        .then((response) => response.data ?? []);
-    }
+  const stockItems = useStockItems({
+    opened: opened,
+    items: items,
+    filters: filters
   });
 
-  const fields = useMemo(() => {
-    return fieldGenerator(data);
-  }, [data]);
+  // Rebuild the "fields" object
+  const fields = useMemo(
+    () => fieldGenerator(stockItems),
+    [fieldGenerator, stockItems]
+  );
 
   return modalFunc({
     url: endpoint,
@@ -1471,9 +1542,14 @@ export function useReturnStockItem(props: StockOperationProps) {
 }
 
 export function useCountStockItem(props: StockOperationProps) {
+  const fieldGenerator = useCallback(
+    (items: any[]) => stockCountFields(items),
+    []
+  );
+
   return useStockOperationModal({
     ...props,
-    fieldGenerator: stockCountFields,
+    fieldGenerator: fieldGenerator,
     endpoint: ApiEndpoints.stock_count,
     title: t`盘点改数`,
     successMessage: t`库存已盘点`,

@@ -220,10 +220,14 @@ export default function ManufacturerPartDetail() {
     onFormSuccess: refreshInstance
   });
 
+  const duplicateManufacturerPartFields = useManufacturerPartFields({
+    duplicateManufacturerPartId: manufacturerPart?.pk
+  });
+
   const duplicateManufacturerPart = useCreateApiFormModal({
     url: ApiEndpoints.manufacturer_part_list,
     title: t`新增生产厂家货号`,
-    fields: editManufacturerPartFields,
+    fields: duplicateManufacturerPartFields,
     initialData: {
       ...manufacturerPart
     },
