@@ -5,8 +5,8 @@ import CompanyDetail from './CompanyDetail';
 export default function CustomerDetail() {
   return (
     <CompanyDetail
-      title={t`Customer`}
-      breadcrumbs={[{ name: t`Sales`, url: '/sales/' }]}
+      title={t`客户`}
+      breadcrumbs={[{ name: t`销售管理`, url: '/sales/' }]}
       last_crumb_url='/sales/customer'
     />
   );

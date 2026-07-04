@@ -71,6 +71,7 @@ export function CompanyTable({
       }),
       {
         accessor: 'website',
+        title: t`网站`,
         sortable: false
       }
     ];

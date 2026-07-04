@@ -41,21 +41,25 @@ export function ContactTable({
     const corecols: TableColumn[] = [
       {
         accessor: 'name',
+        title: t`联系人`,
         sortable: true,
         switchable: false
       },
       {
         accessor: 'phone',
+        title: t`电话`,
         switchable: true,
         sortable: false
       },
       {
         accessor: 'email',
+        title: t`邮箱`,
         switchable: true,
         sortable: false
       },
       {
         accessor: 'role',
+        title: t`职务`,
         switchable: true,
         sortable: false
       }
@@ -83,11 +87,11 @@ export function ContactTable({
 
   const contactFields: ApiFormFieldSet = useMemo(() => {
     return {
-      company: {},
-      name: {},
-      phone: {},
-      email: {},
-      role: {}
+      company: { label: t`往来单位` },
+      name: { label: t`联系人` },
+      phone: { label: t`电话` },
+      email: { label: t`邮箱` },
+      role: { label: t`职务` }
     };
   }, []);
 
@@ -96,14 +100,14 @@ export function ContactTable({
   const editContact = useEditApiFormModal({
     url: ApiEndpoints.contact_list,
     pk: selectedContact,
-    title: t`Edit Contact`,
+    title: t`编辑联系人`,
     fields: contactFields,
     onFormSuccess: (record: any) => table.updateRecord(record)
   });
 
   const newContact = useCreateApiFormModal({
     url: ApiEndpoints.contact_list,
-    title: t`Add Contact`,
+    title: t`新增联系人`,
     initialData: {
       company: companyId
     },
@@ -114,7 +118,7 @@ export function ContactTable({
   const deleteContact = useDeleteApiFormModal({
     url: ApiEndpoints.contact_list,
     pk: selectedContact,
-    title: t`Delete Contact`,
+    title: t`删除联系人`,
     table: table
   });
 
@@ -155,7 +159,7 @@ export function ContactTable({
     return [
       <AddItemButton
         key='add-contact'
-        tooltip={t`Add contact`}
+        tooltip={t`新增联系人`}
         onClick={() => newContact.open()}
         hidden={!can_add}
       />

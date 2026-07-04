@@ -38,18 +38,20 @@ export function AddressTable({
     return [
       {
         accessor: 'title',
+        title: t`地址名称`,
         sortable: true,
         switchable: false
       },
       {
         accessor: 'primary',
+        title: t`默认地址`,
         switchable: false,
         sortable: false,
         render: (record: any) => YesNoButton({ value: record.primary })
       },
       {
         accessor: 'address',
-        title: t`Address`,
+        title: t`地址`,
         sortable: false,
         switchable: false,
         render: (record: any) => {
@@ -68,31 +70,37 @@ export function AddressTable({
       },
       {
         accessor: 'postal_code',
+        title: t`邮编`,
         sortable: false,
         switchable: true
       },
       {
         accessor: 'postal_city',
+        title: t`城市`,
         sortable: false,
         switchable: true
       },
       {
         accessor: 'province',
+        title: t`省份`,
         sortable: false,
         switchable: true
       },
       {
         accessor: 'country',
+        title: t`国家/地区`,
         sortable: false,
         switchable: true
       },
       {
         accessor: 'shipping_notes',
+        title: t`送货备注`,
         sortable: false,
         switchable: true
       },
       {
         accessor: 'internal_shipping_notes',
+        title: t`内部送货备注`,
         sortable: false,
         switchable: true
       },
@@ -102,29 +110,29 @@ export function AddressTable({
 
   const addressFields: ApiFormFieldSet = useMemo(() => {
     return {
-      company: {},
-      title: {},
-      primary: {},
-      line1: {},
-      line2: {},
-      postal_code: {},
-      postal_city: {},
-      province: {},
-      country: {},
-      shipping_notes: {},
-      internal_shipping_notes: {},
-      link: {}
+      company: { label: t`往来单位` },
+      title: { label: t`地址名称` },
+      primary: { label: t`默认地址` },
+      line1: { label: t`地址第一行` },
+      line2: { label: t`地址第二行` },
+      postal_code: { label: t`邮编` },
+      postal_city: { label: t`城市` },
+      province: { label: t`省份` },
+      country: { label: t`国家/地区` },
+      shipping_notes: { label: t`送货备注` },
+      internal_shipping_notes: { label: t`内部送货备注` },
+      link: { label: t`外部链接` }
     };
   }, []);
 
   const newAddress = useCreateApiFormModal({
     url: ApiEndpoints.address_list,
-    title: t`Add Address`,
+    title: t`新增地址`,
     fields: addressFields,
     initialData: {
       company: companyId
     },
-    successMessage: t`Address created`,
+    successMessage: t`地址已新增`,
     table: table
   });
 
@@ -133,7 +141,7 @@ export function AddressTable({
   const editAddress = useEditApiFormModal({
     url: ApiEndpoints.address_list,
     pk: selectedAddress,
-    title: t`Edit Address`,
+    title: t`编辑地址`,
     fields: addressFields,
     table: table
   });
@@ -141,8 +149,8 @@ export function AddressTable({
   const deleteAddress = useDeleteApiFormModal({
     url: ApiEndpoints.address_list,
     pk: selectedAddress,
-    title: t`Delete Address`,
-    preFormWarning: t`Are you sure you want to delete this address?`,
+    title: t`删除地址`,
+    preFormWarning: t`确认删除这个地址？`,
     table: table
   });
 
@@ -184,7 +192,7 @@ export function AddressTable({
     return [
       <AddItemButton
         key='add-address'
-        tooltip={t`Add Address`}
+        tooltip={t`新增地址`}
         onClick={() => newAddress.open()}
         hidden={!can_add}
       />

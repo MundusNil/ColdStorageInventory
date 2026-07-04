@@ -16,8 +16,8 @@ export default function ParametricCompanyTable({
     return [
       {
         name: 'active',
-        label: t`Active`,
-        description: t`Show active companies`
+        label: t`启用`,
+        description: t`显示启用的往来单位`
       }
     ];
   }, []);
