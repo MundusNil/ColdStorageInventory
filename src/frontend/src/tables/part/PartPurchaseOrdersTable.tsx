@@ -72,13 +72,13 @@ export default function PartPurchaseOrdersTable({
 
             extra.push(
               <Text key='pack-quantity' size='sm'>
-                {t`Pack Quantity`}: {supplier_part.pack_quantity}
+                {t`包装数量`}: {supplier_part.pack_quantity}
               </Text>
             );
 
             extra.push(
               <Text key='total-quantity' size='sm'>
-                {t`Total Quantity`}: {formatDecimal(total)} {part?.units}
+                {t`合计数量`}: {formatDecimal(total)} {part?.units}
               </Text>
             );
           }

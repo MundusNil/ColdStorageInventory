@@ -21,6 +21,7 @@ export default function ManufacturerPartParametricTable({
       }),
       {
         accessor: 'manufacturer',
+        title: t`生产厂家/品牌`,
         sortable: true,
         render: (record: any) => (
           <CompanyColumn company={record?.manufacturer_detail} />
@@ -28,7 +29,7 @@ export default function ManufacturerPartParametricTable({
       },
       {
         accessor: 'MPN',
-        title: t`MPN`,
+        title: t`厂家货号`,
         sortable: true,
         copyable: true
       }
@@ -39,14 +40,14 @@ export default function ManufacturerPartParametricTable({
     return [
       {
         name: 'part_active',
-        label: t`Active Part`,
-        description: t`Show manufacturer parts for active internal parts.`,
+        label: t`启用货品`,
+        description: t`只显示启用货品对应的生产厂家货号`,
         type: 'boolean'
       },
       {
         name: 'manufacturer_active',
-        label: t`Active Manufacturer`,
-        description: t`Show manufacturer parts for active manufacturers.`,
+        label: t`启用生产厂家/品牌`,
+        description: t`只显示启用生产厂家/品牌对应的货号`,
         type: 'boolean'
       }
     ];

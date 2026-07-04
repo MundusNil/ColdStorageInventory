@@ -99,6 +99,7 @@ export function SupplierPartTable({
       IPNColumn({}),
       {
         accessor: 'supplier',
+        title: t`供货商`,
         filter: 'supplier_active',
         sortable: true,
         render: (record: any) => (
@@ -123,35 +124,39 @@ export function SupplierPartTable({
       {
         accessor: 'MPN',
         sortable: true,
-        title: t`MPN`,
+        title: t`厂家货号`,
         render: (record: any) => record?.manufacturer_part_detail?.MPN,
         copyable: true,
         copyAccessor: 'manufacturer_part_detail.MPN'
       },
       BooleanColumn({
         accessor: 'primary',
+        title: t`首选供货商`,
         sortable: true,
         switchable: true,
         defaultVisible: false
       }),
       BooleanColumn({
         accessor: 'active',
-        title: t`Active`,
+        title: t`启用`,
         sortable: true,
         switchable: true,
         defaultVisible: false
       }),
       DecimalColumn({
         accessor: 'in_stock',
+        title: t`当前库存`,
         sortable: true
       }),
       {
         accessor: 'packaging',
+        title: t`包装说明`,
         sortable: true,
         defaultVisible: false
       },
       {
         accessor: 'pack_quantity',
+        title: t`包装数量`,
         sortable: true,
         render: (record: any) => {
           const part = record?.part_detail ?? {};
@@ -161,7 +166,7 @@ export function SupplierPartTable({
           if (part.units) {
             extra.push(
               <Text key='base' size='sm'>
-                {t`Base units`} : {part.units}
+                {t`基础单位`} : {part.units}
               </Text>
             );
           }
@@ -170,7 +175,7 @@ export function SupplierPartTable({
             <TableHoverCard
               value={record.pack_quantity}
               extra={extra}
-              title={t`Pack Quantity`}
+              title={t`包装数量`}
             />
           );
         }
@@ -179,6 +184,7 @@ export function SupplierPartTable({
       NoteColumn({}),
       {
         accessor: 'available',
+        title: t`可供数量`,
         sortable: true,
         defaultVisible: false,
         filter: 'has_stock',
@@ -188,7 +194,7 @@ export function SupplierPartTable({
           if (record.availablility_updated) {
             extra.push(
               <Text>
-                {t`Updated`} : {record.availablility_updated}
+                {t`更新时间`} : {record.availablility_updated}
               </Text>
             );
           }
@@ -205,7 +211,7 @@ export function SupplierPartTable({
 
   const addSupplierPart = useCreateApiFormModal({
     url: ApiEndpoints.supplier_part_list,
-    title: t`Add Supplier Part`,
+    title: t`新增供货商货品`,
     fields: supplierPartFields,
     initialData: {
       part: partId,
@@ -215,7 +221,7 @@ export function SupplierPartTable({
     onFormSuccess: (response: any) => {
       table.refreshTable();
     },
-    successMessage: t`Supplier part created`,
+    successMessage: t`供货商货品已新增`,
     keepOpenOption: true
   });
 
@@ -228,7 +234,7 @@ export function SupplierPartTable({
     return [
       <AddItemButton
         key='add-supplier-part'
-        tooltip={t`Add supplier part`}
+        tooltip={t`新增供货商货品`}
         onClick={() => addSupplierPart.open()}
         hidden={!user.hasAddRole(UserRoles.purchase_order)}
       />,
@@ -236,7 +242,7 @@ export function SupplierPartTable({
         key='import-part'
         icon={<IconPackageImport />}
         color='green'
-        tooltip={t`Import supplier part`}
+        tooltip={t`导入供货商货品`}
         onClick={() => importPartWizard.openWizard()}
         hidden={
           supplierPlugins.length === 0 ||
@@ -251,28 +257,28 @@ export function SupplierPartTable({
     return [
       {
         name: 'active',
-        label: t`Active`,
-        description: t`Show active supplier parts`
+        label: t`启用`,
+        description: t`只显示启用的供货商货品`
       },
       {
         name: 'primary',
-        label: t`Primary`,
-        description: t`Show primary supplier parts`
+        label: t`首选供货商`,
+        description: t`只显示首选供货商货品`
       },
       {
         name: 'part_active',
-        label: t`Active Part`,
-        description: t`Show active internal parts`
+        label: t`启用货品`,
+        description: t`只显示启用的货品`
       },
       {
         name: 'supplier_active',
-        label: t`Active Supplier`,
-        description: t`Show active suppliers`
+        label: t`启用供货商`,
+        description: t`只显示启用的供货商`
       },
       {
         name: 'has_stock',
-        label: t`In Stock`,
-        description: t`Show supplier parts with stock`
+        label: t`有库存`,
+        description: t`只显示当前有库存的供货商货品`
       }
     ];
   }, []);
@@ -285,7 +291,7 @@ export function SupplierPartTable({
   const editSupplierPart = useEditApiFormModal({
     url: ApiEndpoints.supplier_part_list,
     pk: selectedSupplierPart?.pk,
-    title: t`Edit Supplier Part`,
+    title: t`编辑供货商货品`,
     fields: useMemo(() => editSupplierPartFields, [editSupplierPartFields]),
     onFormSuccess: (response: any) => {
       table.refreshTable();
@@ -294,7 +300,7 @@ export function SupplierPartTable({
 
   const duplicateSupplierPart = useCreateApiFormModal({
     url: ApiEndpoints.supplier_part_list,
-    title: t`Add Supplier Part`,
+    title: t`新增供货商货品`,
     fields: useMemo(() => editSupplierPartFields, [editSupplierPartFields]),
     initialData: {
       ...selectedSupplierPart,
@@ -304,13 +310,13 @@ export function SupplierPartTable({
     onFormSuccess: (response: any) => {
       table.refreshTable();
     },
-    successMessage: t`Supplier part created`
+    successMessage: t`供货商货品已新增`
   });
 
   const deleteSupplierPart = useDeleteApiFormModal({
     url: ApiEndpoints.supplier_part_list,
     pk: selectedSupplierPart?.pk,
-    title: t`Delete Supplier Part`,
+    title: t`删除供货商货品`,
     table: table
   });
 

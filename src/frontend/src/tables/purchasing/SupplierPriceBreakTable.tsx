@@ -37,7 +37,7 @@ export function SupplierPriceBreakColumns(): TableColumn[] {
   return [
     {
       accessor: 'supplier',
-      title: t`Supplier`,
+      title: t`供货商`,
       sortable: true,
       switchable: true,
       render: (record: any) => (
@@ -46,7 +46,7 @@ export function SupplierPriceBreakColumns(): TableColumn[] {
     },
     {
       accessor: 'part_detail.SKU',
-      title: t`SKU`,
+      title: t`供货商货号`,
       ordering: 'SKU',
       sortable: true,
       switchable: false,
@@ -66,13 +66,13 @@ export function SupplierPriceBreakColumns(): TableColumn[] {
     },
     {
       accessor: 'quantity',
-      title: t`Quantity`,
+      title: t`数量`,
       sortable: true,
       switchable: false
     },
     {
       accessor: 'price',
-      title: t`Supplier Price`,
+      title: t`供货商报价`,
       render: (record: any) =>
         formatCurrency(record.price, { currency: record.price_currency }),
       sortable: true,
@@ -81,7 +81,7 @@ export function SupplierPriceBreakColumns(): TableColumn[] {
     {
       accessor: 'unit_price',
       ordering: 'price',
-      title: t`Unit Price`,
+      title: t`单价`,
       sortable: true,
       switchable: true,
       render: (record: any) => {
@@ -131,7 +131,7 @@ export default function SupplierPriceBreakTable({
 
   const newPriceBreak = useCreateApiFormModal({
     url: apiUrl(ApiEndpoints.supplier_part_pricing_list),
-    title: t`Add Price Break`,
+    title: t`新增阶梯报价`,
     fields: supplierPriceBreakFields,
     initialData: {
       part: supplierPart.pk,
@@ -143,7 +143,7 @@ export default function SupplierPriceBreakTable({
   const editPriceBreak = useEditApiFormModal({
     url: apiUrl(ApiEndpoints.supplier_part_pricing_list),
     pk: selectedPriceBreak,
-    title: t`Edit Price Break`,
+    title: t`编辑阶梯报价`,
     fields: supplierPriceBreakFields,
     table: table
   });
@@ -151,7 +151,7 @@ export default function SupplierPriceBreakTable({
   const deletePriceBreak = useDeleteApiFormModal({
     url: apiUrl(ApiEndpoints.supplier_part_pricing_list),
     pk: selectedPriceBreak,
-    title: t`Delete Price Break`,
+    title: t`删除阶梯报价`,
     table: table
   });
 
@@ -159,7 +159,7 @@ export default function SupplierPriceBreakTable({
     return [
       <AddItemButton
         key='add-price-break'
-        tooltip={t`Add Price Break`}
+        tooltip={t`新增阶梯报价`}
         onClick={() => {
           newPriceBreak.open();
         }}

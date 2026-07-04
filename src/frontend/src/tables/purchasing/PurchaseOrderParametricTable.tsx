@@ -24,7 +24,7 @@ export default function PurchaseOrderParametricTable({
       }),
       {
         accessor: 'supplier__name',
-        title: t`Supplier`,
+        title: t`供货商`,
         sortable: true,
         render: (record: any) => (
           <CompanyColumn company={record.supplier_detail} />

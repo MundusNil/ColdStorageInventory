@@ -142,7 +142,7 @@ export default function PurchaseOrderDetail() {
       {
         type: 'text',
         name: 'reference',
-        label: t`Reference`,
+        label: t`进货单号`,
         copy: true
       },
       {
@@ -163,19 +163,19 @@ export default function PurchaseOrderDetail() {
       {
         type: 'text',
         name: 'description',
-        label: t`Description`,
+        label: t`说明`,
         copy: true
       },
       {
         type: 'status',
         name: 'status',
-        label: t`Status`,
+        label: t`状态`,
         model: ModelType.purchaseorder
       },
       {
         type: 'status',
         name: 'status_custom_key',
-        label: t`Custom Status`,
+        label: t`自定义状态`,
         model: ModelType.purchaseorder,
         icon: 'status',
         hidden:
@@ -188,7 +188,7 @@ export default function PurchaseOrderDetail() {
         type: 'progressbar',
         name: 'completed',
         icon: 'progress',
-        label: t`Completed Line Items`,
+        label: t`已完成明细`,
         total: order.line_items,
         progress: order.completed_lines
       },
@@ -197,19 +197,19 @@ export default function PurchaseOrderDetail() {
         model: ModelType.stocklocation,
         link: true,
         name: 'destination',
-        label: t`Destination`,
+        label: t`入库库位`,
         hidden: !order.destination
       },
       {
         type: 'text',
         name: 'currency',
-        label: t`Order Currency`,
+        label: t`进货币种`,
         value_formatter: () => orderCurrency
       },
       {
         type: 'text',
         name: 'total_price',
-        label: t`Total Cost`,
+        label: t`总金额`,
         value_formatter: () => {
           return formatCurrency(order?.total_price, {
             currency: order?.order_currency || order?.supplier_detail?.currency
@@ -223,14 +223,14 @@ export default function PurchaseOrderDetail() {
         type: 'link',
         external: true,
         name: 'link',
-        label: t`Link`,
+        label: t`外部链接`,
         copy: true,
         hidden: !order.link
       },
       {
         type: 'text',
         name: 'contact_detail.name',
-        label: t`Contact`,
+        label: t`联系人`,
         icon: 'user',
         copy: true,
         hidden: !order.contact
@@ -238,7 +238,7 @@ export default function PurchaseOrderDetail() {
       {
         type: 'text',
         name: 'contact_detail.email',
-        label: t`Contact Email`,
+        label: t`联系人邮箱`,
         icon: 'email',
         copy: true,
         hidden: !order.contact_detail?.email
@@ -246,7 +246,7 @@ export default function PurchaseOrderDetail() {
       {
         type: 'text',
         name: 'contact_detail.phone',
-        label: t`Contact Phone`,
+        label: t`联系人电话`,
         icon: 'phone',
         copy: true,
         hidden: !order.contact_detail?.phone
@@ -254,7 +254,7 @@ export default function PurchaseOrderDetail() {
       {
         type: 'text',
         name: 'project_code_label',
-        label: t`Project Code`,
+        label: t`业务编号`,
         icon: 'reference',
         copy: true,
         hidden: !order.project_code
@@ -262,7 +262,7 @@ export default function PurchaseOrderDetail() {
       {
         type: 'text',
         name: 'responsible',
-        label: t`Responsible`,
+        label: t`负责人`,
         badge: 'owner',
         hidden: !order.responsible
       }
@@ -272,14 +272,14 @@ export default function PurchaseOrderDetail() {
       {
         type: 'date',
         name: 'creation_date',
-        label: t`Creation Date`,
+        label: t`创建日期`,
         copy: true,
         icon: 'calendar'
       },
       {
         type: 'date',
         name: 'issue_date',
-        label: t`Issue Date`,
+        label: t`下达日期`,
         icon: 'calendar',
         copy: true,
         hidden: !order.issue_date
@@ -287,7 +287,7 @@ export default function PurchaseOrderDetail() {
       {
         type: 'date',
         name: 'start_date',
-        label: t`Start Date`,
+        label: t`开始日期`,
         icon: 'calendar',
         copy: true,
         hidden: !order.start_date
@@ -295,7 +295,7 @@ export default function PurchaseOrderDetail() {
       {
         type: 'date',
         name: 'target_date',
-        label: t`Target Date`,
+        label: t`预计到货日期`,
         icon: 'calendar',
         copy: true,
         hidden: !order.target_date
@@ -304,14 +304,14 @@ export default function PurchaseOrderDetail() {
         type: 'date',
         name: 'complete_date',
         icon: 'calendar_check',
-        label: t`Completion Date`,
+        label: t`完成日期`,
         copy: true,
         hidden: !order.complete_date
       },
       {
         type: 'date',
         name: 'updated_at',
-        label: t`Last Updated`,
+        label: t`最后更新`,
         icon: 'calendar',
         copy: true,
         showTime: true,
@@ -346,13 +346,13 @@ export default function PurchaseOrderDetail() {
     return [
       {
         name: 'detail',
-        label: t`Order Details`,
+        label: t`进货单详情`,
         icon: <IconInfoCircle />,
         content: detailsPanel
       },
       {
         name: 'line-items',
-        label: t`Line Items`,
+        label: t`进货明细`,
         icon: <IconList />,
         content: (
           <Accordion
@@ -361,7 +361,7 @@ export default function PurchaseOrderDetail() {
           >
             <Accordion.Item value='line-items' key='lineitems'>
               <Accordion.Control>
-                <StylishText size='lg'>{t`Line Items`}</StylishText>
+                <StylishText size='lg'>{t`进货明细`}</StylishText>
               </Accordion.Control>
               <Accordion.Panel>
                 <PurchaseOrderLineItemTable
@@ -376,7 +376,7 @@ export default function PurchaseOrderDetail() {
             </Accordion.Item>
             <Accordion.Item value='extra-items' key='extraitems'>
               <Accordion.Control>
-                <StylishText size='lg'>{t`Extra Line Items`}</StylishText>
+                <StylishText size='lg'>{t`附加费用`}</StylishText>
               </Accordion.Control>
               <Accordion.Panel>
                 <ExtraLineItemTable
@@ -394,7 +394,7 @@ export default function PurchaseOrderDetail() {
       },
       {
         name: 'received-stock',
-        label: t`Received Stock`,
+        label: t`已入库库存`,
         icon: <IconPackages />,
         content: (
           <StockItemTable
@@ -431,24 +431,24 @@ export default function PurchaseOrderDetail() {
     url: apiUrl(ApiEndpoints.purchase_order_issue, order.pk),
     title: t`下达进货单`,
     onFormSuccess: refreshInstance,
-    preFormWarning: t`Issue this order`,
-    successMessage: t`Order issued`
+    preFormWarning: t`确认下达这张进货单`,
+    successMessage: t`进货单已下达`
   });
 
   const cancelOrder = useCreateApiFormModal({
     url: apiUrl(ApiEndpoints.purchase_order_cancel, order.pk),
     title: t`取消进货单`,
     onFormSuccess: refreshInstance,
-    preFormWarning: t`Cancel this order`,
-    successMessage: t`Order cancelled`
+    preFormWarning: t`确认取消这张进货单`,
+    successMessage: t`进货单已取消`
   });
 
   const holdOrder = useCreateApiFormModal({
     url: apiUrl(ApiEndpoints.purchase_order_hold, order.pk),
     title: t`暂停进货单`,
     onFormSuccess: refreshInstance,
-    preFormWarning: t`Place this order on hold`,
-    successMessage: t`Order placed on hold`
+    preFormWarning: t`确认暂停这张进货单`,
+    successMessage: t`进货单已暂停`
   });
 
   const completeOrder = useCreateApiFormModal({
@@ -460,7 +460,7 @@ export default function PurchaseOrderDetail() {
       accept_incomplete: {}
     },
     onFormSuccess: refreshInstance,
-    preFormWarning: t`Mark this order as complete`
+    preFormWarning: t`确认完成这张进货单`
   });
 
   const poActions = useMemo(() => {
@@ -483,14 +483,14 @@ export default function PurchaseOrderDetail() {
 
     return [
       <PrimaryActionButton
-        title={t`Issue Order`}
+        title={t`下达进货单`}
         icon='issue'
         hidden={!canIssue}
         color='blue'
         onClick={issueOrder.open}
       />,
       <PrimaryActionButton
-        title={t`Complete Order`}
+        title={t`完成进货单`}
         icon='complete'
         hidden={!canComplete}
         color='green'
@@ -509,11 +509,11 @@ export default function PurchaseOrderDetail() {
         enableReports
       />,
       <OptionsActionDropdown
-        tooltip={t`Order Actions`}
+        tooltip={t`进货单操作`}
         actions={[
           EditItemAction({
             hidden: !canEdit,
-            tooltip: t`Edit order`,
+            tooltip: t`编辑进货单`,
             onClick: () => {
               editPurchaseOrder.open();
             }
@@ -521,15 +521,15 @@ export default function PurchaseOrderDetail() {
           DuplicateItemAction({
             hidden: !user.hasAddRole(UserRoles.purchase_order),
             onClick: () => duplicatePurchaseOrder.open(),
-            tooltip: t`Duplicate order`
+            tooltip: t`复制进货单`
           }),
           HoldItemAction({
-            tooltip: t`Hold order`,
+            tooltip: t`暂停进货单`,
             hidden: !canHold,
             onClick: holdOrder.open
           }),
           CancelItemAction({
-            tooltip: t`Cancel order`,
+            tooltip: t`取消进货单`,
             hidden: !canCancel,
             onClick: cancelOrder.open
           })

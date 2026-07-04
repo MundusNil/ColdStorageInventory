@@ -106,7 +106,7 @@ export function PurchaseOrderLineItemTable({
 
   const importLineItems = useCreateApiFormModal({
     url: ApiEndpoints.import_session_list,
-    title: t`Import Line Items`,
+    title: t`导入进货明细`,
     fields: importSessionFields,
     onFormSuccess: (response: any) => {
       openImporter(response.pk, {
@@ -168,7 +168,7 @@ export function PurchaseOrderLineItemTable({
       },
       {
         accessor: 'quantity',
-        title: t`Quantity`,
+        title: t`数量`,
         sortable: true,
         switchable: false,
         render: (record: any) => {
@@ -184,13 +184,13 @@ export function PurchaseOrderLineItemTable({
 
             extra.push(
               <Text key='pack-quantity' size='sm'>
-                {t`Pack Quantity`}: {supplier_part.pack_quantity}
+                {t`包装数量`}: {supplier_part.pack_quantity}
               </Text>
             );
 
             extra.push(
               <Text key='total-quantity' size='sm'>
-                {t`Total Quantity`}: {formatDecimal(total)} {part?.units}
+                {t`合计数量`}: {formatDecimal(total)} {part?.units}
               </Text>
             );
           }
@@ -199,14 +199,14 @@ export function PurchaseOrderLineItemTable({
             <TableHoverCard
               value={formatDecimal(record.quantity)}
               extra={extra}
-              title={t`Quantity`}
+              title={t`数量`}
             />
           );
         }
       },
       {
         accessor: 'received',
-        title: t`Received`,
+        title: t`已到货`,
         sortable: true,
         render: (record: any) => (
           <ProgressBar
@@ -219,17 +219,17 @@ export function PurchaseOrderLineItemTable({
       {
         accessor: 'supplier_part_detail.packaging',
         sortable: false,
-        title: t`Packaging`,
+        title: t`包装说明`,
         defaultVisible: false
       },
       {
         accessor: 'supplier_part_detail.pack_quantity',
         sortable: false,
-        title: t`Pack Quantity`
+        title: t`包装数量`
       },
       {
         accessor: 'sku',
-        title: t`Supplier Code`,
+        title: t`供货商货号`,
         switchable: false,
         sortable: true,
         ordering: 'SKU',
@@ -237,7 +237,7 @@ export function PurchaseOrderLineItemTable({
       },
       LinkColumn({
         accessor: 'supplier_part_detail.link',
-        title: t`Supplier Link`,
+        title: t`供货商链接`,
         sortable: false,
         defaultVisible: false
       }),
@@ -251,11 +251,11 @@ export function PurchaseOrderLineItemTable({
       },
       CurrencyColumn({
         accessor: 'purchase_price',
-        title: t`Unit Price`
+        title: t`单价`
       }),
       {
         accessor: 'total_price',
-        title: t`Total Price`,
+        title: t`总价`,
         render: (record: any) =>
           formatCurrency(record.purchase_price, {
             currency: record.purchase_price_currency,
@@ -266,7 +266,7 @@ export function PurchaseOrderLineItemTable({
       LocationColumn({
         accessor: 'destination_detail',
         sortable: false,
-        title: t`Destination`
+        title: t`入库库位`
       }),
       NoteColumn({}),
       LinkColumn({})
@@ -277,8 +277,8 @@ export function PurchaseOrderLineItemTable({
     return [
       {
         name: 'received',
-        label: t`Received`,
-        description: t`Show line items which have been received`
+        label: t`已到货`,
+        description: t`只显示已经到货的进货明细`
       }
     ];
   }, []);
@@ -294,7 +294,7 @@ export function PurchaseOrderLineItemTable({
 
   const newLine = useCreateApiFormModal({
     url: ApiEndpoints.purchase_order_line_list,
-    title: t`Add Line Item`,
+    title: t`新增进货明细`,
     fields: addPurchaseOrderFields,
     initialData: {
       ...initialData,
@@ -317,7 +317,7 @@ export function PurchaseOrderLineItemTable({
   const editLine = useEditApiFormModal({
     url: ApiEndpoints.purchase_order_line_list,
     pk: selectedLine,
-    title: t`Edit Line Item`,
+    title: t`编辑进货明细`,
     fields: editLineItemFields,
     onFormSuccess: orderDetailRefresh,
     table: table
@@ -326,7 +326,7 @@ export function PurchaseOrderLineItemTable({
   const deleteLine = useDeleteApiFormModal({
     url: ApiEndpoints.purchase_order_line_list,
     pk: selectedLine,
-    title: t`Delete Line Item`,
+    title: t`删除进货明细`,
     onFormSuccess: orderDetailRefresh,
     table: table
   });
@@ -347,7 +347,7 @@ export function PurchaseOrderLineItemTable({
       return [
         {
           hidden: received || !orderPlaced,
-          title: t`Receive line item`,
+          title: t`登记到货`,
           icon: <IconSquareArrowRight />,
           color: 'green',
           onClick: () => {
@@ -394,13 +394,13 @@ export function PurchaseOrderLineItemTable({
       <ActionButton
         key='import-line-items'
         hidden={!editable || !user.hasAddRole(UserRoles.purchase_order)}
-        tooltip={t`Import Line Items`}
+        tooltip={t`导入进货明细`}
         icon={<IconFileArrowLeft />}
         onClick={() => importLineItems.open()}
       />,
       <AddItemButton
         key='add-line-item'
-        tooltip={t`Add Line Item`}
+        tooltip={t`新增进货明细`}
         onClick={() => {
           setInitialData({
             order: orderId
@@ -411,7 +411,7 @@ export function PurchaseOrderLineItemTable({
       />,
       <ActionButton
         key='receive-items'
-        text={t`Receive items`}
+        text={t`登记到货`}
         icon={<IconSquareArrowRight />}
         onClick={() => receiveLineItems.open()}
         disabled={table.selectedRecords.length === 0}

@@ -398,7 +398,7 @@ export default function PartDetail() {
       {
         type: 'link',
         name: 'link',
-        label: t`Link`,
+        label: t`外部链接`,
         external: true,
         copy: true,
         hidden: !part.link
@@ -411,7 +411,7 @@ export default function PartDetail() {
         type: 'number',
         name: 'total_in_stock',
         unit: part.units,
-        label: t`In Stock`,
+        label: t`当前库存`,
         hidden: part.virtual
       },
       {
@@ -945,13 +945,13 @@ export default function PartDetail() {
 
     return [
       <DetailsBadge
-        label={`${t`In Stock`}: ${formatDecimal(partRequirements.total_stock)}`}
+        label={`${t`当前库存`}: ${formatDecimal(partRequirements.total_stock)}`}
         color={stockColor}
         visible={!part.virtual && partRequirements.total_stock > 0}
         key='in_stock'
       />,
       <DetailsBadge
-        label={`${t`Available`}: ${formatDecimal(partRequirements.unallocated_stock)}`}
+        label={`${t`可用库存`}: ${formatDecimal(partRequirements.unallocated_stock)}`}
         color='yellow'
         key='available_stock'
         visible={

@@ -92,6 +92,7 @@ export function ManufacturerPartTable({
       IPNColumn({}),
       {
         accessor: 'manufacturer',
+        title: t`生产厂家/品牌`,
         sortable: true,
         filter: 'manufacturer_active',
         render: (record: any) => (
@@ -100,7 +101,7 @@ export function ManufacturerPartTable({
       },
       {
         accessor: 'MPN',
-        title: t`MPN`,
+        title: t`厂家货号`,
         sortable: true,
         copyable: true
       },
@@ -115,7 +116,7 @@ export function ManufacturerPartTable({
 
   const createManufacturerPart = useCreateApiFormModal({
     url: ApiEndpoints.manufacturer_part_list,
-    title: t`Add Manufacturer Part`,
+    title: t`新增生产厂家货号`,
     fields: manufacturerPartFields,
     table: table,
     initialData: {
@@ -128,14 +129,14 @@ export function ManufacturerPartTable({
   const editManufacturerPart = useEditApiFormModal({
     url: ApiEndpoints.manufacturer_part_list,
     pk: selectedPart?.pk,
-    title: t`Edit Manufacturer Part`,
+    title: t`编辑生产厂家货号`,
     fields: useMemo(() => manufacturerPartFields, [manufacturerPartFields]),
     table: table
   });
 
   const duplicateManufacturerPart = useCreateApiFormModal({
     url: ApiEndpoints.manufacturer_part_list,
-    title: t`Add Manufacturer Part`,
+    title: t`新增生产厂家货号`,
     fields: useMemo(() => manufacturerPartFields, [manufacturerPartFields]),
     table: table,
     initialData: {
@@ -146,7 +147,7 @@ export function ManufacturerPartTable({
   const deleteManufacturerPart = useDeleteApiFormModal({
     url: ApiEndpoints.manufacturer_part_list,
     pk: selectedPart?.pk,
-    title: t`Delete Manufacturer Part`,
+    title: t`删除生产厂家货号`,
     table: table
   });
 
@@ -154,15 +155,15 @@ export function ManufacturerPartTable({
     return [
       {
         name: 'part_active',
-        label: t`Active Part`,
-        description: t`Show manufacturer parts for active internal parts.`,
+        label: t`启用货品`,
+        description: t`只显示启用货品对应的生产厂家货号`,
         type: 'boolean'
       },
       {
         name: 'manufacturer_active',
-        label: t`Active Manufacturer`,
+        label: t`启用生产厂家/品牌`,
         active: !manufacturerId,
-        description: t`Show manufacturer parts for active manufacturers.`,
+        description: t`只显示启用生产厂家/品牌对应的货号`,
         type: 'boolean'
       },
       TagsFilter({ modelType: ModelType.manufacturerpart })
@@ -177,7 +178,7 @@ export function ManufacturerPartTable({
     return [
       <AddItemButton
         key='add-manufacturer-part'
-        tooltip={t`Add Manufacturer Part`}
+        tooltip={t`新增生产厂家货号`}
         onClick={() => createManufacturerPart.open()}
         hidden={!can_add}
       />
