@@ -17,23 +17,32 @@ import {
 } from '@mantine/core';
 import {
   IconAlertCircle,
+  IconArrowsExchange,
   IconCalendarDue,
+  IconClipboardCheck,
   IconMapPin,
   IconPackage,
   IconPackageExport,
   IconRefresh,
-  IconSearch
+  IconSearch,
+  IconTrash
 } from '@tabler/icons-react';
 import { ApiEndpoints, apiUrl } from '@lib/index';
 import { useCallback, useEffect, useState } from 'react';
 
 import { useApi } from '../../contexts/ApiContext';
+import {
+  displayStockQuantity,
+  displayStockStatus,
+  displayText
+} from './coldStorageDisplay';
 
 export type ColdStorageStockRecord = {
   pk: number;
   quantity?: number | string;
   batch?: string;
   expiry_date?: string;
+  location?: number | string;
   status?: number | string;
   status_text?: string;
   status_custom_key?: string;
@@ -52,24 +61,10 @@ export type ColdStorageStockRecord = {
 type ColdStorageStockCardsProps = {
   refreshSignal?: number;
   onRemoveStock?: (item: ColdStorageStockRecord) => void;
+  onTransferStock?: (item: ColdStorageStockRecord) => void;
+  onCountStock?: (item: ColdStorageStockRecord) => void;
+  onWasteStock?: (item: ColdStorageStockRecord) => void;
 };
-
-function displayText(value: unknown, fallback = '-') {
-  return typeof value === 'string' && value.trim().length > 0
-    ? value
-    : fallback;
-}
-
-function displayQuantity(record: ColdStorageStockRecord) {
-  const quantity = record.quantity ?? '-';
-  const units = record.part_detail?.units;
-
-  if (typeof quantity === 'number') {
-    return `${quantity.toLocaleString('zh-CN')}${units ? ` ${units}` : ''}`;
-  }
-
-  return `${quantity}${units ? ` ${units}` : ''}`;
-}
 
 function isExpired(date?: string) {
   if (!date) {
@@ -87,10 +82,16 @@ function isExpired(date?: string) {
 
 function StockCard({
   item,
-  onRemoveStock
+  onRemoveStock,
+  onTransferStock,
+  onCountStock,
+  onWasteStock
 }: {
   item: ColdStorageStockRecord;
   onRemoveStock?: (item: ColdStorageStockRecord) => void;
+  onTransferStock?: (item: ColdStorageStockRecord) => void;
+  onCountStock?: (item: ColdStorageStockRecord) => void;
+  onWasteStock?: (item: ColdStorageStockRecord) => void;
 }) {
   const partName = displayText(
     item.part_detail?.full_name || item.part_detail?.name,
@@ -100,10 +101,10 @@ function StockCard({
     item.location_detail?.pathstring || item.location_detail?.name,
     '未填写库位'
   );
-  const batch = displayText(item.batch, '无批次');
+  const batch = displayText(item.batch, '无批次号');
   const expiry = displayText(item.expiry_date, '未填到期日');
   const expired = isExpired(item.expiry_date);
-  const status = displayText(item.status_text || item.status_custom_key, '正常');
+  const status = displayStockStatus(item);
 
   return (
     <Paper withBorder radius='md' p='md'>
@@ -128,7 +129,7 @@ function StockCard({
         </Group>
 
         <Text fw={700} size='xl'>
-          {displayQuantity(item)}
+          {displayStockQuantity(item)}
         </Text>
 
         <Stack gap={6}>
@@ -138,7 +139,7 @@ function StockCard({
           </Group>
           <Group gap={6} wrap='nowrap'>
             <IconPackage size={18} />
-            <Text size='sm'>批次：{batch}</Text>
+            <Text size='sm'>批次号：{batch}</Text>
           </Group>
           <Group gap={6} wrap='nowrap'>
             <IconCalendarDue size={18} />
@@ -146,17 +147,52 @@ function StockCard({
           </Group>
         </Stack>
 
-        {onRemoveStock && (
-          <Button
-            variant='light'
-            color='orange'
-            fullWidth
-            leftSection={<IconPackageExport size={18} />}
-            onClick={() => onRemoveStock(item)}
-          >
-            出库扣数
-          </Button>
-        )}
+        <SimpleGrid cols={{ base: 1, sm: 2 }} spacing='xs'>
+          {onRemoveStock && (
+            <Button
+              variant='light'
+              color='orange'
+              fullWidth
+              leftSection={<IconPackageExport size={18} />}
+              onClick={() => onRemoveStock(item)}
+            >
+              出库扣数
+            </Button>
+          )}
+          {onTransferStock && (
+            <Button
+              variant='light'
+              color='violet'
+              fullWidth
+              leftSection={<IconArrowsExchange size={18} />}
+              onClick={() => onTransferStock(item)}
+            >
+              改库位
+            </Button>
+          )}
+          {onCountStock && (
+            <Button
+              variant='light'
+              color='grape'
+              fullWidth
+              leftSection={<IconClipboardCheck size={18} />}
+              onClick={() => onCountStock(item)}
+            >
+              盘点改数
+            </Button>
+          )}
+          {onWasteStock && (
+            <Button
+              variant='light'
+              color='red'
+              fullWidth
+              leftSection={<IconTrash size={18} />}
+              onClick={() => onWasteStock(item)}
+            >
+              报损/过期
+            </Button>
+          )}
+        </SimpleGrid>
       </Stack>
     </Paper>
   );
@@ -164,7 +200,10 @@ function StockCard({
 
 export default function ColdStorageStockCards({
   refreshSignal,
-  onRemoveStock
+  onRemoveStock,
+  onTransferStock,
+  onCountStock,
+  onWasteStock
 }: ColdStorageStockCardsProps) {
   const api = useApi();
   const [items, setItems] = useState<ColdStorageStockRecord[]>([]);
@@ -227,7 +266,7 @@ export default function ColdStorageStockCards({
       <Group justify='space-between' align='flex-end' gap='md'>
         <TextInput
           label='查库存'
-          placeholder='手动输入货品、库位或批次'
+          placeholder='手动输入货品、库位或批次号'
           leftSection={<IconSearch size={20} />}
           size='lg'
           value={search}
@@ -276,6 +315,9 @@ export default function ColdStorageStockCards({
               key={item.pk}
               item={item}
               onRemoveStock={onRemoveStock}
+              onTransferStock={onTransferStock}
+              onCountStock={onCountStock}
+              onWasteStock={onWasteStock}
             />
           ))}
         </SimpleGrid>
