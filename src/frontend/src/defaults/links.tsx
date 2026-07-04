@@ -24,7 +24,7 @@ type NavTab = {
   visible?: boolean;
 };
 
-const showLegacyBusinessTabs = false;
+const showLegacyBusinessTabs = true;
 
 export function getNavTabs(user: UserStateProps): NavTab[] {
   const globalSettings = useGlobalSettingsState.getState();
