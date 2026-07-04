@@ -6,33 +6,24 @@ import useTable from '@lib/hooks/UseTable';
 import type { TableColumn } from '@lib/types/Tables';
 import { useState } from 'react';
 import { InvenTreeTable } from '../../tables/InvenTreeTable';
-
-function renderText(value: any) {
-  return value || '-';
-}
+import {
+  displayStockQuantity,
+  displayStockStatus,
+  displayText
+} from './coldStorageDisplay';
 
 function renderQuantity(record: any) {
-  const quantity = record.quantity ?? '-';
-  const units = record.part_detail?.units;
-
   return (
-    <Group gap={6} wrap='nowrap'>
-      <Text fw={600}>{quantity}</Text>
-      {units && (
-        <Text size='sm' c='dimmed'>
-          {units}
-        </Text>
-      )}
-    </Group>
+    <Text fw={600}>
+      {displayStockQuantity(record)}
+    </Text>
   );
 }
 
 function renderStatus(record: any) {
-  const status = record.status_text || record.status_custom_key || '-';
-
   return (
     <Badge color='green' variant='light'>
-      {status}
+      {displayStockStatus(record)}
     </Badge>
   );
 }
@@ -43,7 +34,7 @@ function getColumns(): TableColumn[] {
       accessor: 'part_detail.name',
       title: '货品',
       sortable: true,
-      render: (record: any) => renderText(record.part_detail?.name)
+      render: (record: any) => displayText(record.part_detail?.name)
     },
     {
       accessor: 'quantity',
@@ -56,19 +47,21 @@ function getColumns(): TableColumn[] {
       title: '库位',
       sortable: true,
       render: (record: any) =>
-        renderText(record.location_detail?.pathstring || record.location_detail?.name)
+        displayText(
+          record.location_detail?.pathstring || record.location_detail?.name
+        )
     },
     {
       accessor: 'batch',
-      title: '批次',
+      title: '批次号',
       sortable: true,
-      render: (record: any) => renderText(record.batch)
+      render: (record: any) => displayText(record.batch, '无批次号')
     },
     {
       accessor: 'expiry_date',
       title: '到期日期',
       sortable: true,
-      render: (record: any) => renderText(record.expiry_date)
+      render: (record: any) => displayText(record.expiry_date, '未填到期日')
     },
     {
       accessor: 'status_text',
@@ -88,7 +81,7 @@ export default function ColdStorageStockTable() {
       <Group justify='space-between' align='flex-end' gap='md'>
         <Box style={{ flex: 1, minWidth: 280 }}>
           <SearchInput
-            placeholder='输入货品、库位或批次'
+            placeholder='输入货品、库位或批次号'
             searchCallback={(value) => table.setSearchTerm(value)}
           />
         </Box>
