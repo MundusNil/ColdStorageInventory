@@ -716,7 +716,7 @@ export function ApiForm({
               color={props.submitColor ?? 'green'}
               disabled={isLoading || (props.fetchInitialData && !isDirty)}
             >
-              {props.submitText ?? t`Submit`}
+              {props.submitText ?? t`提交`}
             </Button>
           </Group>
         </Group>
@@ -754,7 +754,7 @@ export function EditApiForm({
     () => ({
       ...props,
       fetchInitialData: props.fetchInitialData ?? true,
-      submitText: props.submitText ?? t`Update`,
+      submitText: props.submitText ?? t`保存`,
       method: 'PUT'
     }),
     [props]
@@ -774,7 +774,7 @@ export function DeleteApiForm({
     () => ({
       ...props,
       method: 'DELETE',
-      submitText: t`Delete`,
+      submitText: t`删除`,
       submitColor: 'red',
       fields: {}
     }),

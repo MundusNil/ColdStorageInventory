@@ -114,25 +114,25 @@ function PartRequirementsInfo({
             <Divider />
             {buildRequirements > 0 && (
               <Group justify='space-between'>
-                <Text size='xs'>{t`Build Requirements`}</Text>
+                <Text size='xs'>{t`生产占用`}</Text>
                 <Text size='xs'>{formatDecimal(buildRequirements)}</Text>
               </Group>
             )}
             {salesRequirements > 0 && (
               <Group justify='space-between'>
-                <Text size='xs'>{t`Sales Requirements`}</Text>
+                <Text size='xs'>{t`销售占用`}</Text>
                 <Text size='xs'>{formatDecimal(salesRequirements)}</Text>
               </Group>
             )}
             {inStock > 0 && (
               <Group justify='space-between'>
-                <Text size='xs'>{t`In Stock`}</Text>
+                <Text size='xs'>{t`当前库存`}</Text>
                 <Text size='xs'>{formatDecimal(inStock)}</Text>
               </Group>
             )}
             {ordering > 0 && (
               <Group justify='space-between'>
-                <Text size='xs'>{t`On Order`}</Text>
+                <Text size='xs'>{t`进货在途`}</Text>
                 <Text size='xs'>{formatDecimal(ordering)}</Text>
               </Group>
             )}

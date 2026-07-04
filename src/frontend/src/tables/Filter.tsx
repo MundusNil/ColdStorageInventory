@@ -114,16 +114,16 @@ export function StatusFilterOptions(
 export function HasBatchCodeFilter(): TableFilter {
   return {
     name: 'has_batch',
-    label: t`Has Batch Code`,
-    description: t`Show items which have a batch code`
+    label: t`有批次号`,
+    description: t`显示有批次号的库存`
   };
 }
 
 export function BatchFilter(): TableFilter {
   return {
     name: 'batch',
-    label: t`Batch Code`,
-    description: t`Filter items by batch code`,
+    label: t`批次号`,
+    description: t`按批次号筛选库存`,
     type: 'text'
   };
 }
@@ -131,24 +131,24 @@ export function BatchFilter(): TableFilter {
 export function InStockFilter(): TableFilter {
   return {
     name: 'in_stock',
-    label: t`In Stock`,
-    description: t`Show items which are in stock`
+    label: t`有库存`,
+    description: t`显示当前有库存的记录`
   };
 }
 
 export function IsSerializedFilter(): TableFilter {
   return {
     name: 'serialized',
-    label: t`Is Serialized`,
-    description: t`Show items which have a serial number`
+    label: t`有序列号`,
+    description: t`显示有序列号的库存`
   };
 }
 
 export function SerialFilter(): TableFilter {
   return {
     name: 'serial',
-    label: t`Serial`,
-    description: t`Filter items by serial number`,
+    label: t`序列号`,
+    description: t`按序列号筛选库存`,
     type: 'text'
   };
 }

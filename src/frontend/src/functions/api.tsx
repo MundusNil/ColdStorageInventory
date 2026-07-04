@@ -30,25 +30,25 @@ export function extractErrorMessage({
     if (status) {
       switch (status) {
         case 400:
-          message = t`Bad request`;
+          message = t`请求内容有误`;
           break;
         case 401:
-          message = t`Unauthorized`;
+          message = t`未登录或登录已过期`;
           break;
         case 403:
-          message = t`Forbidden`;
+          message = t`没有操作权限`;
           break;
         case 404:
-          message = t`Not found`;
+          message = t`没有找到记录`;
           break;
         case 405:
-          message = t`Method not allowed`;
+          message = t`当前操作不允许`;
           break;
         case 500:
-          message = t`Internal server error`;
+          message = t`服务器内部错误`;
           break;
         default:
-          message = t`Unknown error`;
+          message = t`未知错误`;
           break;
       }
 
@@ -57,7 +57,7 @@ export function extractErrorMessage({
   }
 
   if (!message) {
-    message = defaultMessage ?? t`An error occurred`;
+    message = defaultMessage ?? t`发生错误`;
   }
 
   return message;
