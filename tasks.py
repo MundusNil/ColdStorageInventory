@@ -334,6 +334,7 @@ def builtin_apps():
         'generic',
         'machine',
         'web',
+        'scim',
     ]
 
 
@@ -764,6 +765,9 @@ def install(
         f'pip-licenses --format=json --with-license-file --no-license-path > {lic_path}',
     )
 
+    if not lic_path.exists() or lic_path.stat().st_size == 0:
+        raise FileNotFoundError(f"License file was not generated at '{lic_path}'")
+
     success('Dependency installation complete')
 
 
@@ -1070,21 +1074,24 @@ def listbackups(c):
     },
 )
 @state_logger
-def migrate(c, detect: bool = True, verbose: bool = False):
-    """Performs database migrations.
+def migrate(c, detect: bool = False, verbose: bool = False):
+    """Performs database migrations. This is a critical step if the database schema has been altered.
 
-    This is a critical step if the database schema have been altered!
+    Arguments:
+        c: Command line context.
+        detect: Whether to detect and create new migrations based on changes to models. Default is False.
+        verbose: Whether to print verbose output from migration commands. Default is False.
     """
     info('Running InvenTree database migrations...')
 
     if detect:
-        manage(c, 'makemigrations', verbose=verbose)
+        manage(c, 'makemigrations --traceback', verbose=verbose)
 
     manage(c, 'runmigrations', pty=True, verbose=verbose)
-    manage(c, 'migrate --run-syncdb', verbose=verbose)
+    manage(c, 'migrate --run-syncdb --traceback', verbose=verbose)
     manage(
         c,
-        'remove_stale_contenttypes --include-stale-apps --no-input',
+        'remove_stale_contenttypes --include-stale-apps --no-input --traceback',
         pty=True,
         verbose=verbose,
     )
@@ -1509,12 +1516,12 @@ def delete_data(c, force: bool = False, migrate: bool = False, verbose: bool = F
     info('Deleting existing data from InvenTree database...')
 
     if migrate:
-        manage(c, 'migrate --run-syncdb', verbose=verbose)
+        manage(c, 'migrate --run-syncdb --traceback', verbose=verbose)
 
     if force:
-        manage(c, 'flush --noinput', verbose=verbose)
+        manage(c, 'flush --traceback --noinput', verbose=verbose)
     else:
-        manage_interactive('flush', verbose=verbose)
+        manage_interactive('flush --traceback', verbose=verbose)
 
     success('Existing data deleted')
 
@@ -1659,15 +1666,33 @@ def server_health(c, address: str = 'http://localhost:8000', timeout: int = 5):
     """Check if the web server is healthy by requesting /api/system/health/.
 
     Exits 0 on HTTP 200, 1 otherwise.
-    No Django startup required.
+    Django startup only required when when INVENTREE_SITE_URL is not set
+    and no docker/devcontainer/pkg-installer env vars are set. Django exceptions
+    caught and logged as warnings, but do not cause the health check to fail.
     """
     import urllib.error
+    import urllib.parse
     import urllib.request
 
+    from src.backend.InvenTree.InvenTree.config import (  # type: ignore[import]
+        get_setting,
+    )
+
     url = f'{address.rstrip("/")}/api/system/health/'
+    site_url = None
 
     try:
-        with urllib.request.urlopen(url, timeout=timeout) as response:
+        site_url = get_setting('INVENTREE_SITE_URL', 'site_url', None)
+    except (Exception, SystemExit) as exc:
+        warning(f'Could not determine configured site URL: {exc}')
+
+    request = urllib.request.Request(url)
+
+    if site_url and (hostname := urllib.parse.urlparse(site_url).hostname):
+        request.add_header('Host', hostname)
+
+    try:
+        with urllib.request.urlopen(request, timeout=timeout) as response:
             if response.status == 200:
                 success(f'Server is healthy ({url})')
                 return
@@ -1760,6 +1785,7 @@ def test_translations(c):
         'translations': 'Compile translations before running tests',
         'keepdb': 'Keep the test database after running tests (default = False)',
         'pytest': 'Use pytest to run tests',
+        'parallel': 'Set number of parallel test processes (default = off)',
         'verbosity': 'Verbosity level for test output (default = 1)',
     }
 )
@@ -1774,6 +1800,7 @@ def test(
     translations: bool = False,
     keepdb: bool = False,
     pytest: bool = False,
+    parallel: Optional[int] = None,
     verbosity: int = 1,
 ):
     """Run unit-tests for InvenTree codebase.
@@ -1824,6 +1851,9 @@ def test(
 
     cmd += f' --verbosity {verbosity}'
 
+    if parallel:
+        cmd += f' --parallel {parallel}'
+
     if coverage:
         # Run tests within coverage environment, and generate report
         run(c, f'coverage run {manage_py_path()} {cmd}')
@@ -1840,21 +1870,23 @@ def test(
 @task(
     help={
         'dev': 'Set up development environment at the end',
+        'keep': 'Keep existing demo dataset (do not re-clone)',
         'validate_files': 'Validate media files are correctly copied',
         'use_ssh': 'Use SSH protocol for cloning the demo dataset (requires SSH key)',
-        'branch': 'Specify branch of demo-dataset to clone (default = main)',
+        'branch': 'Specify branch of demo-dataset to clone',
         'verbose': 'Print verbose output from management commands',
     }
 )
 def setup_test(
     c,
-    ignore_update=False,
-    dev=False,
-    validate_files=False,
-    use_ssh=False,
-    verbose=False,
-    path='inventree-demo-dataset',
-    branch='main',
+    ignore_update: bool = False,
+    dev: bool = False,
+    keep: bool = False,
+    validate_files: bool = False,
+    use_ssh: bool = False,
+    verbose: bool = False,
+    path: str = 'inventree-demo-dataset',
+    branch: Optional[str] = None,
 ):
     """Setup a testing environment."""
     from src.backend.InvenTree.InvenTree.config import (  # type: ignore[import]
@@ -1866,19 +1898,49 @@ def setup_test(
 
     template_dir = local_dir().joinpath(path)
 
-    # Remove old data directory
-    if template_dir.exists():
-        run(c, f'rm {template_dir} -r')
+    if not keep:
+        # Remove old data directory
+        if template_dir.exists():
+            run(c, f'rm {template_dir} -r')
 
-    URL = 'https://github.com/inventree/demo-dataset'
+        URL = 'https://github.com/inventree/demo-dataset'
 
-    if use_ssh:
-        # Use SSH protocol for cloning the demo dataset
-        URL = 'git@github.com:inventree/demo-dataset.git'
+        if use_ssh:
+            # Use SSH protocol for cloning the demo dataset
+            URL = 'git@github.com:inventree/demo-dataset.git'
 
-    # Get test data
-    info('Cloning demo dataset ...')
-    run(c, f'git clone {URL} {template_dir} -b {branch} -v --depth=1')
+        if not branch:
+            # No branch specified - determine the InvenTree version
+            version = get_inventree_version()
+
+            # If the version is a stable release (e.g. "1.4.3")
+            # then we can try to use the corresponding branch in the demo-dataset repository
+            # (e.g. "1.4.x")
+            if re.match(r'^\d+\.\d+\.\d+$', version):
+                branch = f'{version.rsplit(".", 1)[0]}.x'
+
+        # InvenTree's trunk branch is named "master", but the demo-dataset
+        # repository uses "main" as its trunk branch - map this automatically
+        # so CI can pass through the detected target branch unmodified.
+        if not branch or branch == 'master':
+            branch = 'main'
+
+        if branch != 'main':
+            # Stable release branches (e.g. "1.4.x") may not yet exist in the
+            # demo-dataset repository (e.g. it has not been backported yet).
+            # Fall back to "main" in that case, rather than failing the clone.
+            result = c.run(
+                f'git ls-remote --heads {URL} {branch}', hide=True, warn=True
+            )
+            if not result.ok or not result.stdout.strip():
+                warning(
+                    f"Demo dataset has no branch named '{branch}' - falling back to 'main'"
+                )
+                branch = 'main'
+
+        # Get test data
+        info(f"Cloning demo dataset (branch '{branch}') ...")
+        run(c, f'git clone {URL} {template_dir} -b {branch} -v --depth=1')
 
     # Make sure migrations are done - might have just deleted sqlite database
     if not ignore_update:
@@ -1890,6 +1952,7 @@ def setup_test(
         c,
         filename=template_dir.joinpath('inventree_data.json'),
         clear=True,
+        ignore_nonexistent=True,
         verbose=verbose,
     )
 
@@ -1998,6 +2061,8 @@ def export_definitions(c, basedir: str = ''):
         base_path.joinpath('inventree_tags.yml'),
         base_path.joinpath('inventree_filters.yml'),
         base_path.joinpath('inventree_report_context.json'),
+        base_path.joinpath('inventree_status_codes.json'),
+        base_path.joinpath('inventree_roles.json'),
     ]
 
     info('Exporting definitions...')
@@ -2011,6 +2076,12 @@ def export_definitions(c, basedir: str = ''):
 
     check_file_existence(filenames[3], overwrite=True)
     manage(c, f'export_report_context {filenames[3]}', pty=True)
+
+    check_file_existence(filenames[4], overwrite=True)
+    manage(c, f'export_status_codes {filenames[4]}', pty=True)
+
+    check_file_existence(filenames[5], overwrite=True)
+    manage(c, f'export_roles {filenames[5]}', pty=True)
 
     info('Exporting definitions complete')
 

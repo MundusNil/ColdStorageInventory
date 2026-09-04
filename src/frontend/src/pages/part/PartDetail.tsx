@@ -3,7 +3,6 @@ import {
   ActionIcon,
   Alert,
   Center,
-  Grid,
   Group,
   Loader,
   Paper,
@@ -41,7 +40,6 @@ import { type ReactNode, useMemo, useState } from 'react';
 import { useNavigate, useParams } from 'react-router-dom';
 import Select from 'react-select';
 
-import TagsList from '@lib/components/TagsList';
 import { ApiEndpoints } from '@lib/enums/ApiEndpoints';
 import { ModelType } from '@lib/enums/ModelType';
 import { UserRoles } from '@lib/enums/Roles';
@@ -52,13 +50,7 @@ import type { PanelType } from '@lib/types/Panel';
 import AdminButton from '../../components/buttons/AdminButton';
 import { PrintingActions } from '../../components/buttons/PrintingActions';
 import StarredToggleButton from '../../components/buttons/StarredToggleButton';
-import {
-  type DetailsField,
-  DetailsTable
-} from '../../components/details/Details';
 import DetailsBadge from '../../components/details/DetailsBadge';
-import { DetailsImage } from '../../components/details/DetailsImage';
-import { ItemDetailsGrid } from '../../components/details/ItemDetails';
 import { Thumbnail } from '../../components/images/Thumbnail';
 import {
   ActionDropdown,
@@ -77,7 +69,7 @@ import { PanelGroup } from '../../components/panels/PanelGroup';
 import { RenderPart } from '../../components/render/Part';
 import OrderPartsWizard from '../../components/wizards/OrderPartsWizard';
 import { useApi } from '../../contexts/ApiContext';
-import { formatDecimal, formatPriceRange } from '../../defaults/formatters';
+import { formatDecimal } from '../../defaults/formatters';
 import { usePartFields } from '../../forms/PartForms';
 import { useFindSerialNumberForm } from '../../forms/StockForms';
 import {
@@ -86,6 +78,7 @@ import {
   useEditApiFormModal
 } from '../../hooks/UseForm';
 import { useInstance } from '../../hooks/UseInstance';
+import { useInstanceInfo } from '../../hooks/UseInstanceInfo';
 import { useStockAdjustActions } from '../../hooks/UseStockAdjustActions';
 import {
   useGlobalSettingsState,
@@ -97,15 +90,16 @@ import { UsedInTable } from '../../tables/bom/UsedInTable';
 import { BuildOrderTable } from '../../tables/build/BuildOrderTable';
 import { ParameterTable } from '../../tables/general/ParameterTable';
 import PartPurchaseOrdersTable from '../../tables/part/PartPurchaseOrdersTable';
+import PartSalesOrdersTable from '../../tables/part/PartSalesOrdersTable';
 import PartTestResultTable from '../../tables/part/PartTestResultTable';
 import PartTestTemplateTable from '../../tables/part/PartTestTemplateTable';
 import { PartVariantTable } from '../../tables/part/PartVariantTable';
 import { RelatedPartTable } from '../../tables/part/RelatedPartTable';
 import { ReturnOrderTable } from '../../tables/sales/ReturnOrderTable';
-import { SalesOrderTable } from '../../tables/sales/SalesOrderTable';
 import { StockItemTable } from '../../tables/stock/StockItemTable';
 import { TransferOrderTable } from '../../tables/stock/TransferOrderTable';
 import PartAllocationPanel from './PartAllocationPanel';
+import { PartDetailsPanel } from './PartDetailsPanel';
 import PartPricingPanel from './PartPricingPanel';
 import PartStockHistoryDetail from './PartStockHistoryDetail';
 import PartSupplierDetail from './PartSupplierDetail';
@@ -175,14 +169,6 @@ export default function PartDetail() {
     refetchOnMount: true
   });
 
-  const { instance: serials } = useInstance({
-    endpoint: ApiEndpoints.part_serial_numbers,
-    pk: id,
-    hasPrimaryKey: true,
-    refetchOnMount: false,
-    defaultValue: {}
-  });
-
   const {
     instance: part,
     refreshInstance,
@@ -195,6 +181,11 @@ export default function PartDetail() {
       tags: true
     },
     refetchOnMount: true
+  });
+
+  const { instanceInfo } = useInstanceInfo({
+    modelType: ModelType.part,
+    modelId: part?.pk
   });
 
   const { instance: partRequirements, instanceQuery: partRequirementsQuery } =
@@ -275,398 +266,22 @@ export default function PartDetail() {
     return partRevisionOptions.length > 0 && revisionsEnabled;
   }, [partRevisionOptions, revisionsEnabled]);
 
-  const detailsPanel = useMemo(() => {
-    if (instanceQuery.isFetching) {
-      return <Skeleton />;
-    }
-
-    const data = { ...part };
-
-    const fetching =
-      partRequirementsQuery.isFetching || instanceQuery.isFetching;
-
-    // Copy part requirements data into the main part data
-    data.total_in_stock =
-      partRequirements?.total_stock ?? part?.total_in_stock ?? 0;
-    data.unallocated =
-      partRequirements?.unallocated_stock ?? part?.unallocated_stock ?? 0;
-    data.ordering = partRequirements?.ordering ?? part?.ordering ?? 0;
-
-    data.required =
-      (partRequirements?.required_for_build_orders ??
-        part?.required_for_build_orders ??
-        0) +
-      (partRequirements?.required_for_sales_orders ??
-        part?.required_for_sales_orders ??
-        0);
-
-    data.allocated =
-      (partRequirements?.allocated_to_build_orders ??
-        part?.allocated_to_build_orders ??
-        0) +
-      (partRequirements?.allocated_to_sales_orders ??
-        part?.allocated_to_sales_orders ??
-        0);
-
-    // Extract requirements data
-    data.can_build = partRequirements?.can_build ?? 0;
-
-    // Provide latest serial number info
-    if (!!serials.latest) {
-      data.latest_serial_number = serials.latest;
-    }
-
-    // Top left - core part information
-    const tl: DetailsField[] = [
-      {
-        type: 'string',
-        name: 'name',
-        label: t`Name`,
-        icon: 'part',
-        copy: true
-      },
-      {
-        type: 'string',
-        name: 'IPN',
-        label: t`IPN`,
-        copy: true,
-        hidden: !part.IPN
-      },
-      {
-        type: 'string',
-        name: 'description',
-        label: t`Description`,
-        copy: true
-      },
-      {
-        type: 'link',
-        name: 'variant_of',
-        label: t`Variant of`,
-        model: ModelType.part,
-        model_field: 'full_name',
-        hidden: !part.variant_of
-      },
-      {
-        type: 'link',
-        name: 'revision_of',
-        label: t`Revision of`,
-        model: ModelType.part,
-        model_field: 'full_name',
-        hidden: !part.revision_of
-      },
-      {
-        type: 'string',
-        name: 'revision',
-        label: t`Revision`,
-        hidden: !part.revision,
-        copy: true
-      },
-      {
-        type: 'link',
-        name: 'category',
-        label: t`Category`,
-        model: ModelType.partcategory
-      },
-      {
-        type: 'link',
-        name: 'default_location',
-        label: t`Default Location`,
-        model: ModelType.stocklocation,
-        hidden: !part.default_location
-      },
-      {
-        type: 'link',
-        name: 'category_default_location',
-        label: t`Category Default Location`,
-        model: ModelType.stocklocation,
-        hidden: part.default_location || !part.category_default_location
-      },
-      {
-        type: 'string',
-        name: 'units',
-        label: t`Units`,
-        copy: true,
-        hidden: !part.units
-      },
-      {
-        type: 'string',
-        name: 'keywords',
-        label: t`Keywords`,
-        copy: true,
-        hidden: !part.keywords
-      },
-      {
-        type: 'link',
-        name: 'link',
-        label: t`外部链接`,
-        external: true,
-        copy: true,
-        hidden: !part.link
-      }
-    ];
-
-    // Top right - stock availability information
-    const tr: DetailsField[] = [
-      {
-        type: 'number',
-        name: 'total_in_stock',
-        unit: part.units,
-        label: t`当前库存`,
-        hidden: part.virtual
-      },
-      {
-        type: 'progressbar',
-        name: 'unallocated_stock',
-        total: data.total_in_stock,
-        progress: data.unallocated,
-        label: t`可用库存`,
-        hidden: part.virtual || data.total_in_stock == data.unallocated
-      },
-      {
-        type: 'number',
-        name: 'ordering',
-        label: t`进货在途`,
-        unit: part.units,
-        hidden: !part.purchaseable || part.ordering <= 0
-      },
-      {
-        type: 'number',
-        name: 'required',
-        label: t`订单需求`,
-        unit: part.units,
-        hidden: data.required <= 0,
-        icon: 'stocktake'
-      },
-      {
-        type: 'progressbar',
-        name: 'allocated_to_build_orders',
-        icon: 'manufacturers',
-        total: partRequirements.required_for_build_orders,
-        progress: partRequirements.allocated_to_build_orders,
-        label: t`组合配货占用`,
-        hidden:
-          fetching ||
-          (partRequirements.required_for_build_orders <= 0 &&
-            partRequirements.allocated_to_build_orders <= 0)
-      },
-      {
-        type: 'progressbar',
-        icon: 'sales_orders',
-        name: 'allocated_to_sales_orders',
-        total: partRequirements.required_for_sales_orders,
-        progress: partRequirements.allocated_to_sales_orders,
-        label: t`出货单占用`,
-        hidden:
-          fetching ||
-          (partRequirements.required_for_sales_orders <= 0 &&
-            partRequirements.allocated_to_sales_orders <= 0)
-      },
-      {
-        type: 'progressbar',
-        name: 'building',
-        label: t`组合配货中`,
-        progress: partRequirements.building,
-        total: partRequirements.scheduled_to_build,
-        hidden:
-          fetching ||
-          (!partRequirements.building && !partRequirements.scheduled_to_build)
-      },
-      {
-        type: 'number',
-        name: 'can_build',
-        unit: part.units,
-        label: t`可组合数量`,
-        hidden: !part.assembly || fetching
-      },
-      {
-        type: 'number',
-        name: 'minimum_stock',
-        unit: part.units,
-        label: t`最低库存`,
-        hidden: part.minimum_stock <= 0
-      },
-      {
-        type: 'number',
-        name: 'maximum_stock',
-        unit: part.units,
-        label: t`最高库存`,
-        hidden: part.maximum_stock <= 0
-      }
-    ];
-
-    // Bottom left - part attributes
-    const bl: DetailsField[] = [
-      {
-        type: 'boolean',
-        name: 'active',
-        label: t`启用`
-      },
-      {
-        type: 'boolean',
-        name: 'locked',
-        label: t`锁定`
-      },
-      {
-        type: 'boolean',
-        icon: 'template',
-        name: 'is_template',
-        label: t`模板货品`
-      },
-      {
-        type: 'boolean',
-        name: 'assembly',
-        label: t`组合货品`
-      },
-      {
-        type: 'boolean',
-        name: 'component',
-        label: t`可作为配货组成`
-      },
-      {
-        type: 'boolean',
-        name: 'testable',
-        label: t`需要质检`,
-        icon: 'test'
-      },
-      {
-        type: 'boolean',
-        name: 'trackable',
-        label: t`可追踪批次`
-      },
-      {
-        type: 'boolean',
-        name: 'purchaseable',
-        label: t`可进货`
-      },
-      {
-        type: 'boolean',
-        name: 'salable',
-        icon: 'saleable',
-        label: t`可出货`
-      },
-      {
-        type: 'boolean',
-        name: 'virtual',
-        label: t`虚拟货品`
-      },
-      {
-        type: 'boolean',
-        name: 'starred',
-        label: t`已订阅`,
-        icon: 'bell'
-      }
-    ];
-
-    // Bottom right - other part information
-    const br: DetailsField[] = [
-      {
-        type: 'string',
-        name: 'creation_date',
-        label: t`创建日期`
-      },
-      {
-        type: 'string',
-        name: 'creation_user',
-        label: t`创建人`,
-        badge: 'user',
-        icon: 'user',
-        hidden: !part.creation_user
-      },
-      {
-        type: 'string',
-        name: 'responsible',
-        label: t`负责人`,
-        badge: 'owner',
-        hidden: !part.responsible
-      },
-      {
-        name: 'default_expiry',
-        label: t`默认保质期`,
-        hidden: !part.default_expiry,
-        icon: 'calendar',
-        type: 'string',
-        value_formatter: () => {
-          return `${part.default_expiry} ${t`days`}`;
-        }
-      }
-    ];
-
-    // Add in price range data
-    if (part.pricing_min || part.pricing_max) {
-      br.push({
-        type: 'string',
-        name: 'pricing',
-        label: t`价格区间`,
-        value_formatter: () => {
-          return formatPriceRange(part.pricing_min, part.pricing_max);
-        }
-      });
-    }
-
-    br.push({
-      type: 'string',
-      name: 'latest_serial_number',
-      label: t`最新追踪码`,
-      hidden: !part.trackable || !data.latest_serial_number,
-      icon: 'serial'
-    });
-
-    return part ? (
-      <ItemDetailsGrid>
+  const revisionSelector = useMemo(() => {
+    if (!enableRevisionSelection) return null;
+    return (
+      <Paper p='sm' withBorder>
         <Stack gap='xs'>
-          <Grid grow>
-            <DetailsImage
-              appRole={UserRoles.part}
-              imageActions={{
-                selectExisting: true,
-                downloadImage: true,
-                uploadFile: true,
-                deleteFile: true
-              }}
-              src={part.image}
-              thumbnail={part.thumbnail}
-              apiPath={apiUrl(ApiEndpoints.part_list, part.pk)}
-              refresh={refreshInstance}
-              pk={part.pk}
-            />
-            <Grid.Col span={{ base: 12, sm: 8 }}>
-              <DetailsTable fields={tl} item={data} />
-            </Grid.Col>
-          </Grid>
-          <TagsList tags={part.tags} />
-          {enableRevisionSelection && (
-            <Paper p='sm' withBorder>
-              <Stack gap='xs'>
-                <Group gap='xs'>
-                  <ActionIcon variant='transparent'>
-                    <IconVersions />
-                  </ActionIcon>
-                  <Text>{t`选择货品规格版本`}</Text>
-                </Group>
-                <RevisionSelector part={part} options={partRevisionOptions} />
-              </Stack>
-            </Paper>
-          )}
+          <Group gap='xs'>
+            <ActionIcon variant='transparent'>
+              <IconVersions />
+            </ActionIcon>
+            <Text>{t`选择货品规格版本`}</Text>
+          </Group>
+          <RevisionSelector part={part} options={partRevisionOptions} />
         </Stack>
-        <DetailsTable fields={tr} item={data} />
-        <DetailsTable fields={bl} item={data} />
-        <DetailsTable fields={br} item={data} />
-      </ItemDetailsGrid>
-    ) : (
-      <Skeleton />
+      </Paper>
     );
-  }, [
-    globalSettings,
-    part,
-    id,
-    serials,
-    instanceQuery.isFetching,
-    instanceQuery.data,
-    enableRevisionSelection,
-    partRevisionOptions,
-    partRequirementsQuery.isFetching,
-    partRequirements
-  ]);
+  }, [enableRevisionSelection, part, partRevisionOptions]);
 
   // Part data panels (recalculate when part data changes)
   const partPanels: PanelType[] = useMemo(() => {
@@ -675,7 +290,14 @@ export default function PartDetail() {
         name: 'details',
         label: t`货品详情`,
         icon: <IconInfoCircle />,
-        content: detailsPanel
+        content: (
+          <PartDetailsPanel
+            instance={part}
+            allowImageEdit
+            refreshInstance={refreshInstance}
+            additionalContent={revisionSelector}
+          />
+        )
       },
       {
         name: 'stock',
@@ -782,7 +404,11 @@ export default function PartDetail() {
         label: t`出货单`,
         icon: <IconTruckDelivery />,
         hidden: !part.salable || !user.hasViewRole(UserRoles.sales_order),
-        content: part.pk ? <SalesOrderTable partId={part.pk} /> : <Skeleton />
+        content: part.pk ? (
+          <PartSalesOrdersTable partId={part.pk} />
+        ) : (
+          <Skeleton />
+        )
       },
       {
         name: 'return_orders',
@@ -867,6 +493,7 @@ export default function PartDetail() {
         name: 'parameters',
         label: t`Parameters`,
         icon: <IconListDetails />,
+        notification_dot: instanceInfo.parameter_count ? 'info' : null,
         content: (
           <>
             {lockingEnabled && part.locked && (
@@ -889,12 +516,13 @@ export default function PartDetail() {
       },
       AttachmentPanel({
         model_type: ModelType.part,
-        model_id: part?.pk
+        model_id: part?.pk,
+        attachment_count: instanceInfo.attachment_count
       }),
       NotesPanel({
         model_type: ModelType.part,
         model_id: part?.pk,
-        has_note: !!part?.notes
+        note_count: instanceInfo.note_count
       })
     ];
   }, [
@@ -903,8 +531,10 @@ export default function PartDetail() {
     user,
     globalSettings,
     userSettings,
-    detailsPanel,
-    bomInformation
+    bomInformation,
+    revisionSelector,
+    refreshInstance,
+    instanceInfo
   ]);
 
   const breadcrumbs = useMemo(() => {
@@ -984,7 +614,7 @@ export default function PartDetail() {
         key='on_order'
       />,
       <DetailsBadge
-        label={`${t`In Production`}: ${formatDecimal(partRequirements.scheduled_to_build)}`}
+        label={`${t`组合配货中`}: ${formatDecimal(partRequirements.scheduled_to_build)}`}
         color='blue'
         visible={partRequirements.scheduled_to_build > 0}
         key='in_production'
@@ -1002,10 +632,16 @@ export default function PartDetail() {
         key='inactive'
       />,
       <DetailsBadge
-        label={t`虚拟货品`}
+                    label={t`虚拟货品`}
         color='cyan.4'
         visible={part.virtual}
         key='virtual'
+      />,
+      <DetailsBadge
+        label={t`Consumable`}
+        color='cyan.4'
+        visible={part.consumable}
+        key='consumable'
       />
     ];
   }, [partRequirements, partRequirementsQuery.isFetching, part]);

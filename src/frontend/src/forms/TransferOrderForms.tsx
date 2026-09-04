@@ -10,9 +10,9 @@ import {
   TableFieldQuantityInput,
   type TableFieldRowProps
 } from '../components/forms/fields/TableField';
+import { RenderPartColumn } from '../components/tables/ColumnRenderers';
 import { useCreateApiFormModal } from '../hooks/UseForm';
 import { useGlobalSettingsState } from '../states/SettingsStates';
-import { RenderPartColumn } from '../tables/ColumnRenderers';
 import { ProjectCodeField, TagsField } from './CommonFields';
 
 export function useTransferOrderFields({
@@ -59,7 +59,8 @@ export function useTransferOrderFields({
             value: duplicateOrderId
           },
           copy_lines: {},
-          copy_parameters: {}
+          copy_parameters: {},
+          copy_notes: {}
         }
       };
     }

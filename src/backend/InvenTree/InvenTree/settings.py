@@ -316,6 +316,7 @@ INSTALLED_APPS = [
     'order.apps.OrderConfig',
     'part.apps.PartConfig',
     'report.apps.ReportConfig',
+    'scim.apps.ScimConfig',
     'stock.apps.StockConfig',
     'users.apps.UsersConfig',
     'machine.apps.MachineConfig',
@@ -529,6 +530,8 @@ REST_FRAMEWORK = {
     'DEFAULT_METADATA_CLASS': 'InvenTree.metadata.InvenTreeMetadata',
     'DEFAULT_RENDERER_CLASSES': ['rest_framework.renderers.JSONRenderer'],
     'TOKEN_MODEL': 'users.models.ApiToken',
+    'DEFAULT_THROTTLE_CLASSES': [],
+    'DEFAULT_THROTTLE_RATES': {},
 }
 
 if DEBUG:
@@ -543,6 +546,21 @@ if USE_JWT:
     JWT_AUTH_COOKIE = 'inventree-auth'
     JWT_AUTH_REFRESH_COOKIE = 'inventree-token'
     INSTALLED_APPS.append('rest_framework_simplejwt')
+
+# Throtteling setup
+THROTTLE_ANON = get_setting('INVENTREE_THROTTLE_ANON', 'throttle.anon', '20/minute')
+THROTTLE_USER = get_setting('INVENTREE_THROTTLE_USER', 'throttle.user', '60/second')
+
+if not DEBUG and THROTTLE_ANON and str(THROTTLE_ANON).lower() != 'none':
+    REST_FRAMEWORK['DEFAULT_THROTTLE_RATES']['anon'] = THROTTLE_ANON
+    REST_FRAMEWORK['DEFAULT_THROTTLE_CLASSES'].append(
+        'rest_framework.throttling.AnonRateThrottle'
+    )
+if not DEBUG and THROTTLE_USER and str(THROTTLE_USER).lower() != 'none':
+    REST_FRAMEWORK['DEFAULT_THROTTLE_RATES']['user'] = THROTTLE_USER
+    REST_FRAMEWORK['DEFAULT_THROTTLE_CLASSES'].append(
+        'rest_framework.throttling.UserRateThrottle'
+    )
 
 # WSGI default setting
 WSGI_APPLICATION = 'InvenTree.wsgi.application'
@@ -591,8 +609,15 @@ SENTRY_SAMPLE_RATE = float(
     get_setting('INVENTREE_SENTRY_SAMPLE_RATE', 'sentry_sample_rate', 0.1)
 )
 
+# Whether to include PII (e.g. user id/email, IP address, request data) in reported events
+SENTRY_SEND_PII = get_boolean_setting(
+    'INVENTREE_SENTRY_SEND_PII', 'sentry_send_pii', False
+)
+
 if SENTRY_ENABLED and SENTRY_DSN and not TESTING:  # pragma: no cover
-    init_sentry(SENTRY_DSN, SENTRY_SAMPLE_RATE, inventree_tags)
+    init_sentry(
+        SENTRY_DSN, SENTRY_SAMPLE_RATE, inventree_tags, send_pii=SENTRY_SEND_PII
+    )
 
 # OpenTelemetry tracing
 TRACING_ENABLED = (
@@ -995,13 +1020,11 @@ USERSESSIONS_TRACK_ACTIVITY = True
 # allauth rate limiting: https://docs.allauth.org/en/latest/account/rate_limits.html
 # The default login rate limit is "5/m/user,5/m/ip,5/m/key"
 login_attempts = get_setting('INVENTREE_LOGIN_ATTEMPTS', 'login_attempts', 5)
-
 try:
-    login_attempts = int(login_attempts)
-    login_attempts = f'{login_attempts}/m,{login_attempts}/m'
+    # Only the per-account ('key') limit is user-configurable with an int - use a str for more custom limits
+    login_attempts = f'10/m/ip,{int(login_attempts)}/m/key'
 except ValueError:  # pragma: no cover
     pass
-
 ACCOUNT_RATE_LIMITS = {'login_failed': login_attempts}
 
 # Default protocol for login
