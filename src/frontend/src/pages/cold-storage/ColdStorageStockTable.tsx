@@ -5,7 +5,7 @@ import { ApiEndpoints, apiUrl } from '@lib/index';
 import useTable from '@lib/hooks/UseTable';
 import type { TableColumn } from '@lib/types/Tables';
 import { useState } from 'react';
-import { InvenTreeTable } from '../../tables/InvenTreeTable';
+import { InvenTreeTable } from '../../components/tables/InvenTreeTable';
 import {
   displayStockQuantity,
   displayStockStatus,

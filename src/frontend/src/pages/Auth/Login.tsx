@@ -1,7 +1,9 @@
-import { Anchor, Divider, Text } from '@mantine/core';
+import { t } from '@lingui/core/macro';
+import { Trans } from '@lingui/react/macro';
+import { Anchor, Divider, Group, Loader, Text } from '@mantine/core';
 import { useToggle } from '@mantine/hooks';
-import { useEffect, useMemo } from 'react';
-import { useLocation, useNavigate } from 'react-router-dom';
+import { useEffect, useMemo, useState } from 'react';
+import { useLocation, useNavigate, useSearchParams } from 'react-router-dom';
 
 import { useShallow } from 'zustand/react/shallow';
 import { removeTraceId, setApiDefaults, setTraceId } from '../../App';
@@ -13,7 +15,9 @@ import {
   translateHostName
 } from '../../defaults/defaultHostList';
 import {
-  checkLoginState
+  checkLoginState,
+  doBasicLogin,
+  followRedirect
 } from '../../functions/auth';
 import { useLocalState } from '../../states/LocalState';
 import { useServerApiState } from '../../states/ServerApiState';
@@ -53,8 +57,10 @@ export default function Login() {
       ? '未选择服务器'
       : translateHostName(hostList[hostKey]?.name);
   const [hostEdit, setHostEdit] = useToggle([false, true] as const);
+  const [isLoggingIn, setIsLoggingIn] = useState<boolean>(false);
   const navigate = useNavigate();
   const location = useLocation();
+  const [searchParams] = useSearchParams();
   const [sso_registration, registration_enabled] = useServerApiState(
     useShallow((state) => [
       state.sso_registration_enabled,

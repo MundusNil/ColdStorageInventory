@@ -1,3 +1,4 @@
+import { t } from '@lingui/core/macro';
 import { openContextModal } from '@mantine/modals';
 
 import { StylishText } from '@lib/components/StylishText';
@@ -190,8 +191,8 @@ export function AboutLinks(
   const base_items: MenuLinkItem[] = [
     {
       id: 'documentation',
-      title: t`Documentation`,
-      description: t`InvenTree documentation`,
+      title: t`帮助文档`,
+      description: t`查看 InvenTree 官方文档`,
       link: docLinks.docs,
       external: true
     },
