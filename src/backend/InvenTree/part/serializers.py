@@ -276,7 +276,10 @@ class PartSalePriceSerializer(
     )
 
 
-class PartInternalPriceSerializer(InvenTree.serializers.InvenTreeModelSerializer):
+@register_importer()
+class PartInternalPriceSerializer(
+    DataImportExportSerializerMixin, InvenTree.serializers.InvenTreeModelSerializer
+):
     """Serializer for internal prices for Part model."""
 
     class Meta:
@@ -357,6 +360,7 @@ class PartBriefSerializer(
             'testable',
             'trackable',
             'virtual',
+            'consumable',
             'units',
             'pricing_min',
             'pricing_max',
@@ -531,7 +535,6 @@ class DefaultLocationSerializer(InvenTree.serializers.InvenTreeModelSerializer):
 class PartSerializer(
     InvenTree.serializers.FilterableSerializerMixin,
     DataImportExportSerializerMixin,
-    InvenTree.serializers.NotesFieldMixin,
     InvenTree.serializers.InvenTreeTaggitSerializer,
     InvenTree.serializers.InvenTreeModelSerializer,
 ):
@@ -573,7 +576,6 @@ class PartSerializer(
             'minimum_stock',
             'maximum_stock',
             'name',
-            'notes',
             'parameters',
             'pk',
             'purchaseable',
@@ -588,6 +590,7 @@ class PartSerializer(
             'units',
             'variant_of',
             'virtual',
+            'consumable',
             'pricing_min',
             'pricing_max',
             'pricing_updated',
@@ -1033,12 +1036,13 @@ class PartSerializer(
         initial_supplier = validated_data.pop('initial_supplier', None)
         copy_category_parameters = validated_data.pop('copy_category_parameters', False)
 
-        instance = super().create(validated_data)
+        # Additional data to apply to the serializer
+        extra_data = {}
 
-        # Save user information
         if request := self.context.get('request'):
-            instance.creation_user = request.user
-            instance.save()
+            extra_data['creation_user'] = request.user
+
+        instance = super().create({**validated_data, **extra_data})
 
         # Copy data from original Part
         if duplicate:
@@ -1047,16 +1051,13 @@ class PartSerializer(
             if duplicate.get('copy_bom', False):
                 instance.copy_bom_from(original)
 
-            if duplicate.get('copy_notes', False):
-                instance.notes = original.notes
-                instance.save()
+            InvenTree.serializers.apply_duplicate_copy_options(
+                instance, duplicate, original, copy_notes=False, copy_parameters=False
+            )
 
             if duplicate.get('copy_image', False):
                 instance.image = original.image
                 instance.save()
-
-            if duplicate.get('copy_parameters', False):
-                instance.copy_parameters_from(original)
 
             if duplicate.get('copy_tests', False):
                 instance.copy_tests_from(original)
@@ -1267,7 +1268,7 @@ class PartStocktakeSerializer(
         if exclude_pk:
             self.fields.pop('pk', None)
 
-    quantity = serializers.FloatField()
+    quantity = InvenTree.serializers.InvenTreeDecimalField()
 
     cost_min = InvenTree.serializers.InvenTreeMoneySerializer(allow_null=True)
     cost_min_currency = InvenTree.serializers.InvenTreeCurrencySerializer()
@@ -1427,7 +1428,9 @@ class PartPricingSerializer(InvenTree.serializers.InvenTreeModelSerializer):
             'update',
         ]
 
-    currency = serializers.CharField(allow_null=True, read_only=True)
+    currency = InvenTree.serializers.InvenTreeCurrencySerializer(
+        allow_null=True, read_only=True
+    )
 
     updated = serializers.DateTimeField(allow_null=True, read_only=True)
 
@@ -1658,6 +1661,7 @@ class BomItemSerializer(
             'reference',
             'raw_amount',
             'quantity',
+            'piece_count',
             'allow_variants',
             'inherited',
             'optional',
@@ -1705,6 +1709,16 @@ class BomItemSerializer(
 
     rounding_multiple = InvenTree.serializers.InvenTreeDecimalField(
         required=False, allow_null=True
+    )
+
+    piece_count = serializers.IntegerField(
+        required=False,
+        default=1,
+        label=_('Piece Count'),
+        help_text=_(
+            'Number of pieces required (for cut-to-length items). '
+            'Total material = quantity x piece_count.'
+        ),
     )
 
     part = serializers.PrimaryKeyRelatedField(

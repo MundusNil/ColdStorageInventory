@@ -1,5 +1,5 @@
 import { t } from '@lingui/core/macro';
-import { Grid, Skeleton, Stack } from '@mantine/core';
+import { Skeleton, Stack } from '@mantine/core';
 import {
   IconBuildingWarehouse,
   IconInfoCircle,
@@ -17,18 +17,10 @@ import { useNavigate, useParams } from 'react-router-dom';
 import { ApiEndpoints } from '@lib/enums/ApiEndpoints';
 import { ModelType } from '@lib/enums/ModelType';
 import { UserRoles } from '@lib/enums/Roles';
-import { apiUrl } from '@lib/functions/Api';
-import { TagsList } from '@lib/index';
 import type { PanelType } from '@lib/types/Panel';
 import AdminButton from '../../components/buttons/AdminButton';
 import { PrintingActions } from '../../components/buttons/PrintingActions';
-import {
-  type DetailsField,
-  DetailsTable
-} from '../../components/details/Details';
 import DetailsBadge from '../../components/details/DetailsBadge';
-import { DetailsImage } from '../../components/details/DetailsImage';
-import { ItemDetailsGrid } from '../../components/details/ItemDetails';
 import {
   DeleteItemAction,
   DuplicateItemAction,
@@ -49,6 +41,7 @@ import {
   useEditApiFormModal
 } from '../../hooks/UseForm';
 import { useInstance } from '../../hooks/UseInstance';
+import { useInstanceInfo } from '../../hooks/UseInstanceInfo';
 import { useUserState } from '../../states/UserState';
 import { AddressTable } from '../../tables/company/AddressTable';
 import { ContactTable } from '../../tables/company/ContactTable';
@@ -58,6 +51,7 @@ import { SupplierPartTable } from '../../tables/purchasing/SupplierPartTable';
 import { ReturnOrderTable } from '../../tables/sales/ReturnOrderTable';
 import { SalesOrderTable } from '../../tables/sales/SalesOrderTable';
 import { StockItemTable } from '../../tables/stock/StockItemTable';
+import { CompanyDetailsPanel } from './CompanyDetailsPanel';
 
 export type CompanyDetailProps = {
   title: string;
@@ -87,101 +81,20 @@ export default function CompanyDetail(props: Readonly<CompanyDetailProps>) {
     refetchOnMount: true
   });
 
-  const detailsPanel = useMemo(() => {
-    if (instanceQuery.isFetching) {
-      return <Skeleton />;
-    }
+  const { instanceInfo } = useInstanceInfo({
+    modelType: ModelType.company,
+    modelId: company?.pk
+  });
 
-    const tl: DetailsField[] = [
-      {
-        type: 'text',
-        name: 'description',
-        label: t`说明`,
-        copy: true
-      },
-      {
-        type: 'link',
-        name: 'website',
-        label: t`网站`,
-        external: true,
-        copy: true,
-        hidden: !company.website
-      },
-      {
-        type: 'text',
-        name: 'phone',
-        label: t`电话`,
-        copy: true,
-        hidden: !company.phone
-      },
-      {
-        type: 'text',
-        name: 'email',
-        label: t`邮箱`,
-        copy: true,
-        hidden: !company.email
-      },
-      {
-        type: 'text',
-        name: 'tax_id',
-        label: t`税号`,
-        copy: true,
-        hidden: !company.tax_id
-      }
-    ];
-
-    const tr: DetailsField[] = [
-      {
-        type: 'string',
-        name: 'currency',
-        label: t`默认币种`
-      },
-      {
-        type: 'boolean',
-        name: 'is_supplier',
-        label: t`供货商`,
-        icon: 'suppliers'
-      },
-      {
-        type: 'boolean',
-        name: 'is_manufacturer',
-        label: t`生产厂家/品牌`,
-        icon: 'manufacturers'
-      },
-      {
-        type: 'boolean',
-        name: 'is_customer',
-        label: t`客户`,
-        icon: 'customers'
-      }
-    ];
-
-    return (
-      <ItemDetailsGrid>
-        <Stack gap='xs'>
-          <Grid grow>
-            <DetailsImage
-              appRole={UserRoles.purchase_order}
-              apiPath={apiUrl(ApiEndpoints.company_list, company.pk)}
-              src={company.image}
-              pk={company.pk}
-              refresh={refreshInstance}
-              imageActions={{
-                uploadFile: true,
-                downloadImage: true,
-                deleteFile: true
-              }}
-            />
-            <Grid.Col span={{ base: 12, sm: 8 }}>
-              <DetailsTable item={company} fields={tl} />
-            </Grid.Col>
-          </Grid>
-          <TagsList tags={company.tags} />
-        </Stack>
-        <DetailsTable item={company} fields={tr} />
-      </ItemDetailsGrid>
-    );
-  }, [company, instanceQuery]);
+  const detailsPanel = instanceQuery.isFetching ? (
+    <Skeleton />
+  ) : (
+    <CompanyDetailsPanel
+      instance={company}
+      allowImageEdit
+      refreshInstance={refreshInstance}
+    />
+  );
 
   const companyPanels: PanelType[] = useMemo(() => {
     return [
@@ -277,19 +190,21 @@ export default function CompanyDetail(props: Readonly<CompanyDetailProps>) {
       },
       ParametersPanel({
         model_type: ModelType.company,
-        model_id: company?.pk
+        model_id: company?.pk,
+        parameter_count: instanceInfo.parameter_count
       }),
       AttachmentPanel({
         model_type: ModelType.company,
-        model_id: company.pk
+        model_id: company.pk,
+        attachment_count: instanceInfo.attachment_count
       }),
       NotesPanel({
         model_type: ModelType.company,
         model_id: company.pk,
-        has_note: !!company.notes
+        note_count: instanceInfo.note_count
       })
     ];
-  }, [id, company, user]);
+  }, [id, company, user, instanceInfo]);
 
   const editCompany = useEditApiFormModal({
     url: ApiEndpoints.company_list,

@@ -136,6 +136,9 @@ export function usePartFields({
           setVirtual(value);
         }
       },
+      consumable: {
+        default: false
+      },
       locked: {
         label: t`锁定货品`
       },
@@ -155,7 +158,7 @@ export function usePartFields({
     if (create && !virtual) {
       fields.copy_category_parameters = {};
 
-      if (virtual != false) {
+      if (globalSettings.isSet('PART_CREATE_INITIAL')) {
         fields.initial_stock = {
           icon: <IconPackages />,
           children: {

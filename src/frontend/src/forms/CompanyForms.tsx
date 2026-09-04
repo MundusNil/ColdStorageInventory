@@ -130,7 +130,8 @@ export function useSupplierPartFields({
       duplicate: DuplicateField({
         originalId: duplicateSupplierPartId,
         extraFields: {
-          copy_parameters: {}
+          copy_parameters: {},
+          copy_notes: {}
         }
       })
     };
@@ -188,7 +189,8 @@ export function useManufacturerPartFields({
       duplicate: DuplicateField({
         originalId: duplicateManufacturerPartId,
         extraFields: {
-          copy_parameters: {}
+          copy_parameters: {},
+          copy_notes: {}
         }
       })
     };
@@ -251,7 +253,8 @@ export function companyFields({
     duplicate: DuplicateField({
       originalId: duplicateCompanyId,
       extraFields: {
-        copy_parameters: {}
+        copy_parameters: {},
+        copy_notes: {}
       }
     })
   };

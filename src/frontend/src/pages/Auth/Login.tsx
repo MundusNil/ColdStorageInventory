@@ -1,7 +1,9 @@
-import { Anchor, Divider, Text } from '@mantine/core';
+import { t } from '@lingui/core/macro';
+import { Trans } from '@lingui/react/macro';
+import { Anchor, Divider, Group, Loader, Text } from '@mantine/core';
 import { useToggle } from '@mantine/hooks';
-import { useEffect, useMemo } from 'react';
-import { useLocation, useNavigate } from 'react-router-dom';
+import { useEffect, useMemo, useState } from 'react';
+import { useLocation, useNavigate, useSearchParams } from 'react-router-dom';
 
 import { useShallow } from 'zustand/react/shallow';
 import { removeTraceId, setApiDefaults, setTraceId } from '../../App';
@@ -13,10 +15,13 @@ import {
   translateHostName
 } from '../../defaults/defaultHostList';
 import {
-  checkLoginState
+  checkLoginState,
+  doBasicLogin,
+  followRedirect
 } from '../../functions/auth';
 import { useLocalState } from '../../states/LocalState';
 import { useServerApiState } from '../../states/ServerApiState';
+import { useUserState } from '../../states/UserState';
 import { Wrapper } from './Layout';
 
 function removeSensitiveLoginParams() {
@@ -52,13 +57,18 @@ export default function Login() {
       ? '未选择服务器'
       : translateHostName(hostList[hostKey]?.name);
   const [hostEdit, setHostEdit] = useToggle([false, true] as const);
+  const [isLoggingIn, setIsLoggingIn] = useState<boolean>(false);
   const navigate = useNavigate();
   const location = useLocation();
+  const [searchParams] = useSearchParams();
   const [sso_registration, registration_enabled] = useServerApiState(
     useShallow((state) => [
       state.sso_registration_enabled,
       state.registration_enabled
     ])
+  );
+  const [loginChecked] = useUserState(
+    useShallow((state) => [state.login_checked])
   );
   const any_reg_enabled = registration_enabled() || sso_registration() || false;
 
@@ -79,12 +89,13 @@ export default function Login() {
   }, [server.customize]);
 
   // Data manipulation functions
-  function ChangeHost(newHost: string | null): void {
+  // `force` defaults to true since this is normally a genuine host change
+  function ChangeHost(newHost: string | null, force = true): void {
     if (newHost === null) return;
     setHost(hostList[newHost]?.host, newHost);
     setApiDefaults();
     const traceid = setTraceId();
-    fetchServerApiState();
+    fetchServerApiState(force);
     removeTraceId(traceid);
   }
 
@@ -93,10 +104,25 @@ export default function Login() {
     removeSensitiveLoginParams();
 
     if (hostKey === '') {
-      ChangeHost(defaultHostKey);
+      ChangeHost(defaultHostKey, false);
     }
 
-    checkLoginState(navigate, location?.state, true);
+    // Only check here if a check hasn't already happened this session
+    if (!loginChecked) {
+      checkLoginState(navigate, location?.state, true);
+    }
+
+    // check if we got login params (login and password)
+    if (searchParams.has('login') && searchParams.has('password')) {
+      setIsLoggingIn(true);
+      doBasicLogin(
+        searchParams.get('login') ?? '',
+        searchParams.get('password') ?? '',
+        navigate
+      ).then(() => {
+        followRedirect(navigate, location?.state);
+      });
+    }
   }, []);
 
   return (
