@@ -103,6 +103,9 @@ function Resolve-Python {
 }
 
 function Resolve-Yarn {
+    # 走国内镜像，避免 corepack/yarn 联网校验时网络抖动导致 fetch 断连
+    $env:COREPACK_NPM_REGISTRY = 'https://registry.npmmirror.com'
+
     $Command = Get-Command yarn.cmd -ErrorAction SilentlyContinue
     if ($Command) {
         return @{
