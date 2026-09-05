@@ -85,7 +85,6 @@ function Stop-Listener($Listener, $Name) {
 
 function Resolve-Python {
     $Candidates = @(
-        (Join-Path $Root '.venv312\Scripts\python.exe'),
         (Join-Path $Root '.venv\Scripts\python.exe')
     )
 
@@ -176,7 +175,7 @@ try {
 
     $Python = Resolve-Python
     if (-not $Python) {
-        throw '没有找到 Python。请先确认 .venv312 或 .venv 存在，或者系统 PATH 中有 python。'
+        throw '没有找到 Python。请先确认 .venv 存在，或者系统 PATH 中有 python。'
     }
 
     $Yarn = Resolve-Yarn
